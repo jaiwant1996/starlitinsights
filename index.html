@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Starlit Insights — Vedic Astrology, Computed to the Arcsecond</title>
+<meta name="description" content="Sidereal Vedic astrology built on Swiss Ephemeris precision and classical Parashari method. Find out why your horoscope has been 24 degrees wrong your whole life.">
+<meta name="theme-color" content="#04060c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Starlit Insights — Vedic Astrology, Computed to the Arcsecond">
+<meta property="og:description" content="Your horoscope has been off by 24 degrees. Here's the math that fixes it.">
+<meta property="og:url" content="https://starlitinsights.com">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://starlitinsights.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4l10 32 32 10-32 10-10 32-10-32-32-10 32-10z' fill='%23f5c86b'/%3E%3C/svg%3E">
+
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --void:#04060c;
+  --deep:#080d18;
+  --panel:rgba(255,255,255,.035);
+  --panel-2:rgba(255,255,255,.055);
+  --line:rgba(255,255,255,.09);
+  --line-2:rgba(255,255,255,.16);
+
+  --gold:#f2c879;
+  --gold-2:#c9973f;
+  --cyan:#5fe3d8;
+  --cyan-2:#2aa89e;
+  --violet:#9b8cff;
+  --rose:#ff8fa8;
+
+  --ink:#eef2fa;
+  --ink-2:#aeb8cc;
+  --ink-3:#6f7c96;
+
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:34px;
+  --maxw:1180px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-2:cubic-bezier(.65,0,.35,1);
+
+  --f-disp:'Space Grotesk',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+::selection{background:rgba(242,200,121,.28);color:#fff}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#04060c}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold-2),var(--cyan-2));border-radius:9px}
+
+/* ============================================================
+   BACKGROUND LAYERS
+   ============================================================ */
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+.nebulae{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.neb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
+.neb.a{width:52vw;height:52vw;left:-16vw;top:-8vw;
+  background:radial-gradient(circle,rgba(90,60,190,.42),transparent 68%);
+  animation:drift1 34s var(--ease-2) infinite alternate}
+.neb.b{width:46vw;height:46vw;right:-14vw;top:28vh;
+  background:radial-gradient(circle,rgba(20,140,140,.34),transparent 68%);
+  animation:drift2 41s var(--ease-2) infinite alternate}
+.neb.c{width:40vw;height:40vw;left:24vw;bottom:-14vw;
+  background:radial-gradient(circle,rgba(190,140,50,.22),transparent 70%);
+  animation:drift3 47s var(--ease-2) infinite alternate}
+@keyframes drift1{to{transform:translate3d(9vw,7vh,0) scale(1.16)}}
+@keyframes drift2{to{transform:translate3d(-8vw,-6vh,0) scale(1.22)}}
+@keyframes drift3{to{transform:translate3d(6vw,-9vh,0) scale(1.1)}}
+
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.32;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E")}
+
+#spot{position:fixed;width:620px;height:620px;border-radius:50%;pointer-events:none;z-index:2;
+  background:radial-gradient(circle,rgba(242,200,121,.055),rgba(95,227,216,.03) 42%,transparent 66%);
+  transform:translate(-50%,-50%);transition:opacity .5s;opacity:0}
+@media(hover:hover) and (min-width:900px){#spot{opacity:1}}
+
+/* ============================================================
+   LAYOUT PRIMITIVES
+   ============================================================ */
+.wrap{width:min(100% - 40px,var(--maxw));margin-inline:auto;position:relative;z-index:3}
+section{position:relative;z-index:3;padding:clamp(72px,11vh,140px) 0}
+.eyebrow{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--gold);display:inline-flex;align-items:center;gap:11px;margin-bottom:20px
+}
+.eyebrow::before{content:'';width:26px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+h1,h2,h3,h4{font-family:var(--f-disp);font-weight:500;line-height:1.06;letter-spacing:-.03em}
+h1{font-size:clamp(2.5rem,7.4vw,5.2rem)}
+h2{font-size:clamp(1.95rem,4.6vw,3.35rem);letter-spacing:-.032em}
+h3{font-size:clamp(1.15rem,2.2vw,1.5rem);letter-spacing:-.02em}
+p{color:var(--ink-2)}
+.lead{font-size:clamp(1rem,1.65vw,1.16rem);color:var(--ink-2);max-width:62ch}
+.shimmer{
+  background:linear-gradient(100deg,var(--gold) 0%,#fff6e0 22%,var(--cyan) 48%,#fff 68%,var(--gold) 92%);
+  background-size:280% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shim 9s linear infinite}
+@keyframes shim{to{background-position:280% 0}}
+.hl{color:var(--gold)}
+.hl-c{color:var(--cyan)}
+.mono{font-family:var(--f-mono)}
+
+.card{
+  background:linear-gradient(160deg,var(--panel),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  position:relative;overflow:hidden;transition:transform .5s var(--ease),border-color .5s,box-shadow .5s
+}
+.card::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .5s;
+  background:radial-gradient(500px circle at var(--mx,50%) var(--my,0%),rgba(242,200,121,.09),transparent 42%)
+}
+.card:hover{transform:translateY(-5px);border-color:var(--line-2);box-shadow:0 26px 60px -30px rgba(0,0,0,.9)}
+.calc-form:hover,.result:hover,.dasha:hover,#nakshatra .card:hover{transform:none}
+.card:hover::after{opacity:1}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 30px;border-radius:100px;border:1px solid transparent;cursor:pointer;
+  font-family:var(--f-disp);font-weight:500;font-size:.94rem;letter-spacing:-.01em;
+  position:relative;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s;
+  -webkit-tap-highlight-color:transparent
+}
+.btn-p{background:linear-gradient(105deg,var(--gold),#ffe4ab 45%,var(--gold-2));color:#160f02;
+  box-shadow:0 10px 34px -12px rgba(242,200,121,.62)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 16px 44px -12px rgba(242,200,121,.78)}
+.btn-p span{position:relative;z-index:2}
+.btn-p::before{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:translateX(-130%);transition:transform .85s var(--ease)}
+.btn-p:hover::before{transform:translateX(130%)}
+.btn-g{background:rgba(255,255,255,.04);border-color:var(--line-2);color:var(--ink);backdrop-filter:blur(10px)}
+.btn-g:hover{background:rgba(255,255,255,.09);transform:translateY(-2px);border-color:var(--gold)}
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv[data-d="1"]{transition-delay:.09s}
+.rv[data-d="2"]{transition-delay:.18s}
+.rv[data-d="3"]{transition-delay:.27s}
+.rv[data-d="4"]{transition-delay:.36s}
+.rv[data-d="5"]{transition-delay:.45s}
+.rv[data-d="6"]{transition-delay:.54s}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+header{position:fixed;top:0;left:0;right:0;z-index:60;transition:all .45s var(--ease);
+  padding:20px 0;border-bottom:1px solid transparent}
+header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom-color:var(--line);padding:12px 0}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--f-disp);font-weight:600;
+  font-size:1.04rem;letter-spacing:-.02em}
+.brand svg{width:26px;height:26px;animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:.86rem;color:var(--ink-2);position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;left:0;right:100%;bottom:-5px;height:1px;
+  background:linear-gradient(90deg,var(--gold),var(--cyan));transition:right .4s var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{right:0}
+.nav-cta{padding:10px 22px;font-size:.85rem}
+.burger{display:none;background:none;border:1px solid var(--line-2);border-radius:10px;
+  width:42px;height:42px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.burger i{display:block;width:16px;height:1.5px;background:var(--ink);transition:.35s var(--ease)}
+.burger.on i:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger.on i:nth-child(2){opacity:0}
+.burger.on i:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+#drawer{position:fixed;inset:0;z-index:55;background:rgba(4,6,12,.97);backdrop-filter:blur(26px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  opacity:0;visibility:hidden;transition:.5s var(--ease)}
+#drawer.on{opacity:1;visibility:visible}
+#drawer a{font-family:var(--f-disp);font-size:1.55rem;color:var(--ink-2);transition:.3s}
+#drawer a:hover{color:var(--gold)}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{min-height:100svh;display:flex;align-items:center;padding-top:96px;padding-bottom:56px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:center}
+.hero h1{margin-bottom:24px}
+.hero h1 em{font-style:normal;display:block}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:100px;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.03);font-family:var(--f-mono);
+  font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-2);margin-bottom:26px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);
+  animation:pulse 2.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin-top:34px}
+.hero-stats{display:flex;gap:34px;margin-top:46px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line)}
+.stat b{display:block;font-family:var(--f-disp);font-size:1.65rem;font-weight:500;color:var(--ink);letter-spacing:-.03em}
+.stat span{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+/* Zodiac wheel */
+.wheel-wrap{position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:520px;margin-inline:auto;width:100%}
+.wheel{width:100%;height:auto;overflow:visible}
+.ring-slow,.ring-mid,.ring-fast{transform-box:view-box;transform-origin:50% 50%}
+.ring-slow{animation:spin 130s linear infinite}
+.ring-mid{animation:spinR 84s linear infinite}
+.ring-fast{animation:spin 46s linear infinite}
+@keyframes spinR{to{transform:rotate(-360deg)}}
+.wheel-core{position:absolute;text-align:center;pointer-events:none}
+.wheel-core b{display:block;font-family:var(--f-disp);font-size:2.5rem;font-weight:400;letter-spacing:-.04em;
+  background:linear-gradient(160deg,var(--gold),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.wheel-core span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3)}
+.orb{fill:var(--gold);filter:drop-shadow(0 0 6px rgba(242,200,121,.9))}
+
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:4;
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-3);
+  display:flex;flex-direction:column;align-items:center;gap:11px}
+.scrollcue i{display:block;width:1px;height:44px;background:linear-gradient(180deg,var(--gold),transparent);
+  animation:cue 2.4s var(--ease-2) infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}
+  55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============================================================
+   CALCULATOR
+   ============================================================ */
+.calc{display:grid;grid-template-columns:.92fr 1.08fr;gap:44px;align-items:start}
+.calc-form{padding:32px}
+.field{margin-bottom:18px}
+.field label{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+.field input,.field select{
+  width:100%;padding:14px 16px;border-radius:var(--r-sm);background:rgba(255,255,255,.045);
+  border:1px solid var(--line);color:var(--ink);font-family:var(--f-mono);font-size:.92rem;
+  transition:.3s;color-scheme:dark}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);
+  background:rgba(255,255,255,.075);box-shadow:0 0 0 3px rgba(242,200,121,.11)}
+.hint{font-size:.76rem;color:var(--ink-3);margin-top:7px;line-height:1.5}
+
+.result{padding:32px;min-height:100%;display:flex;flex-direction:column;justify-content:center}
+.res-empty{text-align:center;color:var(--ink-3);padding:40px 12px}
+.res-empty svg{margin:0 auto 18px;opacity:.35;animation:float 5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.compare{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-bottom:24px}
+.sign-box{text-align:center;padding:22px 12px;border-radius:var(--r-md);border:1px solid var(--line);
+  background:rgba(255,255,255,.028)}
+.sign-box.true{border-color:rgba(242,200,121,.42);background:rgba(242,200,121,.075);
+  box-shadow:0 0 34px -14px rgba(242,200,121,.5)}
+.sign-box .glyph{font-size:2.5rem;line-height:1;margin-bottom:9px;display:block}
+.sign-box .nm{font-family:var(--f-disp);font-size:1.24rem;letter-spacing:-.02em}
+.sign-box .tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:7px}
+.sign-box.true .tag{color:var(--gold)}
+.arrow{font-family:var(--f-mono);font-size:.72rem;color:var(--ink-3);text-align:center;line-height:1.4}
+.verdict{padding:16px 18px;border-radius:var(--r-md);border:1px solid var(--line);
+  background:rgba(255,255,255,.025);font-size:.9rem;line-height:1.62}
+.datarow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);
+  font-family:var(--f-mono);font-size:.78rem}
+.datarow:last-child{border-bottom:none}
+.datarow span:first-child{color:var(--ink-3)}
+.datarow span:last-child{color:var(--cyan)}
+
+/* ============================================================
+   INSIGHT CARDS
+   ============================================================ */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:20px}
+.icard{padding:30px 26px}
+.icard .n{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--gold);
+  opacity:.7;display:block;margin-bottom:16px}
+.icard h3{margin-bottom:11px;color:var(--ink)}
+.icard p{font-size:.9rem;line-height:1.68}
+.icard .big{font-family:var(--f-disp);font-size:2.9rem;font-weight:400;letter-spacing:-.045em;
+  line-height:1;margin-bottom:12px;
+  background:linear-gradient(140deg,var(--gold) 8%,var(--cyan) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ============================================================
+   METHOD
+   ============================================================ */
+.method{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mlist{list-style:none;display:flex;flex-direction:column;gap:2px}
+.mlist li{padding:17px 0;border-bottom:1px solid var(--line);display:flex;gap:15px;align-items:flex-start}
+.mlist li:last-child{border-bottom:none}
+.mlist .tick{flex:0 0 20px;height:20px;border-radius:50%;display:grid;place-items:center;margin-top:2px;
+  font-size:10px;font-weight:700}
+.do .tick{background:rgba(95,227,216,.14);color:var(--cyan);border:1px solid rgba(95,227,216,.32)}
+.dont .tick{background:rgba(255,143,168,.11);color:var(--rose);border:1px solid rgba(255,143,168,.28)}
+.mlist strong{display:block;font-family:var(--f-disp);font-weight:500;font-size:.98rem;color:var(--ink);margin-bottom:3px}
+.mlist p{font-size:.83rem;line-height:1.6}
+
+/* ============================================================
+   NAKSHATRA STRIP
+   ============================================================ */
+.nak-scroll{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);padding:6px 0}
+.nak-track{display:flex;gap:12px;width:max-content;animation:marq 68s linear infinite}
+.nak-scroll:hover .nak-track{animation-play-state:paused}
+@keyframes marq{to{transform:translateX(-50%)}}
+.nak{flex:0 0 auto;padding:13px 19px;border-radius:100px;border:1px solid var(--line);
+  background:rgba(255,255,255,.028);font-family:var(--f-mono);font-size:.76rem;color:var(--ink-2);
+  white-space:nowrap;transition:.35s;cursor:default}
+.nak:hover{border-color:var(--gold);color:var(--gold);background:rgba(242,200,121,.075);transform:translateY(-2px)}
+.nak b{color:var(--ink-3);margin-right:9px;font-weight:400}
+
+/* ============================================================
+   DASHA TIMELINE
+   ============================================================ */
+.dasha{padding:34px 30px}
+.dbar{display:flex;height:58px;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:26px 0 18px}
+.dseg{position:relative;display:grid;place-items:center;overflow:hidden;transition:flex .55s var(--ease),filter .35s;
+  min-width:0;cursor:default;flex-grow:0;flex-shrink:0}
+.dseg:hover{filter:brightness(1.42)}
+.dseg span{font-family:var(--f-mono);font-size:9.5px;pointer-events:none;color:rgba(255,255,255,.94);
+  text-shadow:0 1px 4px rgba(0,0,0,.75);white-space:nowrap;letter-spacing:.03em}
+.dlegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:9px;margin-top:18px}
+.dleg{display:flex;align-items:center;gap:9px;font-family:var(--f-mono);font-size:.73rem;color:var(--ink-2)}
+.dleg i{width:9px;height:9px;border-radius:2.5px;flex:0 0 auto}
+.dleg em{font-style:normal;color:var(--ink-3);margin-left:auto}
+
+/* ============================================================
+   SERVICES
+   ============================================================ */
+.svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px}
+.scard{padding:34px 30px;display:flex;flex-direction:column}
+.scard.feat{border-color:rgba(242,200,121,.3)}
+.scard.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.stag{position:absolute;top:20px;right:20px;font-family:var(--f-mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;padding:5px 11px;border-radius:100px;
+  background:rgba(242,200,121,.13);color:var(--gold);border:1px solid rgba(242,200,121,.28)}
+.price{font-family:var(--f-disp);font-size:2.4rem;font-weight:400;letter-spacing:-.04em;margin:14px 0 4px;color:var(--ink)}
+.price small{font-size:.9rem;color:var(--ink-3);font-family:var(--f-mono);letter-spacing:0}
+.slist{list-style:none;margin:22px 0;display:flex;flex-direction:column;gap:11px;flex:1}
+.slist li{display:flex;gap:11px;font-size:.88rem;color:var(--ink-2);line-height:1.55}
+.slist li::before{content:'✦';color:var(--gold);flex:0 0 auto;font-size:.72rem;margin-top:4px}
+
+/* ============================================================
+   BOOKING / PAY
+   ============================================================ */
+.embed-shell{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;
+  background:rgba(255,255,255,.022);backdrop-filter:blur(14px)}
+.embed-bar{display:flex;align-items:center;gap:9px;padding:13px 18px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.028)}
+.embed-bar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+.embed-bar i:first-child{background:rgba(255,110,110,.6)}
+.embed-bar i:nth-child(2){background:rgba(242,200,121,.6)}
+.embed-bar i:nth-child(3){background:rgba(95,227,216,.6)}
+.embed-bar span{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin-left:8px}
+#my-cal-inline-15-minute-reading{width:100%!important;height:auto!important;min-height:660px;overflow:auto!important}
+
+.pay-slot{padding:44px 30px;text-align:center;border:1px dashed var(--line-2);border-radius:var(--r-lg);
+  background:rgba(255,255,255,.018)}
+.pay-slot .ic{width:52px;height:52px;margin:0 auto 18px;border-radius:15px;display:grid;place-items:center;
+  background:linear-gradient(140deg,rgba(242,200,121,.14),rgba(95,227,216,.09));
+  border:1px solid var(--line-2);font-size:1.35rem}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq{border-top:1px solid var(--line)}
+.q{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);
+  padding:24px 44px 24px 0;cursor:pointer;position:relative;font-family:var(--f-disp);font-weight:500;
+  font-size:clamp(1rem,1.9vw,1.14rem);letter-spacing:-.02em;color:var(--ink);transition:color .3s}
+.q:hover{color:var(--gold)}
+.q::after{content:'';position:absolute;right:8px;top:50%;width:12px;height:1.5px;background:var(--gold);
+  transform:translateY(-50%);transition:.4s var(--ease)}
+.q::before{content:'';position:absolute;right:13.2px;top:50%;width:1.5px;height:12px;background:var(--gold);
+  transform:translateY(-50%);transition:.4s var(--ease)}
+.q.on::before{transform:translateY(-50%) rotate(90deg);opacity:0}
+.a{max-height:0;overflow:hidden;transition:max-height .55s var(--ease)}
+.a>div{padding:0 0 26px;color:var(--ink-2);font-size:.93rem;line-height:1.72;max-width:76ch}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-index:3;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.42))}
+.fgrid{display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:36px;margin-bottom:40px}
+.fgrid h4{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:16px;font-weight:400}
+.fgrid ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.fgrid ul a{font-size:.87rem;color:var(--ink-2);transition:.3s}
+.fgrid ul a:hover{color:var(--gold)}
+.fbot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:26px;
+  border-top:1px solid var(--line);font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);
+  letter-spacing:.05em}
+.disclaimer{font-size:.76rem;color:var(--ink-3);line-height:1.66;max-width:74ch;margin-top:18px;
+  padding:15px 17px;border-radius:var(--r-md);border:1px solid var(--line);background:rgba(255,255,255,.018)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:38px;text-align:center}
+  .hero .eyebrow,.hero .badge{justify-content:center}
+  .hero-cta,.hero-stats{justify-content:center}
+  .hero-stats{gap:26px}
+  .wheel-wrap{max-width:380px;order:-1}
+  .calc{grid-template-columns:1fr;gap:22px}
+  .method{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .nav-cta{display:none}
+  .burger{display:flex}
+}
+@media(max-width:600px){
+  .wrap{width:min(100% - 30px,var(--maxw))}
+  section{padding:60px 0}
+  .hero{padding-top:82px}
+  .hero-stats{gap:20px;flex-wrap:wrap}
+  .stat{flex:1 1 40%}
+  .compare{grid-template-columns:1fr;gap:10px}
+  .arrow{padding:3px 0;font-size:.68rem}
+  .calc-form,.result,.dasha,.scard,.icard{padding:24px 20px}
+  .fgrid{grid-template-columns:1fr;gap:26px}
+  .btn{width:100%}
+  .hero-cta{flex-direction:column}
+  .dseg span{font-size:8px}
+  #my-cal-inline-15-minute-reading{min-height:580px}
+  .wheel-core b{font-size:1.9rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div class="nebulae"><div class="neb a"></div><div class="neb b"></div><div class="neb c"></div></div>
+<div class="grain"></div>
+<div id="spot"></div>
+
+<!-- ==================== NAV ==================== -->
+<header id="hdr">
+  <div class="wrap nav">
+    <a href="#top" class="brand">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="url(#bg1)"/>
+        <defs><linearGradient id="bg1" x1="0" y1="0" x2="100" y2="100">
+          <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8"/></linearGradient></defs>
+      </svg>
+      Starlit Insights
+    </a>
+    <nav class="nav-links">
+      <a href="#drift">The 24° Problem</a>
+      <a href="#insights">Insights</a>
+      <a href="#method">Method</a>
+      <a href="#services">Readings</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#book" class="btn btn-p nav-cta"><span>Book a reading</span></a>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<div id="drawer">
+  <a href="#drift">The 24° Problem</a>
+  <a href="#insights">Insights</a>
+  <a href="#method">Method</a>
+  <a href="#services">Readings</a>
+  <a href="#book">Book</a>
+  <a href="#faq">FAQ</a>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="badge rv"><i class="dot"></i> Sidereal · Lahiri Ayanamsha · Swiss Ephemeris</div>
+      <h1 class="rv" data-d="1">The sky was never<br><em class="shimmer">vague.</em></h1>
+      <p class="lead rv" data-d="2">
+        Most of what passes for astrology online is a personality quiz wearing a costume.
+        Starlit Insights does the other thing: real sidereal positions, computed to the arcsecond,
+        read through <span class="hl">classical Parashari method</span> — and stated plainly enough
+        that you can check the math yourself.
+      </p>
+      <div class="hero-cta rv" data-d="3">
+        <a href="#book" class="btn btn-p"><span>Book a 15-minute reading</span></a>
+        <a href="#drift" class="btn btn-g">Find my real sign →</a>
+      </div>
+      <div class="hero-stats rv" data-d="4">
+        <div class="stat"><b><span class="cnt" data-to="24" data-dec="2">0</span>°</b><span>Zodiac drift today</span></div>
+        <div class="stat"><b><span class="cnt" data-to="27">0</span></b><span>Nakshatras tracked</span></div>
+        <div class="stat"><b><span class="cnt" data-to="16">0</span>+</b><span>Divisional charts</span></div>
+        <div class="stat"><b>0.001″</b><span>Ephemeris precision</span></div>
+      </div>
+    </div>
+
+    <div class="wheel-wrap rv" data-d="2">
+      <svg class="wheel" viewBox="0 0 500 500" aria-hidden="true">
+        <defs>
+          <linearGradient id="gA" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#f2c879" stop-opacity=".85"/><stop offset="1" stop-color="#5fe3d8" stop-opacity=".2"/>
+          </linearGradient>
+          <linearGradient id="gB" x1="1" y1="0" x2="0" y2="1">
+            <stop stop-color="#5fe3d8" stop-opacity=".6"/><stop offset="1" stop-color="#9b8cff" stop-opacity=".15"/>
+          </linearGradient>
+          <radialGradient id="gC"><stop stop-color="#f2c879" stop-opacity=".14"/><stop offset="1" stop-color="transparent"/></radialGradient>
+        </defs>
+        <circle cx="250" cy="250" r="230" fill="url(#gC)"/>
+        <g class="ring-slow">
+          <circle cx="250" cy="250" r="228" fill="none" stroke="url(#gA)" stroke-width="1"/>
+          <circle cx="250" cy="250" r="228" fill="none" stroke="#f2c879" stroke-width="1"
+                  stroke-dasharray="1 13.9" opacity=".55"/>
+          <g id="zsigns"></g>
+        </g>
+        <g class="ring-mid">
+          <circle cx="250" cy="250" r="182" fill="none" stroke="url(#gB)" stroke-width="1"/>
+          <g id="znaks"></g>
+        </g>
+        <g class="ring-fast">
+          <circle cx="250" cy="250" r="134" fill="none" stroke="#ffffff" stroke-opacity=".1" stroke-width="1"
+                  stroke-dasharray="4 7"/>
+          <g id="zorbs"></g>
+        </g>
+        <circle cx="250" cy="250" r="88" fill="none" stroke="#ffffff" stroke-opacity=".07"/>
+      </svg>
+      <div class="wheel-core"><b id="ayanNow">24°13′</b><span>Ayanāṁśa · now</span></div>
+    </div>
+  </div>
+  <div class="scrollcue"><span>Scroll</span><i></i></div>
+</section>
+
+<!-- ==================== THE 24 DEGREE PROBLEM ==================== -->
+<section id="drift">
+  <div class="wrap">
+    <div style="max-width:780px;margin-bottom:46px">
+      <div class="eyebrow rv">Start here</div>
+      <h2 class="rv" data-d="1">Your horoscope has been<br>wrong by <span class="hl">24 degrees</span>.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:22px">
+        Earth wobbles. Its axis traces a slow cone once every <span class="mono hl-c">25,772 years</span> —
+        a drift of about 50.3 arcseconds a year. The Greeks fixed their zodiac to the March equinox
+        around 2,000 years ago and never re-pegged it. The stars kept moving. The labels didn't.
+      </p>
+      <p class="lead rv" data-d="3" style="margin-top:16px">
+        So the "Leo" in your Instagram bio is a <em>seasonal marker</em>, not a constellation.
+        Vedic astrology never made that trade. It stayed fixed to the actual stars — the
+        <span class="hl">sidereal</span> zodiac — and corrects for the gap with a number called the
+        <span class="hl">ayanāṁśa</span>. Today that correction is just over 24 degrees. Which is
+        wide enough to move most people one whole sign.
+      </p>
+    </div>
+
+    <div class="calc">
+      <div class="card calc-form rv">
+        <div class="eyebrow" style="margin-bottom:16px">Live computation</div>
+        <h3 style="margin-bottom:8px">Find your sidereal sign</h3>
+        <p style="font-size:.86rem;margin-bottom:24px">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+
+        <div class="field">
+          <label for="bdate">Date of birth</label>
+          <input type="date" id="bdate" min="1900-01-01" max="2030-12-31">
+        </div>
+        <div class="field">
+          <label for="btime">Time of birth <span style="text-transform:none;letter-spacing:0">(optional — improves cusp accuracy)</span></label>
+          <input type="time" id="btime">
+        </div>
+        <button class="btn btn-p" id="calcBtn" style="width:100%;margin-top:6px"><span>Compute →</span></button>
+        <p class="hint">
+          Uses a low-precision solar ephemeris (±0.01°) with the Lahiri ayanāṁśa — accurate enough to
+          settle the sign question. A real reading resolves the full chart from Swiss Ephemeris data
+          at arcsecond precision.
+        </p>
+      </div>
+
+      <div class="card result" id="result">
+        <div class="res-empty" id="resEmpty">
+          <svg width="52" height="52" viewBox="0 0 100 100" fill="none" stroke="#f2c879" stroke-width="1.6">
+            <circle cx="50" cy="50" r="34"/><circle cx="50" cy="50" r="20" stroke-dasharray="3 5"/>
+            <circle cx="50" cy="16" r="4" fill="#f2c879" stroke="none"/>
+          </svg>
+          <p style="font-size:.9rem">Enter your birth date to see the gap between the sign you were told<br>and the sign the sky actually held.</p>
+        </div>
+        <div id="resBody" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WOW INSIGHTS ==================== -->
+<section id="insights">
+  <div class="wrap">
+    <div style="max-width:720px;margin-bottom:44px">
+      <div class="eyebrow rv">Things nobody tells you</div>
+      <h2 class="rv" data-d="1">Eight facts that reframe<br>the whole subject.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:20px">
+        None of these require you to believe anything. They're astronomy, history, and arithmetic —
+        and they're the reason this system is far stranger and more precise than its reputation.
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <article class="card icard rv"><span class="n">01 / PRECESSION</span>
+        <div class="big">20m 24s</div>
+        <h3>The year has two lengths</h3>
+        <p>A sidereal year — Earth's true orbit, star to star — runs <b class="mono">365.2564</b> days.
+        The tropical year, equinox to equinox, runs <b class="mono">365.2422</b>. That 20-minute-24-second
+        gap <em>is</em> precession. Every year, the two zodiacs slip a little further apart. Western
+        astrology tracks the shorter one. Vedic tracks the real one.</p>
+      </article>
+
+      <article class="card icard rv" data-d="1"><span class="n">02 / ASCENDANT</span>
+        <div class="big">4 min = 1°</div>
+        <h3>Your birth minute is load-bearing</h3>
+        <p>The entire 360° zodiac rises past the horizon in 24 hours — so the ascendant sweeps a full
+        degree every four minutes. Someone born four minutes after you, in the same room, has a
+        measurably different chart. Two hours later and they don't even share your rising sign.
+        This is why "roughly morning" isn't a birth time.</p>
+      </article>
+
+      <article class="card icard rv" data-d="2"><span class="n">03 / NAVAMSA</span>
+        <div class="big">13m 20s</div>
+        <h3>There are charts inside your chart</h3>
+        <p>Vedic astrology subdivides each sign into 9 parts of 3°20′ to build the <em>navāṁśa</em> (D9) —
+        a second chart read for marriage and inner character. The ascendant crosses one navāṁśa every
+        13 minutes 20 seconds. There are sixteen such divisional charts in standard use. Career has its
+        own. So does wealth. So does spiritual life.</p>
+      </article>
+
+      <article class="card icard rv" data-d="3"><span class="n">04 / VIMSHOTTARI</span>
+        <div class="big">120 yrs</div>
+        <h3>A clock keyed to the Moon</h3>
+        <p>The nine planetary periods of the Vimśottarī daśā sum to exactly 120 years — an idealised full
+        human life. Your starting point isn't your birthday; it's how far the Moon had travelled through
+        its nakshatra at your first breath. Two people born on the same day in different hours can be
+        running entirely different decades.</p>
+      </article>
+
+      <article class="card icard rv" data-d="4"><span class="n">05 / RAHU & KETU</span>
+        <div class="big">18.6 yrs</div>
+        <h3>Two "planets" that aren't there</h3>
+        <p>Rāhu and Ketu are the lunar nodes — the two points where the Moon's tilted orbit crosses
+        Earth's orbital plane. Eclipses can <em>only</em> happen near them, which is why myth casts them as
+        a severed serpent swallowing the Sun. They drift backwards through the zodiac on an 18.6-year
+        cycle. Vedic tradition assigns Rāhu an 18-year daśā. Make of that what you will.</p>
+      </article>
+
+      <article class="card icard rv" data-d="5"><span class="n">06 / ORBITS</span>
+        <div class="big">29.46</div>
+        <h3>The Saturn return is real orbital mechanics</h3>
+        <p>Saturn takes 29.46 years to circle the Sun, so it arrives back where it started at roughly
+        29–30, then again near 59. Jupiter's 11.86-year orbit means it changes sign about once a year.
+        The "big life chapters" astrology talks about at those ages aren't invented — they're a planet
+        finishing a lap, arriving on schedule.</p>
+      </article>
+
+      <article class="card icard rv" data-d="6"><span class="n">07 / ASHTAKAVARGA</span>
+        <div class="big">337</div>
+        <h3>It has a scoring system</h3>
+        <p>Aṣṭakavarga is a bindu-counting framework that distributes exactly 337 points across the twelve
+        houses — average 28.08 each. A house scoring 32 is structurally supported; one scoring 22 isn't.
+        It's a numerical second opinion on every interpretive claim, and it routinely contradicts the
+        pretty story. That's the point of it.</p>
+      </article>
+
+      <article class="card icard rv" data-d="6"><span class="n">08 / HISTORY</span>
+        <div class="big">1 roof</div>
+        <h3>Astronomy and astrology were the same job</h3>
+        <p>Kepler cast horoscopes for a living while deriving the laws of planetary motion. Galileo drew
+        charts. The Vedāṅga Jyotiṣa — one of the six limbs of the Vedas — is among the oldest surviving
+        astronomical texts on Earth. Predicting where a planet would be and asking what it meant were a
+        single discipline for most of recorded history. The split is recent.</p>
+      </article>
+    </div>
+
+    <div class="card rv" style="margin-top:22px;padding:30px 28px">
+      <div class="eyebrow" style="margin-bottom:14px">The 1° that outlives you</div>
+      <p style="font-size:1.02rem;line-height:1.72;max-width:82ch">
+        The ayanāṁśa grows by one full degree every <b class="mono hl">71.6 years</b>. Which means the
+        gap your grandparents were born under was measurably smaller than yours, and your
+        great-grandchildren will be born under a wider one. A zodiac tied to the stars keeps working.
+        A zodiac tied to a 2,000-year-old memo does not.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== METHOD ==================== -->
+<section id="method">
+  <div class="wrap">
+    <div style="max-width:720px;margin-bottom:44px">
+      <div class="eyebrow rv">How this works</div>
+      <h2 class="rv" data-d="1">Verifiable, or it doesn't<br>go in the reading.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:20px">
+        Astrology's credibility problem is mostly a <em>method</em> problem — unsourced claims, software
+        artifacts repeated as doctrine, and predictions vague enough to never be wrong. Here's the
+        standard this practice holds itself to, stated up front so you can hold it there.
+      </p>
+    </div>
+
+    <div class="method">
+      <div class="card rv" style="padding:30px 28px">
+        <div class="eyebrow" style="color:var(--cyan)">Always</div>
+        <ul class="mlist do">
+          <li><i class="tick">✓</i><div><strong>Swiss Ephemeris, Lahiri ayanāṁśa</strong>
+            <p>Positions computed from JPL-derived ephemeris data, not scraped from a chart image. Every degree is reproducible.</p></div></li>
+          <li><i class="tick">✓</i><div><strong>Classical sources, named</strong>
+            <p>Bṛhat Parāśara Horā Śāstra, Jaimini Sūtras, Praśna Mārga. If a yoga is cited, its textual source is cited with it.</p></div></li>
+          <li><i class="tick">✓</i><div><strong>Doctrine separated from folklore</strong>
+            <p>Classical rule, later commentary, and modern extrapolation are labelled as three different things — because they are.</p></div></li>
+          <li><i class="tick">✓</i><div><strong>Cross-checked across vargas</strong>
+            <p>A claim that only survives in one divisional chart is flagged as weak. Convergence across D1, D9 and D10 is what earns confidence.</p></div></li>
+          <li><i class="tick">✓</i><div><strong>Confidence stated openly</strong>
+            <p>Where birth time is uncertain or a placement sits near a boundary, you're told — along with what conclusions become provisional.</p></div></li>
+        </ul>
+      </div>
+
+      <div class="card rv" data-d="1" style="padding:30px 28px">
+        <div class="eyebrow" style="color:var(--rose)">Never</div>
+        <ul class="mlist dont">
+          <li><i class="tick">✕</i><div><strong>Fear as a sales tool</strong>
+            <p>No manufactured doṣas, no "urgent remedy" upsells, no gemstone you must buy today. Doṣas get checked for cancellation and reported honestly.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Auto-generated yogas taken on faith</strong>
+            <p>Popular kundli apps routinely invent yogas that don't survive a degree check. Every one is verified independently before it's mentioned.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Death, terminal illness, or disaster predictions</strong>
+            <p>Out of scope. Permanently. No responsible reading of a chart delivers those, whatever the tradition claims is possible.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Deterministic fatalism</strong>
+            <p>A chart describes karmic temperament and timing pressure — the weather system you're flying through. It is not a sentence handed down.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Vagueness dressed as depth</strong>
+            <p>If a statement would be true of anyone, it isn't insight. Readings name specific windows, specific mechanisms, specific trade-offs.</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NAKSHATRA ==================== -->
+<section id="nakshatra" style="padding-top:0">
+  <div class="wrap">
+    <div class="card rv" style="padding:36px 30px 32px">
+      <div style="max-width:720px;margin-bottom:26px">
+        <div class="eyebrow">The 27-fold sky</div>
+        <h2 style="font-size:clamp(1.6rem,3.4vw,2.4rem)">Before there were 12 signs,<br>there were 27 Moon-houses.</h2>
+        <p class="lead" style="margin-top:16px;font-size:1rem">
+          The Moon covers roughly 13°20′ of sky per day. Divide 360° by that and you get 27 — the
+          <em>nakṣatras</em>, the lunar mansions the Moon sleeps in on successive nights. This division is
+          older than the solar zodiac in Indian tradition, and it's the layer doing most of the real
+          work: your daśā sequence, your temperament, your compatibility filters all key off the
+          nakṣatra the Moon occupied at your birth. Not your Sun sign. Your Moon's address.
+        </p>
+      </div>
+      <div class="nak-scroll"><div class="nak-track" id="nakTrack"></div></div>
+      <p class="hint" style="margin-top:18px">
+        Each nakṣatra splits further into four <em>pādas</em> of 3°20′ — 108 divisions in total. Yes, that 108.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DASHA ==================== -->
+<section id="dasha" style="padding-top:0">
+  <div class="wrap">
+    <div style="max-width:700px;margin-bottom:36px">
+      <div class="eyebrow rv">Timing</div>
+      <h2 class="rv" data-d="1">A 120-year clock, started<br>at your first breath.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:18px">
+        This is what separates Vedic astrology from the horoscope column. Vimśottarī daśā divides a life
+        into nine planetary chapters, in fixed order, summing to exactly 120 years. Where <em>you</em> enter
+        the sequence depends on the Moon's exact position at birth — so the same chapter arrives at a
+        different age for everyone. Readings that talk about "windows" are talking about this.
+      </p>
+    </div>
+
+    <div class="card dasha rv">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:baseline">
+        <h3>Vimśottarī Mahādaśā sequence</h3>
+        <span class="mono" style="font-size:.74rem;color:var(--ink-3)">TOTAL — 120 YEARS</span>
+      </div>
+      <div class="dbar" id="dbar"></div>
+      <div class="dlegend" id="dlegend"></div>
+      <p class="hint" style="margin-top:20px">
+        Each mahādaśā subdivides into nine antardaśās, each of those into nine pratyantardaśās, and so on
+        down five levels. The resolution goes to days. This is where a reading stops being descriptive
+        and starts being about <em>when</em>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES ==================== -->
+<section id="services">
+  <div class="wrap">
+    <div style="max-width:680px;margin-bottom:42px">
+      <div class="eyebrow rv">Readings</div>
+      <h2 class="rv" data-d="1">Two ways in.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:18px">
+        Start small if you're sceptical — that's what the 15-minute session is for. Go deep when you want
+        the whole architecture.
+      </p>
+    </div>
+
+    <div class="svc">
+      <article class="card scard rv">
+        <span class="stag">Start here</span>
+        <div class="eyebrow" style="margin-bottom:10px">01</div>
+        <h3>15-Minute Reading</h3>
+        <div class="price">₹—<small> / see booking</small></div>
+        <p style="font-size:.88rem">One focused question, one honest answer. No padding.</p>
+        <ul class="slist">
+          <li>Chart cast and verified before the call — no time spent on data entry</li>
+          <li>One specific question: a decision, a timing window, a pattern you keep hitting</li>
+          <li>Straight read on what the chart supports and what it doesn't</li>
+          <li>You leave knowing whether a deeper reading is even worth your money</li>
+        </ul>
+        <a href="#book" class="btn btn-p" style="width:100%"><span>Pick a slot</span></a>
+      </article>
+
+      <article class="card scard feat rv" data-d="1">
+        <span class="stag">Full analysis</span>
+        <div class="eyebrow" style="margin-bottom:10px">02</div>
+        <h3>Complete Natal Chart Analysis</h3>
+        <div class="price">₹—<small> / 60–90 min</small></div>
+        <p style="font-size:.88rem">The whole structure, verified layer by layer.</p>
+        <ul class="slist">
+          <li>Lagna, all nine grahas, house lords and functional dignity at degree precision</li>
+          <li>Yoga audit — every claimed yoga independently confirmed or struck out</li>
+          <li>Divisional charts: D9 navāṁśa, D10 daśāṁśa, and others as the question requires</li>
+          <li>Aṣṭakavarga scoring as a numerical cross-check on the interpretation</li>
+          <li>Vimśottarī daśā mapping — active period, what's next, and the dates that matter</li>
+          <li>Doṣa check with cancellation rules applied, reported honestly either way</li>
+          <li>Written summary afterwards, with the reasoning shown so you can audit it</li>
+        </ul>
+        <a href="#book" class="btn btn-p" style="width:100%"><span>Enquire &amp; book</span></a>
+      </article>
+    </div>
+
+    <p class="hint rv" style="margin-top:20px;max-width:70ch">
+      Accurate birth date, time and place are required. If your birth time is uncertain, say so — there
+      are rectification techniques, and it's better handled openly than quietly guessed at.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== BOOKING ==================== -->
+<section id="book">
+  <div class="wrap">
+    <div style="max-width:680px;margin-bottom:34px">
+      <div class="eyebrow rv">Book</div>
+      <h2 class="rv" data-d="1">Pick a time.</h2>
+      <p class="lead rv" data-d="2" style="margin-top:16px">
+        Live availability below. Bring your birth date, time and city — and one question you actually
+        want answered.
+      </p>
+    </div>
+
+    <div class="embed-shell rv">
+      <div class="embed-bar"><i></i><i></i><i></i><span>Scheduling · 15-Minute Reading</span></div>
+      <!-- Cal inline embed code begins -->
+      <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-15-minute-reading"></div>
+      <script type="text/javascript">
+        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+      Cal("init", "15-minute-reading", {origin:"https://app.cal.com"});
+      Cal.config = Cal.config || {};
+      Cal.config.forwardQueryParams = true;
+        Cal.ns["15-minute-reading"]("inline", {
+          elementOrSelector:"#my-cal-inline-15-minute-reading",
+          config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true"},
+          calLink: "starlit-insights/15-minute-reading",
+        });
+        Cal.ns["15-minute-reading"]("ui", {"hideEventTypeDetails":false,"layout":"month_view","theme":"dark"});
+        </script>
+        <!-- Cal inline embed code ends -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAYMENT ==================== -->
+<section id="pay" style="padding-top:0">
+  <div class="wrap">
+    <!-- ============================================================
+         RAZORPAY SLOT — replace the whole .pay-slot div below with
+         your Razorpay payment-button / payment-page embed script.
+         Everything else on the page stays as-is.
+         ============================================================ -->
+    <div class="pay-slot rv" id="razorpay-slot">
+      <div class="ic">₹</div>
+      <h3 style="margin-bottom:10px">Secure payment</h3>
+      <p style="font-size:.9rem;max-width:48ch;margin-inline:auto">
+        Card, UPI, net banking and wallets — processed by Razorpay. Payment link goes live shortly.
+      </p>
+      <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--ink-3);margin-top:20px">
+        RAZORPAY EMBED — PENDING
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section id="faq">
+  <div class="wrap">
+    <div style="max-width:660px;margin-bottom:38px">
+      <div class="eyebrow rv">Questions</div>
+      <h2 class="rv" data-d="1">The ones worth asking.</h2>
+    </div>
+    <div class="faq rv" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a href="#top" class="brand" style="margin-bottom:16px">
+          <svg viewBox="0 0 100 100" fill="none">
+            <path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="url(#bg2)"/>
+            <defs><linearGradient id="bg2" x1="0" y1="0" x2="100" y2="100">
+              <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8"/></linearGradient></defs>
+          </svg>
+          Starlit Insights
+        </a>
+        <p style="font-size:.88rem;max-width:42ch">
+          Sidereal Vedic astrology, computed to the arcsecond and read through classical Parāśarī method.
+        </p>
+        <div class="disclaimer">
+          <b style="color:var(--ink-2)">Please read:</b> Readings are offered for reflection, self-understanding
+          and timing perspective. They are not medical, psychological, legal or financial advice, and are no
+          substitute for a qualified professional. No reading covers death, terminal illness or disaster.
+          You remain fully responsible for your own decisions. Consultations are for adults (18+).
+        </div>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#drift">The 24° Problem</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#nakshatra">Nakṣatras</a></li>
+          <li><a href="#dasha">Daśā timing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Readings</h4>
+        <ul>
+          <li><a href="#services">15-minute reading</a></li>
+          <li><a href="#services">Full natal analysis</a></li>
+          <li><a href="#book">Book a slot</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© <span id="yr">2026</span> STARLIT INSIGHTS · STARLITINSIGHTS.COM</span>
+      <span>SWISS EPHEMERIS · LAHIRI AYANĀṀŚA · <span id="ayanFoot">24°13′</span> DRIFT</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+   1. STARFIELD
+   ============================================================ */
+(function starfield(){
+  var c = document.getElementById('starfield');
+  if(!c) return;
+  var ctx = c.getContext('2d'), dpr = Math.min(window.devicePixelRatio||1, 2);
+  var W=0,H=0,stars=[],shooters=[],t=0,scrollY=0;
+
+  function size(){
+    W = c.clientWidth; H = c.clientHeight;
+    c.width = W*dpr; c.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    build();
+  }
+  function build(){
+    var n = Math.min(340, Math.round(W*H/4200));
+    stars = [];
+    for(var i=0;i<n;i++){
+      var layer = Math.random();
+      stars.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: layer<.72 ? Math.random()*.85+.25 : Math.random()*1.5+.7,
+        d: layer<.72 ? .18 : .55,
+        a: Math.random()*.6+.22,
+        sp: Math.random()*.022+.006,
+        ph: Math.random()*Math.PI*2,
+        hue: Math.random()<.13 ? '242,200,121' : (Math.random()<.16 ? '95,227,216' : '255,255,255')
+      });
+    }
+  }
+  function shoot(){
+    if(RM) return;
+    shooters.push({
+      x: Math.random()*W*.85, y: Math.random()*H*.4,
+      len: Math.random()*90+60, sp: Math.random()*7+7, life: 1
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t += 1;
+    for(var i=0;i<stars.length;i++){
+      var s = stars[i];
+      var y = s.y - scrollY*s.d*.14;
+      y = ((y % H) + H) % H;
+      var tw = RM ? s.a : s.a * (0.55 + 0.45*Math.sin(t*s.sp + s.ph));
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, 6.2832);
+      ctx.fillStyle = 'rgba('+s.hue+','+tw.toFixed(3)+')';
+      ctx.fill();
+      if(s.r>1.5){
+        ctx.beginPath(); ctx.arc(s.x,y,s.r*3.2,0,6.2832);
+        ctx.fillStyle='rgba('+s.hue+','+(tw*.06).toFixed(3)+')'; ctx.fill();
+      }
+    }
+    for(var j=shooters.length-1;j>=0;j--){
+      var sh = shooters[j];
+      sh.x += sh.sp; sh.y += sh.sp*.42; sh.life -= .012;
+      if(sh.life<=0 || sh.x>W+120){ shooters.splice(j,1); continue; }
+      var g = ctx.createLinearGradient(sh.x, sh.y, sh.x-sh.len, sh.y-sh.len*.42);
+      g.addColorStop(0,'rgba(255,255,255,'+(sh.life*.85).toFixed(3)+')');
+      g.addColorStop(.4,'rgba(242,200,121,'+(sh.life*.3).toFixed(3)+')');
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.strokeStyle=g; ctx.lineWidth=1.4; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(sh.x,sh.y); ctx.lineTo(sh.x-sh.len, sh.y-sh.len*.42); ctx.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', size, {passive:true});
+  window.addEventListener('scroll', function(){ scrollY = window.scrollY; }, {passive:true});
+  size(); draw();
+  if(!RM) setInterval(function(){ if(Math.random()<.42) shoot(); }, 3600);
+})();
+
+/* ============================================================
+   2. CURSOR SPOTLIGHT + CARD GLOW
+   ============================================================ */
+(function(){
+  var sp = document.getElementById('spot');
+  if(sp && window.matchMedia('(hover:hover)').matches){
+    var tx=0,ty=0,cx=0,cy=0;
+    window.addEventListener('mousemove', function(e){ tx=e.clientX; ty=e.clientY; }, {passive:true});
+    (function loop(){ cx+=(tx-cx)*.09; cy+=(ty-cy)*.09;
+      sp.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
+      requestAnimationFrame(loop); })();
+  }
+  document.addEventListener('mousemove', function(e){
+    var card = e.target.closest ? e.target.closest('.card') : null;
+    if(!card) return;
+    var r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', (e.clientX-r.left)+'px');
+    card.style.setProperty('--my', (e.clientY-r.top)+'px');
+  }, {passive:true});
+})();
+
+/* ============================================================
+   3. NAV
+   ============================================================ */
+(function(){
+  var hdr=document.getElementById('hdr'), b=document.getElementById('burger'), d=document.getElementById('drawer');
+  window.addEventListener('scroll', function(){
+    hdr.classList.toggle('stuck', window.scrollY>28);
+  }, {passive:true});
+  function close(){ b.classList.remove('on'); d.classList.remove('on'); document.body.style.overflow=''; }
+  b.addEventListener('click', function(){
+    var on = b.classList.toggle('on'); d.classList.toggle('on', on);
+    document.body.style.overflow = on ? 'hidden' : '';
+  });
+  d.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', close); });
+})();
+
+/* ============================================================
+   4. REVEAL + COUNT UP
+   ============================================================ */
+(function(){
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  var io2 = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      io2.unobserve(e.target);
+      var el=e.target, to=parseFloat(el.dataset.to), dec=parseInt(el.dataset.dec||0,10), st=null, dur=1500;
+      if(RM){ el.textContent = to.toFixed(dec); return; }
+      requestAnimationFrame(function step(ts){
+        if(!st) st=ts;
+        var p=Math.min((ts-st)/dur,1), e2=1-Math.pow(1-p,3);
+        el.textContent=(to*e2).toFixed(dec);
+        if(p<1) requestAnimationFrame(step);
+      });
+    });
+  }, {threshold:.5});
+  document.querySelectorAll('.cnt').forEach(function(el){ io2.observe(el); });
+})();
+
+/* ============================================================
+   5. ASTRONOMY CORE
+   ============================================================ */
+var SIGNS = [
+  {n:'Aries',g:'♈'},{n:'Taurus',g:'♉'},{n:'Gemini',g:'♊'},{n:'Cancer',g:'♋'},
+  {n:'Leo',g:'♌'},{n:'Virgo',g:'♍'},{n:'Libra',g:'♎'},{n:'Scorpio',g:'♏'},
+  {n:'Sagittarius',g:'♐'},{n:'Capricorn',g:'♑'},{n:'Aquarius',g:'♒'},{n:'Pisces',g:'♓'}
+];
+var SANSKRIT = ['Meṣa','Vṛṣabha','Mithuna','Karka','Siṃha','Kanyā','Tulā','Vṛścika','Dhanu','Makara','Kumbha','Mīna'];
+var NAKS = ['Aśvinī','Bharaṇī','Kṛttikā','Rohiṇī','Mṛgaśīrṣa','Ārdrā','Punarvasu','Puṣya','Āśleṣā',
+  'Maghā','Pūrva Phalgunī','Uttara Phalgunī','Hasta','Citrā','Svātī','Viśākhā','Anurādhā','Jyeṣṭhā',
+  'Mūla','Pūrva Āṣāḍhā','Uttara Āṣāḍhā','Śravaṇa','Dhaniṣṭhā','Śatabhiṣā','Pūrva Bhādrapadā',
+  'Uttara Bhādrapadā','Revatī'];
+
+function jdFromDate(dt){ return dt.getTime()/86400000 + 2440587.5; }
+function daysSinceJ2000(dt){ return jdFromDate(dt) - 2451545.0; }
+
+/* Lahiri (Chitrapakṣa) ayanāṁśa — linear model, 23°51'11" at J2000, ~50.29"/yr */
+function ayanamsa(dt){
+  var n = daysSinceJ2000(dt);
+  return 23.85319 + (n/365.25) * (50.29/3600);
+}
+/* Low-precision apparent solar longitude (tropical), accuracy ~0.01 deg */
+function sunLongitude(dt){
+  var n = daysSinceJ2000(dt);
+  var L = 280.460 + 0.9856474*n;
+  var g = (357.528 + 0.9856003*n) * Math.PI/180;
+  var lam = L + 1.915*Math.sin(g) + 0.020*Math.sin(2*g);
+  return ((lam % 360) + 360) % 360;
+}
+function dms(deg){
+  var d = Math.floor(deg), m = Math.round((deg-d)*60);
+  if(m===60){ d+=1; m=0; }
+  return d + '°' + (m<10?'0':'') + m + '′';
+}
+
+/* live ayanamsa readouts */
+(function(){
+  var a = ayanamsa(new Date());
+  var s = dms(a);
+  var el1=document.getElementById('ayanNow'), el2=document.getElementById('ayanFoot');
+  if(el1) el1.textContent = s;
+  if(el2) el2.textContent = s;
+  var hs = document.querySelector('.cnt[data-to="24"]');
+  if(hs) hs.dataset.to = a.toFixed(2);
+})();
+
+/* ============================================================
+   6. ZODIAC WHEEL
+   ============================================================ */
+(function(){
+  var NS='http://www.w3.org/2000/svg', cx=250, cy=250;
+  function pt(r,deg){ var a=(deg-90)*Math.PI/180; return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; }
+
+  var gs=document.getElementById('zsigns');
+  if(gs){
+    for(var i=0;i<12;i++){
+      var mid=i*30+15, p=pt(206, mid);
+      var tx=document.createElementNS(NS,'text');
+      tx.setAttribute('x',p[0]); tx.setAttribute('y',p[1]);
+      tx.setAttribute('text-anchor','middle'); tx.setAttribute('dominant-baseline','central');
+      tx.setAttribute('font-size','16'); tx.setAttribute('fill','#f2c879'); tx.setAttribute('opacity','.82');
+      tx.textContent=SIGNS[i].g;
+      gs.appendChild(tx);
+      var e=pt(228,i*30), s2=pt(186,i*30);
+      var ln=document.createElementNS(NS,'line');
+      ln.setAttribute('x1',s2[0]); ln.setAttribute('y1',s2[1]);
+      ln.setAttribute('x2',e[0]); ln.setAttribute('y2',e[1]);
+      ln.setAttribute('stroke','#f2c879'); ln.setAttribute('stroke-opacity','.22'); ln.setAttribute('stroke-width','1');
+      gs.appendChild(ln);
+    }
+  }
+  var gn=document.getElementById('znaks');
+  if(gn){
+    for(var k=0;k<27;k++){
+      var d=k*(360/27), a1=pt(182,d), a2=pt(168,d);
+      var l2=document.createElementNS(NS,'line');
+      l2.setAttribute('x1',a1[0]); l2.setAttribute('y1',a1[1]);
+      l2.setAttribute('x2',a2[0]); l2.setAttribute('y2',a2[1]);
+      l2.setAttribute('stroke','#5fe3d8'); l2.setAttribute('stroke-opacity','.42'); l2.setAttribute('stroke-width','1');
+      gn.appendChild(l2);
+      var dp=pt(175, d+(360/54));
+      var ci=document.createElementNS(NS,'circle');
+      ci.setAttribute('cx',dp[0]); ci.setAttribute('cy',dp[1]); ci.setAttribute('r','1.1');
+      ci.setAttribute('fill','#5fe3d8'); ci.setAttribute('opacity','.5');
+      gn.appendChild(ci);
+    }
+  }
+  var go=document.getElementById('zorbs');
+  if(go){
+    var orbs=[[0,3.4],[52,2.2],[104,2.8],[158,1.9],[212,3.1],[268,2.3],[318,2.6]];
+    orbs.forEach(function(o){
+      var p2=pt(134,o[0]);
+      var c2=document.createElementNS(NS,'circle');
+      c2.setAttribute('cx',p2[0]); c2.setAttribute('cy',p2[1]); c2.setAttribute('r',o[1]);
+      c2.setAttribute('class','orb');
+      go.appendChild(c2);
+    });
+  }
+})();
+
+/* ============================================================
+   7. NAKSHATRA MARQUEE
+   ============================================================ */
+(function(){
+  var track=document.getElementById('nakTrack');
+  if(!track) return;
+  var html='';
+  for(var pass=0;pass<2;pass++){
+    for(var i=0;i<27;i++){
+      html += '<div class="nak"><b>'+(i+1<10?'0':'')+(i+1)+'</b>'+NAKS[i]+'</div>';
+    }
+  }
+  track.innerHTML=html;
+})();
+
+/* ============================================================
+   8. VIMSHOTTARI BAR
+   ============================================================ */
+(function(){
+  var D=[
+    {n:'Ketu',y:7,c:'#7d6be0'},{n:'Venus',y:20,c:'#f2c879'},{n:'Sun',y:6,c:'#ff9a5a'},
+    {n:'Moon',y:10,c:'#cfd8ea'},{n:'Mars',y:7,c:'#ff7a7a'},{n:'Rahu',y:18,c:'#8b6fb8'},
+    {n:'Jupiter',y:16,c:'#ffd98a'},{n:'Saturn',y:19,c:'#5f9ee3'},{n:'Mercury',y:17,c:'#5fe3d8'}
+  ];
+  var bar=document.getElementById('dbar'), leg=document.getElementById('dlegend');
+  if(!bar) return;
+  var bh='', lh='';
+  D.forEach(function(d){
+    bh += '<div class="dseg" style="flex-basis:'+(d.y/120*100)+'%;background:linear-gradient(160deg,'+d.c+'cc,'+d.c+'55)" title="'+d.n+' — '+d.y+' years"><span>'+d.y+'</span></div>';
+    lh += '<div class="dleg"><i style="background:'+d.c+'"></i>'+d.n+'<em>'+d.y+'y</em></div>';
+  });
+  bar.innerHTML=bh; leg.innerHTML=lh;
+})();
+
+/* ============================================================
+   9. SIDEREAL SIGN CALCULATOR
+   ============================================================ */
+(function(){
+  var btn=document.getElementById('calcBtn');
+  if(!btn) return;
+  var out=document.getElementById('resBody'), empty=document.getElementById('resEmpty');
+
+  btn.addEventListener('click', function(){
+    var dv=document.getElementById('bdate').value;
+    if(!dv){ document.getElementById('bdate').focus(); return; }
+    var tv=document.getElementById('btime').value || '12:00';
+    var parts=dv.split('-'), tp=tv.split(':');
+    var dt=new Date(Date.UTC(+parts[0], +parts[1]-1, +parts[2], +tp[0], +tp[1]));
+
+    var trop=sunLongitude(dt);
+    var ay=ayanamsa(dt);
+    var sid=((trop-ay)%360+360)%360;
+    var ti=Math.floor(trop/30), si=Math.floor(sid/30);
+    var sidDeg=sid-si*30;
+    var nakIdx=Math.floor(sid/(360/27));
+    var same=(ti===si);
+    var edge=(sidDeg<1.2 || sidDeg>28.8);
+
+    var verdict = same
+      ? 'Your tropical and sidereal Sun happen to land in the same sign — which puts your birth in the narrow band near a cusp where the 24° shift doesn’t cross a boundary. Uncommon. The rest of your chart still moves.'
+      : 'The sign you’ve been told your whole life is <b class="hl">'+SIGNS[ti].n+'</b>. The sign the sky was actually holding is <b class="hl">'+SIGNS[si].n+'</b> — <b>'+SANSKRIT[si]+'</b>. Same sky. Different bookkeeping.';
+    if(edge) verdict += '<br><br><span class="hl-c">Note:</span> you’re within ~1° of a sign boundary, so an exact birth time matters here. This estimate could tip either way.';
+
+    out.innerHTML =
+      '<div class="eyebrow" style="margin-bottom:18px">Result</div>'+
+      '<div class="compare">'+
+        '<div class="sign-box"><span class="glyph" style="color:var(--ink-3)">'+SIGNS[ti].g+'</span>'+
+          '<div class="nm">'+SIGNS[ti].n+'</div><div class="tag">Tropical / Western</div></div>'+
+        '<div class="arrow">−'+dms(ay)+'<br>ayanāṁśa</div>'+
+        '<div class="sign-box true"><span class="glyph" style="color:var(--gold)">'+SIGNS[si].g+'</span>'+
+          '<div class="nm">'+SIGNS[si].n+'</div><div class="tag">Sidereal / Vedic</div></div>'+
+      '</div>'+
+      '<div class="verdict">'+verdict+'</div>'+
+      '<div style="margin-top:20px">'+
+        '<div class="datarow"><span>Tropical solar longitude</span><span>'+trop.toFixed(3)+'°</span></div>'+
+        '<div class="datarow"><span>Lahiri ayanāṁśa at birth</span><span>'+ay.toFixed(3)+'°</span></div>'+
+        '<div class="datarow"><span>Sidereal solar longitude</span><span>'+sid.toFixed(3)+'°</span></div>'+
+        '<div class="datarow"><span>Position in sign</span><span>'+dms(sidDeg)+' '+SANSKRIT[si]+'</span></div>'+
+        '<div class="datarow"><span>Solar nakṣatra</span><span>'+NAKS[nakIdx]+'</span></div>'+
+      '</div>'+
+      '<p class="hint" style="margin-top:18px">This is your <em>Sun</em> only — one of nine grahas. Vedic '+
+      'astrology leans far harder on the Moon’s nakṣatra and the rising sign, and neither can be derived '+
+      'without your exact birth time and place. That’s what a reading is for.</p>'+
+      '<a href="#book" class="btn btn-p" style="width:100%;margin-top:18px"><span>See the whole chart →</span></a>';
+
+    empty.style.display='none';
+    out.style.display='block';
+    out.animate ? out.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],
+      {duration:RM?1:640, easing:'cubic-bezier(.22,1,.36,1)'}) : null;
+  });
+
+  ['bdate','btime'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){
+      if(e.key==='Enter') btn.click();
+    });
+  });
+})();
+
+/* ============================================================
+   10. FAQ
+   ============================================================ */
+(function(){
+  var QA=[
+    ['Do I have to believe in astrology for this to be worth it?',
+     'No. Plenty of people come in as sceptics and treat a reading as a structured mirror — a framework for thinking about timing, temperament and recurring patterns that they can accept or reject line by line. The method here is stated openly precisely so you can push back on it. Disagreement is useful; it usually sharpens the reading.'],
+    ['Why is my birth time such a big deal?',
+     'Because the ascendant moves a full degree every four minutes. It changes sign roughly every two hours, and the navāṁśa sub-division shifts every 13 minutes 20 seconds. A vague birth time doesn’t make a reading slightly less accurate — it makes entire layers of it unusable. If your time is uncertain, say so upfront and it gets handled with rectification techniques rather than quietly guessed.'],
+    ['What if I don’t know my birth time at all?',
+     'A reading is still possible, but it will be limited to what doesn’t depend on the ascendant — planetary sign positions, some daśā structure, broad temperament. You’ll be told exactly which conclusions are solid and which are off the table. What won’t happen is a confident-sounding reading built on a made-up time.'],
+    ['Is this the same as my Instagram horoscope?',
+     'It isn’t even the same zodiac. Popular horoscopes use the tropical zodiac, fixed to the equinox roughly 2,000 years ago and now drifted about 24° from the actual constellations. This practice uses the sidereal zodiac with the Lahiri ayanāṁśa, anchored to the real stars. And a horoscope column addresses one twelfth of humanity at once. A chart addresses one birth moment.'],
+    ['Will you tell me about death, illness, or disaster?',
+     'No. Not now, not for a higher fee, not as a special case. Those questions are permanently out of scope. If something in your chart raises a genuine health or safety concern, the honest response is to point you toward a qualified professional — not to speculate from planetary positions.'],
+    ['Do I need to buy gemstones or perform remedies?',
+     'Nothing is sold to you here beyond the reading itself. Where classical remedial measures exist, they can be explained as part of the tradition — but they’re presented as context, not as a purchase you must make and not as protection you’ll suffer without. Fear-based upselling is the oldest scam in this field.'],
+    ['How is this computed?',
+     'Positions come from Swiss Ephemeris data with the Lahiri ayanāṁśa, resolved to arcsecond precision rather than read off a rendered chart image. Interpretation follows classical Parāśarī method, with claims cross-checked across divisional charts and against Aṣṭakavarga scoring. The reasoning is shown in the written summary so you can audit it rather than take it on trust.'],
+    ['What should I bring to the session?',
+     'Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. Beyond that: one question you actually care about. Open-ended "tell me about myself" sessions are the least useful version of this.']
+  ];
+  var wrapEl=document.getElementById('faqList');
+  if(!wrapEl) return;
+  QA.forEach(function(qa,i){
+    var b=document.createElement('button');
+    b.className='q'; b.type='button'; b.textContent=qa[0];
+    b.setAttribute('aria-expanded','false');
+    var a=document.createElement('div');
+    a.className='a'; a.innerHTML='<div>'+qa[1]+'</div>';
+    b.addEventListener('click', function(){
+      var open=b.classList.contains('on');
+      wrapEl.querySelectorAll('.q.on').forEach(function(o){
+        o.classList.remove('on'); o.setAttribute('aria-expanded','false');
+        o.nextElementSibling.style.maxHeight=0;
+      });
+      if(!open){
+        b.classList.add('on'); b.setAttribute('aria-expanded','true');
+        a.style.maxHeight=a.scrollHeight+'px';
+      }
+    });
+    wrapEl.appendChild(b); wrapEl.appendChild(a);
+  });
+})();
+
+/* ============================================================
+   11. MISC
+   ============================================================ */
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+window.addEventListener('resize', function(){
+  document.querySelectorAll('.q.on').forEach(function(q){
+    q.nextElementSibling.style.maxHeight = q.nextElementSibling.scrollHeight + 'px';
+  });
+}, {passive:true});
+
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var id=a.getAttribute('href');
+    if(id.length<2) return;
+    var el=document.querySelector(id);
+    if(!el) return;
+    e.preventDefault();
+    var top=el.getBoundingClientRect().top + window.scrollY - 74;
+    window.scrollTo({top:top, behavior: RM?'auto':'smooth'});
+  });
+});
+})();
+</script>
+</body>
+</html>
