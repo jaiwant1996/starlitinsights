@@ -75,7 +75,7 @@ button,input,select{font:inherit;color:inherit}
 /* ============================================================
    BACKGROUND LAYERS
    ============================================================ */
-#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.72}
 .nebulae{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .neb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
 .neb.a{width:52vw;height:52vw;left:-16vw;top:-8vw;
@@ -247,12 +247,23 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
 .field{margin-bottom:18px}
 .field label{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.19em;
   text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
-.field input,.field select{
-  width:100%;padding:14px 16px;border-radius:var(--r-sm);background:rgba(255,255,255,.045);
-  border:1px solid var(--line);color:var(--ink);font-family:var(--f-mono);font-size:.92rem;
-  transition:.3s;color-scheme:dark}
-.field input:focus,.field select:focus{outline:none;border-color:var(--gold);
-  background:rgba(255,255,255,.075);box-shadow:0 0 0 3px rgba(242,200,121,.11)}
+.field select{
+  display:block;width:100%;max-width:100%;min-width:0;
+  padding:13px 30px 13px 13px;border-radius:var(--r-sm);
+  background-color:rgba(255,255,255,.045);
+  border:1px solid var(--line);color:var(--ink);font-family:var(--f-mono);font-size:.88rem;
+  transition:border-color .3s,background-color .3s,box-shadow .3s;color-scheme:dark;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23f2c879' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1.5 2L6 6.2L10.5 2'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;background-size:10px}
+.field select:focus{outline:none;border-color:var(--gold);
+  background-color:rgba(255,255,255,.075);box-shadow:0 0 0 3px rgba(242,200,121,.11)}
+.field select option{background:#0a0f1c;color:var(--ink)}
+.field select.err{border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,143,168,.12)}
+.trio{display:grid;grid-template-columns:.82fr 1.25fr .93fr;gap:8px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.errmsg{display:none;margin-top:10px;font-size:.8rem;color:var(--rose)}
+.errmsg.on{display:block}
 .hint{font-size:.76rem;color:var(--ink-3);margin-top:7px;line-height:1.5}
 
 .result{padding:32px;min-height:100%;display:flex;flex-direction:column;justify-content:center}
@@ -309,25 +320,112 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
 /* ============================================================
    NAKSHATRA STRIP
    ============================================================ */
-.nak-scroll{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);padding:6px 0}
-.nak-track{display:flex;gap:12px;width:max-content;animation:marq 68s linear infinite}
-.nak-scroll:hover .nak-track{animation-play-state:paused}
-@keyframes marq{to{transform:translateX(-50%)}}
+.nak-scroll{overflow-x:auto;overflow-y:hidden;scroll-behavior:auto;padding:6px 0 12px;
+  cursor:grab;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  scrollbar-width:thin;scrollbar-color:rgba(242,200,121,.35) transparent}
+.nak-scroll.drag{cursor:grabbing}
+.nak-scroll::-webkit-scrollbar{height:5px}
+.nak-scroll::-webkit-scrollbar-track{background:transparent}
+.nak-scroll::-webkit-scrollbar-thumb{background:rgba(242,200,121,.3);border-radius:5px}
+.nak-scroll::-webkit-scrollbar-thumb:hover{background:rgba(242,200,121,.55)}
+.nak-track{display:flex;gap:12px;width:max-content}
+.nak-track .nak{user-select:none;-webkit-user-select:none}
 .nak{flex:0 0 auto;padding:13px 19px;border-radius:100px;border:1px solid var(--line);
   background:rgba(255,255,255,.028);font-family:var(--f-mono);font-size:.76rem;color:var(--ink-2);
-  white-space:nowrap;transition:.35s;cursor:default}
+  white-space:nowrap;transition:.35s;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .nak:hover{border-color:var(--gold);color:var(--gold);background:rgba(242,200,121,.075);transform:translateY(-2px)}
+.nak:focus-visible{outline:none;border-color:var(--cyan);color:var(--cyan)}
+.nak.sel{border-color:var(--gold);color:var(--gold);background:rgba(242,200,121,.13);
+  box-shadow:0 0 20px -6px rgba(242,200,121,.5)}
 .nak b{color:var(--ink-3);margin-right:9px;font-weight:400}
+.nak.sel b{color:var(--gold);opacity:.65}
+
+/* nakshatra detail panel */
+.nakpanel{margin-top:18px;position:relative;overflow:hidden;min-height:264px;
+  display:flex;align-items:center;
+  border:1px solid var(--line);border-radius:var(--r-md);padding:24px 26px;
+  background:linear-gradient(150deg,rgba(255,255,255,.05),rgba(255,255,255,.012))}
+.np-in{width:100%}
+.nakpanel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--gold),var(--cyan))}
+.np-in{animation:npIn .45s var(--ease) both}
+@keyframes npIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.np-top{display:flex;align-items:baseline;gap:8px 15px;flex-wrap:wrap}
+.np-num{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;color:var(--gold)}
+.np-name{font-family:var(--f-disp);font-weight:500;letter-spacing:-.028em;color:var(--ink);
+  font-size:clamp(1.22rem,2.3vw,1.6rem);line-height:1.1}
+.np-span{font-family:var(--f-mono);font-size:.69rem;color:var(--ink-3);letter-spacing:.02em}
+.np-q{font-size:.855rem;line-height:1.66;color:var(--ink-2);margin:11px 0 17px;max-width:92ch}
+.np-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px 15px;
+  padding-top:15px;border-top:1px solid var(--line)}
+.np-cell span{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:5px;line-height:1.4}
+.np-cell b{font-family:var(--f-disp);font-weight:500;font-size:.82rem;color:var(--ink);
+  letter-spacing:-.012em;line-height:1.34;display:block}
+.np-cell.np-wide{grid-column:span 2}
+.np-cell b.c{color:var(--cyan)}
+.np-cue{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:14px;display:flex;align-items:center;gap:8px}
+.np-cue i{width:5px;height:5px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 8px var(--gold);animation:pulse 2.1s ease-in-out infinite;flex:0 0 auto}
 
 /* ============================================================
    DASHA TIMELINE
    ============================================================ */
 .dasha{padding:34px 30px}
 .dbar{display:flex;height:58px;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:26px 0 18px}
-.dseg{position:relative;display:grid;place-items:center;overflow:hidden;transition:flex .55s var(--ease),filter .35s;
-  min-width:0;cursor:default;flex-grow:0;flex-shrink:0}
-.dseg:hover{filter:brightness(1.42)}
+.dseg{position:relative;display:grid;place-items:center;overflow:hidden;min-width:0;
+  cursor:pointer;flex-grow:0;flex-shrink:0;flex-basis:0;
+  transition:flex-basis .9s var(--ease),filter .4s,opacity .4s;-webkit-tap-highlight-color:transparent}
+.dbar.in .dseg{flex-basis:var(--w)}
+.dseg:hover{filter:brightness(1.45)}
+.dseg.on{filter:brightness(1.5)}
+.dbar.sel .dseg{opacity:.34;filter:saturate(.4)}
+.dbar.sel .dseg.on{opacity:1;filter:brightness(1.45) saturate(1)}
+
+.dctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 4px}
+.dctl label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-3);flex:0 0 auto}
+.dctl select{padding:10px 28px 10px 12px;border-radius:var(--r-sm);background-color:rgba(255,255,255,.045);
+  border:1px solid var(--line);color:var(--ink);font-family:var(--f-mono);font-size:.8rem;cursor:pointer;
+  color-scheme:dark;-webkit-appearance:none;appearance:none;min-width:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23f2c879' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1.5 2L6 6.2L10.5 2'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:10px;transition:.3s}
+.dctl select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(242,200,121,.11)}
+.dctl select option{background:#0a0f1c;color:var(--ink)}
+.dctl-note{font-size:.76rem;color:var(--ink-3)}
+.dctl-note b{color:var(--gold);font-weight:400}
+
+.ddetail{margin-top:22px}
+.dd-in{animation:npIn .45s var(--ease) both;border-top:1px solid var(--line);padding-top:20px}
+.dd-head{display:flex;align-items:baseline;gap:8px 14px;flex-wrap:wrap;margin-bottom:9px}
+.dd-name{font-family:var(--f-disp);font-weight:500;font-size:1.28rem;letter-spacing:-.025em;color:var(--ink)}
+.dd-meta{font-family:var(--f-mono);font-size:.72rem;color:var(--ink-3)}
+.dd-meta b{color:var(--cyan);font-weight:400}
+.dd-text{font-size:.86rem;line-height:1.66;color:var(--ink-2);max-width:88ch;margin-bottom:20px}
+.dd-sub{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.dd-sub em{font-style:normal;color:var(--ink-3);opacity:.7;letter-spacing:.03em;text-transform:none;font-size:10.5px}
+.adbar{display:flex;height:30px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-bottom:14px}
+.adseg{min-width:0;overflow:hidden;display:grid;place-items:center;transition:filter .3s}
+.adseg:hover{filter:brightness(1.4)}
+.adseg span{font-family:var(--f-mono);font-size:8.5px;color:rgba(255,255,255,.92);white-space:nowrap;
+  text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.adlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:7px}
+.adrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 11px;
+  border-radius:8px;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  font-family:var(--f-mono);font-size:.73rem}
+.adrow i{width:7px;height:7px;border-radius:2px;flex:0 0 auto;margin-right:2px}
+.adrow em{font-style:normal;color:var(--ink-3);margin-left:auto}
+.dd-cue{color:var(--ink-3);font-size:.86rem;display:flex;align-items:center;gap:9px;
+  border-top:1px solid var(--line);padding-top:20px}
+.dd-cue i{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);
+  animation:pulse 2.1s ease-in-out infinite;flex:0 0 auto}
+.dleg{cursor:pointer;transition:color .3s}
+.dleg:hover{color:var(--ink)}
+.dleg.on{color:var(--gold)}
 .dseg span{font-family:var(--f-mono);font-size:9.5px;pointer-events:none;color:rgba(255,255,255,.94);
   text-shadow:0 1px 4px rgba(0,0,0,.75);white-space:nowrap;letter-spacing:.03em}
 .dlegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:9px;margin-top:18px}
@@ -339,6 +437,20 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
    SERVICES
    ============================================================ */
 .svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px}
+.svc-solo{max-width:620px;margin-inline:auto}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.step{position:relative;padding:24px 22px 22px;border-radius:var(--r-md);
+  border:1px solid var(--line);background:rgba(255,255,255,.022);
+  transition:border-color .45s var(--ease),transform .45s var(--ease),background .45s}
+.step:hover{border-color:var(--line-2);transform:translateY(-3px);background:rgba(255,255,255,.035)}
+.step::after{content:'';position:absolute;top:32px;right:-19px;width:20px;height:1px;
+  background:linear-gradient(90deg,var(--gold),transparent);opacity:.5}
+.step:last-child::after{display:none}
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:50%;border:1px solid rgba(242,200,121,.32);background:rgba(242,200,121,.09);
+  font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-bottom:14px}
+.step h4{font-size:1.02rem;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px}
+.step p{font-size:.83rem;line-height:1.62}
 .scard{padding:34px 30px;display:flex;flex-direction:column}
 .scard.feat{border-color:rgba(242,200,121,.3)}
 .scard.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -349,8 +461,17 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
 .price{font-family:var(--f-disp);font-size:2.4rem;font-weight:400;letter-spacing:-.04em;margin:14px 0 4px;color:var(--ink)}
 .price small{font-size:.9rem;color:var(--ink-3);font-family:var(--f-mono);letter-spacing:0}
 .slist{list-style:none;margin:22px 0;display:flex;flex-direction:column;gap:11px;flex:1}
-.slist li{display:flex;gap:11px;font-size:.88rem;color:var(--ink-2);line-height:1.55}
-.slist li::before{content:'✦';color:var(--gold);flex:0 0 auto;font-size:.72rem;margin-top:4px}
+/* NOT flex: an inline <em>/<b> inside a flex item becomes its own flex box
+   and breaks the sentence into separately-wrapping chunks */
+.slist li{position:relative;padding-left:21px;font-size:.88rem;color:var(--ink-2);line-height:1.58}
+.slist li::before{content:'✦';position:absolute;left:0;top:.32em;color:var(--gold);font-size:.72rem}
+.slist li b{color:var(--ink);font-weight:500;font-family:var(--f-disp);letter-spacing:-.01em}
+.payafter{display:flex;align-items:center;gap:14px;margin:4px 0 20px;padding:14px 16px;
+  border-radius:var(--r-md);border:1px solid rgba(95,227,216,.28);
+  background:linear-gradient(120deg,rgba(95,227,216,.09),rgba(242,200,121,.05))}
+.payafter span{flex:0 0 auto;font-family:var(--f-disp);font-weight:500;font-size:1.02rem;
+  letter-spacing:-.02em;color:var(--cyan)}
+.payafter p{font-size:.81rem;line-height:1.5;color:var(--ink-2);margin:0}
 
 /* ============================================================
    BOOKING / PAY
@@ -409,6 +530,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+@media(max-width:1020px){
+  .np-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 @media(max-width:960px){
   .hero-grid{grid-template-columns:1fr;gap:38px;text-align:center}
   .hero .eyebrow,.hero .badge{justify-content:center}
@@ -417,12 +541,15 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
   .wheel-wrap{max-width:380px;order:-1}
   .calc{grid-template-columns:1fr;gap:22px}
   .method{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .step::after{display:none}
   .fgrid{grid-template-columns:1fr 1fr}
   .nav-links{display:none}
   .nav-cta{display:none}
   .burger{display:flex}
 }
 @media(max-width:600px){
+  #starfield{opacity:.6}
   .wrap{width:min(100% - 30px,var(--maxw))}
   section{padding:60px 0}
   .hero{padding-top:82px}
@@ -430,11 +557,24 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
   .stat{flex:1 1 40%}
   .compare{grid-template-columns:1fr;gap:10px}
   .arrow{padding:3px 0;font-size:.68rem}
-  .calc-form,.result,.dasha,.scard,.icard{padding:24px 20px}
+  .calc-form,.result,.dasha,.scard,.icard{padding:24px 18px}
+  .nakpanel{padding:20px 16px;min-height:440px}
+  .np-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .np-cell.np-wide{grid-column:span 2}
+  .np-q{font-size:.83rem;line-height:1.62}
+  .np-grid{grid-template-columns:1fr 1fr;gap:12px}
+  /* 16px stops iOS Safari zooming the page when a control is focused */
+  .field select{font-size:16px;padding:12px 26px 12px 10px;background-position:right 8px center}
+  .trio{grid-template-columns:.8fr 1.3fr .95fr;gap:6px}
+  .duo{gap:6px}
   .fgrid{grid-template-columns:1fr;gap:26px}
   .btn{width:100%}
   .hero-cta{flex-direction:column}
   .dseg span{font-size:8px}
+  .dctl{gap:9px}
+  .dctl select{flex:1 1 100%}
+  .adlist{grid-template-columns:1fr 1fr}
+  .adrow{font-size:.68rem;padding:7px 8px}
   #my-cal-inline-15-minute-reading{min-height:580px}
   .wheel-core b{font-size:1.9rem}
 }
@@ -470,7 +610,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <a href="#services">Readings</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a href="#book" class="btn btn-p nav-cta"><span>Book a reading</span></a>
+    <a href="#book" class="btn btn-p nav-cta"><span>Book now · Pay after</span></a>
     <button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button>
   </div>
 </header>
@@ -570,12 +710,20 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <p style="font-size:.86rem;margin-bottom:24px">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
 
         <div class="field">
-          <label for="bdate">Date of birth</label>
-          <input type="date" id="bdate" min="1900-01-01" max="2030-12-31">
+          <label for="bday">Date of birth</label>
+          <div class="trio">
+            <select id="bday" aria-label="Day"></select>
+            <select id="bmon" aria-label="Month"></select>
+            <select id="byear" aria-label="Year"></select>
+          </div>
         </div>
         <div class="field">
-          <label for="btime">Time of birth <span style="text-transform:none;letter-spacing:0">(optional — improves cusp accuracy)</span></label>
-          <input type="time" id="btime">
+          <label for="bhour">Time of birth <span style="text-transform:none;letter-spacing:0">(optional — improves cusp accuracy)</span></label>
+          <div class="duo">
+            <select id="bhour" aria-label="Hour"></select>
+            <select id="bmin" aria-label="Minute"></select>
+          </div>
+          <div class="errmsg" id="calcErr"></div>
         </div>
         <button class="btn btn-p" id="calcBtn" style="width:100%;margin-top:6px"><span>Compute →</span></button>
         <p class="hint">
@@ -712,7 +860,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 
     <div class="method">
       <div class="card rv" style="padding:30px 28px">
-        <div class="eyebrow" style="color:var(--cyan)">Always</div>
+        <div class="eyebrow" style="color:var(--cyan)">Trust Basis</div>
         <ul class="mlist do">
           <li><i class="tick">✓</i><div><strong>Swiss Ephemeris, Lahiri ayanāṁśa</strong>
             <p>Positions computed from JPL-derived ephemeris data, not scraped from a chart image. Every degree is reproducible.</p></div></li>
@@ -728,7 +876,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       </div>
 
       <div class="card rv" data-d="1" style="padding:30px 28px">
-        <div class="eyebrow" style="color:var(--rose)">Never</div>
+        <div class="eyebrow" style="color:var(--rose)">What we are not</div>
         <ul class="mlist dont">
           <li><i class="tick">✕</i><div><strong>Fear as a sales tool</strong>
             <p>No manufactured doṣas, no "urgent remedy" upsells, no gemstone you must buy today. Doṣas get checked for cancellation and reported honestly.</p></div></li>
@@ -762,8 +910,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         </p>
       </div>
       <div class="nak-scroll"><div class="nak-track" id="nakTrack"></div></div>
-      <p class="hint" style="margin-top:18px">
+      <div class="nakpanel" id="nakPanel"></div>
+      <p class="hint" style="margin-top:16px">
         Each nakṣatra splits further into four <em>pādas</em> of 3°20′ — 108 divisions in total. Yes, that 108.
+        Qualities below are classical associations, not verdicts: a nakṣatra describes texture and temperament,
+        never a fixed outcome.
       </p>
     </div>
   </div>
@@ -788,8 +939,14 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <h3>Vimśottarī Mahādaśā sequence</h3>
         <span class="mono" style="font-size:.74rem;color:var(--ink-3)">TOTAL — 120 YEARS</span>
       </div>
+      <div class="dctl">
+        <label for="nakStart">Moon's nakṣatra at birth</label>
+        <select id="nakStart" aria-label="Moon's nakshatra at birth"></select>
+        <span class="dctl-note" id="dctlNote">Canonical order shown — pick one to see your sequence</span>
+      </div>
       <div class="dbar" id="dbar"></div>
       <div class="dlegend" id="dlegend"></div>
+      <div class="ddetail" id="ddetail"></div>
       <p class="hint" style="margin-top:20px">
         Each mahādaśā subdivides into nine antardaśās, each of those into nine pratyantardaśās, and so on
         down five levels. The resolution goes to days. This is where a reading stops being descriptive
@@ -802,53 +959,63 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 <!-- ==================== SERVICES ==================== -->
 <section id="services">
   <div class="wrap">
-    <div style="max-width:680px;margin-bottom:42px">
-      <div class="eyebrow rv">Readings</div>
-      <h2 class="rv" data-d="1">Two ways in.</h2>
-      <p class="lead rv" data-d="2" style="margin-top:18px">
-        Start small if you're sceptical — that's what the 15-minute session is for. Go deep when you want
-        the whole architecture.
+    <div style="max-width:700px;margin:0 auto 42px;text-align:center">
+      <div class="eyebrow rv">The reading</div>
+      <h2 class="rv" data-d="1">₹250 — and only<br><span class="hl">after it delivers.</span></h2>
+      <p class="lead rv" data-d="2" style="margin:18px auto 0">
+        One session. One price. No packages, no advance payment, nothing to decide before we've actually
+        spoken. You take the slot, we spend fifteen minutes inside your chart, and the payment link
+        reaches you once the session is done. That order is deliberate — the risk shouldn't be yours.
       </p>
     </div>
 
-    <div class="svc">
-      <article class="card scard rv">
-        <span class="stag">Start here</span>
-        <div class="eyebrow" style="margin-bottom:10px">01</div>
+    <div class="svc-solo">
+      <article class="card scard feat rv">
+        <span class="stag">No advance payment</span>
+        <div class="eyebrow" style="margin-bottom:10px">The only thing on offer</div>
         <h3>15-Minute Reading</h3>
-        <div class="price">₹—<small> / see booking</small></div>
-        <p style="font-size:.88rem">One focused question, one honest answer. No padding.</p>
+        <div class="price">₹250<small> / 15 min · settled after the session</small></div>
+        <p style="font-size:.92rem;color:var(--ink-2)">Fifteen minutes inside your real chart, built around
+        the thing you're actually carrying — and you decide it was worth ₹250 once you've had it.</p>
         <ul class="slist">
-          <li>Chart cast and verified before the call — no time spent on data entry</li>
-          <li>One specific question: a decision, a timing window, a pattern you keep hitting</li>
-          <li>Straight read on what the chart supports and what it doesn't</li>
-          <li>You leave knowing whether a deeper reading is even worth your money</li>
+          <li><b>Tell me what's on your mind.</b> The booking form has a box for it — a decision you're stuck on, a pattern that keeps repeating, a timing question, or simply what you'd like read.</li>
+          <li><b>Your chart is ready before you arrive.</b> Computed from Swiss Ephemeris positions and cross-checked against what you wrote. Not one of your fifteen minutes goes on setup.</li>
+          <li><b>A clear read, not a horoscope.</b> What your chart genuinely supports — and, just as usefully, what it doesn't. No hedging, no lines that would be true of anyone.</li>
+          <li><b>Every claim is sourced as it's made</b>, so you can go and verify any of it yourself once we're done.</li>
+          <li><b>Nothing is charged to book.</b> The ₹250 link reaches you only after the session — and only if it earned it.</li>
         </ul>
-        <a href="#book" class="btn btn-p" style="width:100%"><span>Pick a slot</span></a>
-      </article>
-
-      <article class="card scard feat rv" data-d="1">
-        <span class="stag">Full analysis</span>
-        <div class="eyebrow" style="margin-bottom:10px">02</div>
-        <h3>Complete Natal Chart Analysis</h3>
-        <div class="price">₹—<small> / 60–90 min</small></div>
-        <p style="font-size:.88rem">The whole structure, verified layer by layer.</p>
-        <ul class="slist">
-          <li>Lagna, all nine grahas, house lords and functional dignity at degree precision</li>
-          <li>Yoga audit — every claimed yoga independently confirmed or struck out</li>
-          <li>Divisional charts: D9 navāṁśa, D10 daśāṁśa, and others as the question requires</li>
-          <li>Aṣṭakavarga scoring as a numerical cross-check on the interpretation</li>
-          <li>Vimśottarī daśā mapping — active period, what's next, and the dates that matter</li>
-          <li>Doṣa check with cancellation rules applied, reported honestly either way</li>
-          <li>Written summary afterwards, with the reasoning shown so you can audit it</li>
-        </ul>
-        <a href="#book" class="btn btn-p" style="width:100%"><span>Enquire &amp; book</span></a>
+        <div class="payafter">
+          <span>₹0 today</span>
+          <p>Take a slot without paying anything. Settle up afterwards, if the session delivered.</p>
+        </div>
+        <a href="#book" class="btn btn-p" style="width:100%"><span>Take a slot — nothing charged now</span></a>
       </article>
     </div>
 
-    <p class="hint rv" style="margin-top:20px;max-width:70ch">
-      Accurate birth date, time and place are required. If your birth time is uncertain, say so — there
-      are rectification techniques, and it's better handled openly than quietly guessed at.
+    <div class="steps rv" data-d="1">
+      <div class="step">
+        <span class="stepn">01</span>
+        <h4>Book a slot</h4>
+        <p>Pick a time below. No card, no deposit, not a rupee taken. The form asks for your birth date,
+        exact time and city — plus a short note on what you'd like read, so the chart is prepared around it.</p>
+      </div>
+      <div class="step">
+        <span class="stepn">02</span>
+        <h4>We talk for 15 minutes</h4>
+        <p>A short reading built on a chart that's already been computed and cross-checked against your note.
+        Where the chart genuinely doesn't speak to what you raised, you'll be told that rather than sold a story.</p>
+      </div>
+      <div class="step">
+        <span class="stepn">03</span>
+        <h4>Then — and only then — ₹250</h4>
+        <p>A Razorpay link arrives once the session is done. UPI, card, net banking or wallet. If the
+        reading didn't deliver for you, ignore the link. No chasing, no invoice, no hard feelings.</p>
+      </div>
+    </div>
+
+    <p class="hint rv" style="margin:22px auto 0;max-width:74ch;text-align:center">
+      Accurate birth date, time and place are required. If your birth time is uncertain, say so when you
+      book — there are rectification techniques, and it is far better handled openly than quietly guessed at.
     </p>
   </div>
 </section>
@@ -860,8 +1027,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="eyebrow rv">Book</div>
       <h2 class="rv" data-d="1">Pick a time.</h2>
       <p class="lead rv" data-d="2" style="margin-top:16px">
-        Live availability below. Bring your birth date, time and city — and one question you actually
-        want answered.
+        Live availability below — nothing is charged to reserve one. The form takes your birth date, time
+        and city, along with a short note on what you'd like the reading to cover; that note is what the
+        chart gets prepared around before we meet.
       </p>
     </div>
 
@@ -890,18 +1058,22 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 <section id="pay" style="padding-top:0">
   <div class="wrap">
     <!-- ============================================================
-         RAZORPAY SLOT — replace the whole .pay-slot div below with
-         your Razorpay payment-button / payment-page embed script.
-         Everything else on the page stays as-is.
+         RAZORPAY SLOT — this section is intentionally NOT a checkout.
+         Payment happens after the consultation. Replace the whole
+         .pay-slot div below with your Razorpay payment-button or
+         payment-page embed once it's ready, and it becomes the link
+         clients land on after the call. Everything else stays as-is.
          ============================================================ -->
     <div class="pay-slot rv" id="razorpay-slot">
       <div class="ic">₹</div>
-      <h3 style="margin-bottom:10px">Secure payment</h3>
-      <p style="font-size:.9rem;max-width:48ch;margin-inline:auto">
-        Card, UPI, net banking and wallets — processed by Razorpay. Payment link goes live shortly.
+      <h3 style="margin-bottom:10px">Nothing is charged to book</h3>
+      <p style="font-size:.9rem;max-width:56ch;margin-inline:auto">
+        Not at booking, not before the call. Once your session is done you'll get a Razorpay link for
+        <b class="hl">₹250</b> — UPI, card, net banking or wallet. Settle it then, if the fifteen
+        minutes were worth it to you.
       </p>
       <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--ink-3);margin-top:20px">
-        RAZORPAY EMBED — PENDING
+        RAZORPAY LINK — GOES LIVE SHORTLY
       </p>
     </div>
   </div>
@@ -952,11 +1124,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         </ul>
       </div>
       <div>
-        <h4>Readings</h4>
+        <h4>The reading</h4>
         <ul>
-          <li><a href="#services">15-minute reading</a></li>
-          <li><a href="#services">Full natal analysis</a></li>
+          <li><a href="#services">15-minute reading · ₹250</a></li>
           <li><a href="#book">Book a slot</a></li>
+          <li><a href="#pay">How payment works</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
@@ -989,27 +1161,36 @@ var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     build();
   }
   function build(){
-    var n = Math.min(340, Math.round(W*H/4200));
+    var n = Math.min(640, Math.round(W*H/2400));
     stars = [];
     for(var i=0;i<n;i++){
       var layer = Math.random();
+      var far = layer<.58, mid = !far && layer<.88;
       stars.push({
         x: Math.random()*W,
         y: Math.random()*H,
-        r: layer<.72 ? Math.random()*.85+.25 : Math.random()*1.5+.7,
-        d: layer<.72 ? .18 : .55,
-        a: Math.random()*.6+.22,
-        sp: Math.random()*.022+.006,
+        r: far ? Math.random()*.6+.18 : (mid ? Math.random()*.9+.45 : Math.random()*1.6+.8),
+        d: far ? .12 : (mid ? .34 : .62),
+        a: (far ? Math.random()*.34+.12 : Math.random()*.5+.24),
+        sp: Math.random()*.0075+.0015,
         ph: Math.random()*Math.PI*2,
-        hue: Math.random()<.13 ? '242,200,121' : (Math.random()<.16 ? '95,227,216' : '255,255,255')
+        hue: Math.random()<.14 ? '242,200,121' : (Math.random()<.17 ? '95,227,216' : '255,255,255')
       });
     }
   }
   function shoot(){
-    if(RM) return;
+    if(RM || shooters.length>18) return;
+    var dir = Math.random()<.24 ? -1 : 1;
+    var fast = Math.random()<.22;
     shooters.push({
-      x: Math.random()*W*.85, y: Math.random()*H*.4,
-      len: Math.random()*90+60, sp: Math.random()*7+7, life: 1
+      x: dir>0 ? Math.random()*W*.8 - W*.06 : Math.random()*W*.8 + W*.26,
+      y: Math.random()*H*.62,
+      len: fast ? Math.random()*130+105 : Math.random()*85+50,
+      sp: (fast ? Math.random()*2.4+4.2 : Math.random()*1.9+1.9) * dir,
+      drop: Math.random()*.5+.22,
+      w: fast ? 1.7 : 1.15,
+      hue: Math.random()<.2 ? '95,227,216' : (Math.random()<.28 ? '242,200,121' : '255,255,255'),
+      life: 1, fade: fast ? .0052 : .0031
     });
   }
   function draw(){
@@ -1031,21 +1212,36 @@ var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
     for(var j=shooters.length-1;j>=0;j--){
       var sh = shooters[j];
-      sh.x += sh.sp; sh.y += sh.sp*.42; sh.life -= .012;
-      if(sh.life<=0 || sh.x>W+120){ shooters.splice(j,1); continue; }
-      var g = ctx.createLinearGradient(sh.x, sh.y, sh.x-sh.len, sh.y-sh.len*.42);
-      g.addColorStop(0,'rgba(255,255,255,'+(sh.life*.85).toFixed(3)+')');
-      g.addColorStop(.4,'rgba(242,200,121,'+(sh.life*.3).toFixed(3)+')');
-      g.addColorStop(1,'rgba(255,255,255,0)');
-      ctx.strokeStyle=g; ctx.lineWidth=1.4; ctx.lineCap='round';
-      ctx.beginPath(); ctx.moveTo(sh.x,sh.y); ctx.lineTo(sh.x-sh.len, sh.y-sh.len*.42); ctx.stroke();
+      sh.x += sh.sp; sh.y += Math.abs(sh.sp)*sh.drop; sh.life -= sh.fade;
+      if(sh.life<=0 || sh.x>W+200 || sh.x<-200 || sh.y>H+200){ shooters.splice(j,1); continue; }
+      var tx = sh.x - Math.sign(sh.sp)*sh.len, ty = sh.y - sh.len*sh.drop;
+      var g = ctx.createLinearGradient(sh.x, sh.y, tx, ty);
+      g.addColorStop(0,'rgba('+sh.hue+','+(sh.life*.92).toFixed(3)+')');
+      g.addColorStop(.35,'rgba('+sh.hue+','+(sh.life*.34).toFixed(3)+')');
+      g.addColorStop(1,'rgba('+sh.hue+',0)');
+      ctx.strokeStyle=g; ctx.lineWidth=sh.w; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(sh.x,sh.y); ctx.lineTo(tx,ty); ctx.stroke();
+      ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.w*1.1, 0, 6.2832);
+      ctx.fillStyle='rgba('+sh.hue+','+(sh.life*.7).toFixed(3)+')'; ctx.fill();
     }
     requestAnimationFrame(draw);
   }
   window.addEventListener('resize', size, {passive:true});
   window.addEventListener('scroll', function(){ scrollY = window.scrollY; }, {passive:true});
   size(); draw();
-  if(!RM) setInterval(function(){ if(Math.random()<.42) shoot(); }, 3600);
+  if(!RM){
+    setInterval(function(){
+      if(Math.random()<.6) shoot();
+      if(Math.random()<.18) shoot();
+    }, 1700);
+    // occasional cluster, like a real shower
+    setInterval(function(){
+      if(Math.random()<.3){
+        var burst = 2 + Math.floor(Math.random()*3);
+        for(var b=0;b<burst;b++) setTimeout(shoot, b*420);
+      }
+    }, 11000);
+  }
 })();
 
 /* ============================================================
@@ -1217,35 +1413,321 @@ function dms(deg){
 /* ============================================================
    7. NAKSHATRA MARQUEE
    ============================================================ */
+var NAKDATA = [
+  ['Aśvinī','Aries 0°00′ – 13°20′','Ketu','Aśvinī Kumāras','Horse\'s head','Deva','Śīghra-vyāpani — to reach swiftly','Horse','The zodiac\'s opening impulse, and it behaves like one: fast, instinctive, first on the scene. Associated with the celestial physicians, it carries a real gift for rapid healing and rescue — the one who acts while everyone else is still deciding. The same speed is its friction. Momentum arrives before deliberation does, and things get started far more easily than they get finished.'],
+  ['Bharaṇī','Aries 13°20′ – 26°40′','Venus','Yama','Yoni — the womb','Manuṣya','Apabharaṇī — to carry away','Elephant','Governed by Yama, keeper of limits. Bharaṇī bears things: pressure, consequence, other people\'s weight, long gestation before anything shows. Its strength is capacity — an unusual tolerance for holding a difficult situation until it genuinely transforms rather than merely ends. The cost is intensity turned inward, and a habit of carrying what should have been set down.'],
+  ['Kṛttikā','Aries 26°40′ – Taurus 10°00′','Sun','Agni','Razor, flame','Rākṣasa','Dahana — to burn','Sheep','Ruled by Agni, and it burns. Sharp perception that cuts straight to what is false, a low tolerance for pretence, and a willingness to say the thing nobody else will. It purifies whatever it touches, which is valuable and rarely comfortable. The friction is plain: the blade that clarifies also wounds, and criticism can arrive faster than care.'],
+  ['Rohiṇī','Taurus 10°00′ – 23°20′','Moon','Brahmā (Prajāpati)','Ox cart','Manuṣya','Rohaṇa — to grow, to ascend','Serpent','The most fertile ground in the zodiac, and the Moon\'s favourite place to sit. Beauty, magnetism, and a genuine capacity to make things flourish — materially and artistically. People are drawn here without quite knowing why. The shadow is attachment: what grows well becomes hard to release, and possessiveness can quietly replace devotion.'],
+  ['Mṛgaśīrṣa','Taurus 23°20′ – Gemini 6°40′','Mars','Soma','Deer\'s head','Deva','Prīṇana — to give fulfilment','Serpent','The deer\'s head, permanently scanning. Curious, quick, gentle, and genuinely good at finding things — information, people, openings. It thrives while searching. The difficulty is arrival: satisfaction always sits just past whatever has already been reached, so restlessness outlives every acquisition and the search itself becomes the point.'],
+  ['Ārdrā','Gemini 6°40′ – 20°00′','Rāhu','Rudra','Teardrop','Manuṣya','Yatna — to make effort','Dog','Rudra\'s storm. Ārdrā breaks things open — assumptions, structures, comfortable stories — and the clarity that follows the disruption could not have arrived any other way. Real intellectual force, and no patience for a tidy answer. The cost is turbulence: emotional weather that lands hard, and a habit of tearing down before deciding what replaces it.'],
+  ['Punarvasu','Gemini 20°00′ – Cancer 3°20′','Jupiter','Aditi','Quiver of arrows','Deva','Vasutva-prāpana — to regain substance','Cat','“Good again.” Aditi\'s nakṣatra is the capacity to return — after loss, after failure, after a wrong turn — and to rebuild without carrying the grievance forward. Generous, philosophical, easy to be around. The friction is repetition: the same lesson gets circled more than once, and being good at recovery quietly reduces the urgency to avoid the fall.'],
+  ['Puṣya','Cancer 3°20′ – 16°40′','Saturn','Bṛhaspati','Cow\'s udder','Deva','Brahmavarcasa — to create spiritual energy','Sheep','Held to be the most auspicious of the 27, and it earns it. Nourishing, dependable, protective — the person others structurally rely on, often without acknowledging it. Ruled by Saturn but presided over by Bṛhaspati, it pairs duty with real care. The shadow is over-responsibility: giving past capacity, and mistaking being needed for being valued.'],
+  ['Āśleṣā','Cancer 16°40′ – 30°00′','Mercury','The Nāgas','Coiled serpent','Rākṣasa','Viṣāśleṣaṇa — to entwine, to poison','Cat','The coiled serpent: penetrating, strategic, and unusually accurate about what people are actually doing rather than what they claim. It reads a room on entry. That same faculty is why it withholds — information, intent, feeling — and the line between discretion and manipulation is one this nakṣatra has to draw for itself.'],
+  ['Maghā','Leo 0°00′ – 13°20′','Ketu','The Pitṛs','Royal throne','Rākṣasa','Tyāge kṣepaṇī — to leave the body','Rat','The throne of the ancestors. Authority arrives here by inheritance rather than negotiation, together with a strong sense of lineage, tradition and what is owed to those who came before. Dignified, naturally commanding. The friction is entitlement: position mistaken for achievement, and real difficulty operating in rooms where the throne counts for nothing.'],
+  ['Pūrva Phalgunī','Leo 13°20′ – 26°40′','Venus','Bhaga','Front of a bed','Manuṣya','Prajanana — to procreate','Rat','Bhaga\'s nakṣatra — enjoyment, rest, and creative play. It knows how to appreciate what has been built, and how to make that pleasure contagious. Warm, charming, socially fluent, genuinely good company. The cost is ease: comfort gets defended a little too well, and effort is deferred until enjoyment stops being a reward and becomes an avoidance.'],
+  ['Uttara Phalgunī','Leo 26°40′ – Virgo 10°00′','Sun','Aryaman','Back of a bed','Manuṣya','Cayanī — to accumulate through union','Cow','Where friendship becomes contract. Aryaman governs the bonds that actually hold — patronage, alliance, marriage, the agreements that survive inconvenience. Reliable, generous, good at formalising trust. The friction is that obligation outlasts affection: arrangements get maintained on principle long after they stopped nourishing anyone.'],
+  ['Hasta','Virgo 10°00′ – 23°20′','Moon','Savitṛ','Open hand','Deva','Hasta-sthāpanīya — to place the goal in hand','Buffalo','The open hand: skill, dexterity, craft. It can make a thing come out exactly as imagined, which is rarer than it sounds. Practical intelligence, quick humour, real attention to detail. The shadow is control — the hand that shapes also wants to hold, and precision curdles into fussiness or a need to manage what everyone else is doing.'],
+  ['Citrā','Virgo 23°20′ – Libra 6°40′','Mars','Tvaṣṭṛ','Bright jewel','Rākṣasa','Puṇya-cayanī — to accumulate merit','Tiger','Tvaṣṭṛ, the celestial architect. Design instinct, striking surface, and a real eye for how things should look and be arranged. It builds beautiful structures and is entirely aware of the impression they make. The friction is that awareness: appearance starts doing the work substance should, and identity gets tangled up in being seen.'],
+  ['Svātī','Libra 6°40′ – 20°00′','Rāhu','Vāyu','Young shoot in wind','Deva','Pradhvaṁsa — to scatter like wind','Buffalo','The young shoot bending in wind. Independent, adaptable, diplomatic, and deeply resistant to being held down or spoken for. It moves around obstacles rather than through them, and it trades and negotiates well. The cost is rootlessness — flexibility without anchor, and a reluctance to commit that feels like freedom from inside and evasion from outside.'],
+  ['Viśākhā','Libra 20°00′ – Scorpio 3°20′','Jupiter','Indra–Agni','Triumphal archway','Rākṣasa','Vyāpanī — to attain many fruits','Tiger','The forked branch, and a fixed target. Ambition here is patient and specific: it keeps working long after enthusiasm has burned off, which is usually why it arrives. Determined, competitive, goal-shaped. The friction is the price of the goal — rest, relationships and everything unrelated get postponed, and arrival satisfies less than the pursuit did.'],
+  ['Anurādhā','Scorpio 3°20′ – 16°40′','Saturn','Mitra','Lotus','Deva','Rādhana — to worship, to honour','Deer','Mitra\'s nakṣatra: friendship, devotion, and an ability to build cooperation between people with nothing obvious in common. It travels well, works well among strangers and outsiders, and stays loyal across distance. The shadow is that devotion can be handed to something undeserving, and hardship is tolerated well past the point it should have been named.'],
+  ['Jyeṣṭhā','Scorpio 16°40′ – 30°00′','Mercury','Indra','Circular amulet','Rākṣasa','Ārohaṇa — to rise and conquer','Deer','The eldest. Seniority, protectiveness, and real capability — the one deferred to, and the one carrying what that costs. Indra\'s nakṣatra, so there is both power and the isolation trailing it. The friction is the burden itself: authority held too tightly, help offered as control, and a deep reluctance to be seen struggling.'],
+  ['Mūla','Sagittarius 0°00′ – 13°20′','Ketu','Nirṛti','Bunch of roots','Rākṣasa','Barhaṇa — to break apart','Dog','The root, and Nirṛti who presides over dissolution. It digs until it reaches the origin of a thing — motive, cause, first principle — and is unsatisfied by any account that stops short. Formidable for research, philosophy, and anything requiring the floor be taken up. Uprooting is not gentle, and what gets destroyed along the way is real.'],
+  ['Pūrva Āṣāḍhā','Sagittarius 13°20′ – 26°40′','Venus','Āpas','Winnowing fan','Manuṣya','Varcograhaṇa — to invigorate','Monkey','The undefeated. Conviction here is close to unshakeable and it is contagious — this nakṣatra persuades, invigorates, and carries others along on certainty alone. Associated with the waters, it purifies as it moves. The friction is that certainty rarely audits itself: being convinced and being correct feel identical from the inside.'],
+  ['Uttara Āṣāḍhā','Sagittarius 26°40′ – Capricorn 10°00′','Sun','Viśvadevas','Elephant tusk','Manuṣya','Apradhṛṣya — unchallengeable victory','Mongoose','The later victory — the one that holds. It wins slowly, by integrity rather than speed, and what it builds tends to outlast it. Principled, patient, unusually safe with responsibility. The cost is rigidity: the principles that make it dependable make it slow to move position, and it carries a burden long after help was available.'],
+  ['Śravaṇa','Capricorn 10°00′ – 23°20′','Moon','Viṣṇu','The ear','Deva','Saṁhanana — to connect','Monkey','The ear. Viṣṇu\'s nakṣatra is about receiving — listening, learning, remembering, and passing knowledge on intact to whoever comes next. Excellent for teaching, languages, counsel and scholarship. The shadow is absorption without a filter: other people\'s opinions take up residence, and reputation matters more than it should to someone who hears everything said.'],
+  ['Dhaniṣṭhā','Capricorn 23°20′ – Aquarius 6°40′','Mars','The Vasus','Drum','Rākṣasa','Khyāpayitrī — to give fame','Lion','The drum. Rhythm, timing, performance, and a real capacity for wealth and public recognition. It works well in groups and knows instinctively when to come in. The friction is the need to be heard — status becomes the measure of everything, and the beat is sometimes kept at the expense of the people playing alongside.'],
+  ['Śatabhiṣā','Aquarius 6°40′ – 20°00′','Rāhu','Varuṇa','Empty circle','Rākṣasa','Bheṣaja — to heal','Horse','A hundred healers, and an empty circle. Solitary, unconventional, drawn to what is hidden — and often able to diagnose or repair what nobody else could even identify. Strong links to medicine, mysticism and technology. The cost is the enclosure: privacy hardens into isolation, and help is offered far more readily than it is ever accepted.'],
+  ['Pūrva Bhādrapadā','Aquarius 20°00′ – Pisces 3°20′','Jupiter','Aja Ekapāda','Two-faced man','Manuṣya','Yajamāna-udyamana — to raise up','Lion','Austerity with an edge. Idealism sharp enough to cut, unusual intensity, and a willingness to trade comfort for a principle. It sees through the world\'s arrangements and is not much interested in pretending otherwise. The friction is severity — toward others, and considerably more toward itself — with a pull to extremes that moderation rarely survives.'],
+  ['Uttara Bhādrapadā','Pisces 3°20′ – 16°40′','Saturn','Ahir Budhnya','Serpent of the deep','Manuṣya','Varṣodyamana — to bring rain','Cow','The serpent of the deep. Stillness, patience, and wisdom that accumulated quietly and feels no need to announce itself. Compassionate, hard to unsettle, good in a crisis precisely because it does not react. The shadow is withdrawal: depth used as somewhere to retreat into, and difficulty translating an inner life into anything reachable by anyone else.'],
+  ['Revatī','Pisces 16°40′ – 30°00′','Mercury','Pūṣan','Fish','Deva','Kṣīrādyāpanī — to nourish','Elephant','Pūṣan, the guide who sees travellers safely home. Nourishing, kind, protective of whatever is vulnerable, and unusually good at endings — it completes cycles and hands things on well. The last nakṣatra, so it carries a sense of finish. The friction is porousness: boundaries run thin, other people\'s needs get absorbed as one\'s own, and letting go costs more than it should.']
+];
+
 (function(){
-  var track=document.getElementById('nakTrack');
+  var track=document.getElementById('nakTrack'), panel=document.getElementById('nakPanel');
   if(!track) return;
   var html='';
   for(var pass=0;pass<2;pass++){
     for(var i=0;i<27;i++){
-      html += '<div class="nak"><b>'+(i+1<10?'0':'')+(i+1)+'</b>'+NAKS[i]+'</div>';
+      html += '<div class="nak" role="button" tabindex="0" data-i="'+i+'" '+
+              'aria-label="'+NAKS[i]+' — nakshatra '+(i+1)+'"><b>'+
+              (i+1<10?'0':'')+(i+1)+'</b>'+NAKS[i]+'</div>';
     }
   }
   track.innerHTML=html;
+
+  /* ---- scroller: native touch swipe + mouse drag + wheel, with gentle auto-drift ---- */
+  var sc = track.parentNode, hovering=false;
+  (function scroller(){
+    var down=false, touching=false, sx=0, sl=0, moved=0, acc=0, last=null;
+
+    function half(){ return track.scrollWidth/2; }
+    // returns the correction applied, so a live drag can re-baseline against it
+    function wrap(){
+      var h=half();
+      if(h<=0 || sc.clientWidth<=0) return 0;
+      if(sc.scrollLeft >= h){ sc.scrollLeft -= h; return -h; }
+      if(sc.scrollLeft <= 0){ sc.scrollLeft += h; return h; }
+      return 0;
+    }
+
+    sc.addEventListener('pointerdown', function(e){
+      down=true; moved=0; sx=e.clientX; sl=sc.scrollLeft;
+      if(e.pointerType==='mouse'){
+        sc.classList.add('drag');
+        // NEVER capture touch pointers - it disables the browser's native scrolling
+        if(sc.setPointerCapture) try{ sc.setPointerCapture(e.pointerId); }catch(_){}
+      } else { touching=true; }
+    });
+    sc.addEventListener('pointermove', function(e){
+      if(!down || e.pointerType!=='mouse') return;
+      var dx=e.clientX-sx;
+      moved=Math.max(moved, Math.abs(dx));
+      e.preventDefault();
+      sc.scrollLeft = sl - dx;
+      sl += wrap();
+    });
+    ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+      sc.addEventListener(ev, function(){ down=false; sc.classList.remove('drag'); });
+    });
+    sc.addEventListener('touchend',    function(){ touching=false; }, {passive:true});
+    sc.addEventListener('touchcancel', function(){ touching=false; }, {passive:true});
+
+    // a drag shouldn't be mistaken for a tap on a pill
+    sc.addEventListener('click', function(e){
+      if(moved>6){ e.stopPropagation(); e.preventDefault(); moved=0; }
+    }, true);
+
+    sc.addEventListener('wheel', function(e){
+      var d = Math.abs(e.deltaX)>Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if(!d) return;
+      e.preventDefault(); sc.scrollLeft += d; wrap();
+    }, {passive:false});
+
+    sc.addEventListener('scroll', function(){ if(!down) wrap(); }, {passive:true});
+
+    if(window.matchMedia('(hover:hover)').matches){
+      sc.addEventListener('mouseenter', function(){ hovering=true; });
+      sc.addEventListener('mouseleave', function(){ hovering=false; });
+    }
+
+    if(RM) return;
+    var PPS = 46; // pixels per second
+    function tick(ts){
+      if(last===null) last=ts;
+      var dt=Math.min(64, ts-last); last=ts;
+      if(!down && !touching && !hovering){
+        acc += dt*(PPS/1000);
+        // scrollLeft is rounded to whole pixels in WebKit, so sub-pixel
+        // increments are silently discarded - bank them and apply integers
+        var px=Math.floor(acc);
+        if(px>0){ acc-=px; sc.scrollLeft += px; wrap(); }
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+
+  if(!panel) return;
+
+  var pinned=null;
+  function show(i, pin){
+    var d=NAKDATA[i];
+    panel.innerHTML =
+      '<div class="np-in">'+
+        '<div class="np-top">'+
+          '<span class="np-num">'+(i+1<10?'0':'')+(i+1)+' / 27</span>'+
+          '<span class="np-name">'+d[0]+'</span>'+
+          '<span class="np-span">'+d[1]+'</span>'+
+        '</div>'+
+        '<p class="np-q">'+d[8]+'</p>'+
+        '<div class="np-grid">'+
+          '<div class="np-cell"><span>Daśā lord</span><b class="c">'+d[2]+'</b></div>'+
+          '<div class="np-cell"><span>Deity</span><b>'+d[3]+'</b></div>'+
+          '<div class="np-cell"><span>Symbol</span><b>'+d[4]+'</b></div>'+
+          '<div class="np-cell"><span>Gaṇa</span><b>'+d[5]+'</b></div>'+
+          '<div class="np-cell"><span>Yoni</span><b>'+d[7]+'</b></div>'+
+          '<div class="np-cell np-wide"><span>Śakti — its stated power</span><b class="c">'+d[6]+'</b></div>'+
+        '</div>'+
+      '</div>';
+    track.querySelectorAll('.nak').forEach(function(el){
+      el.classList.toggle('sel', pin && +el.dataset.i===i);
+    });
+    if(pin) pinned=i;
+  }
+  function intro(){
+    panel.innerHTML =
+      '<div class="np-in">'+
+        '<div class="np-top"><span class="np-num">27 lunar mansions</span>'+
+        '<span class="np-name">Where the Moon sleeps</span></div>'+
+        '<p class="np-q">The Moon crosses one of these every night, covering roughly 13°20′ of sky a day. '+
+        'The one it occupied at the moment you were born sets your daśā sequence — the timing of your whole life '+
+        'in chapters — along with much of your temperament and the filters used in compatibility matching. '+
+        'This is why Jyotiṣa asks for your Moon rather than your Sun, and why it needs your birth time to find it.<br><br>'+
+        'Each entry below carries its ruling planet, presiding deity, symbol, temperament class (gaṇa), animal '+
+        '(yoni, used in matching), and its śakti — the specific power classical texts assign to it.</p>'+
+        '<div class="np-cue"><i></i>Hover or tap any nakṣatra to read it</div>'+
+      '</div>';
+  }
+  intro();
+
+  track.addEventListener('click', function(e){
+    var el=e.target.closest('.nak'); if(!el) return;
+    var i=+el.dataset.i;
+    if(pinned===i){ pinned=null; track.querySelectorAll('.nak.sel').forEach(function(x){x.classList.remove('sel');}); intro(); }
+    else show(i, true);
+  });
+  track.addEventListener('keydown', function(e){
+    var el=e.target.closest('.nak'); if(!el) return;
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); show(+el.dataset.i, true); }
+  });
+  track.addEventListener('focusin', function(e){
+    var el=e.target.closest('.nak'); if(el) show(+el.dataset.i, false);
+  });
+
+  /* hover preview - the strip is paused while the cursor is on it, so this
+     reads one nakshatra at a time instead of flickering through them */
+  if(window.matchMedia('(hover:hover)').matches){
+    var hoverIdx=null;
+    track.addEventListener('mouseover', function(e){
+      if(sc.classList.contains('drag')) return;
+      var el=e.target.closest('.nak'); if(!el) return;
+      var i=+el.dataset.i;
+      if(i===hoverIdx) return;
+      hoverIdx=i;
+      show(i, false);
+      track.querySelectorAll('.nak').forEach(function(x){
+        x.classList.toggle('sel', +x.dataset.i===i || (pinned!==null && +x.dataset.i===pinned));
+      });
+    });
+    sc.addEventListener('mouseleave', function(){
+      hoverIdx=null;
+      if(pinned!==null) show(pinned, true);
+      else { intro(); track.querySelectorAll('.nak.sel').forEach(function(x){x.classList.remove('sel');}); }
+    });
+  }
 })();
 
 /* ============================================================
    8. VIMSHOTTARI BAR
    ============================================================ */
 (function(){
+  // canonical Vimshottari order; years sum to exactly 120
   var D=[
-    {n:'Ketu',y:7,c:'#7d6be0'},{n:'Venus',y:20,c:'#f2c879'},{n:'Sun',y:6,c:'#ff9a5a'},
-    {n:'Moon',y:10,c:'#cfd8ea'},{n:'Mars',y:7,c:'#ff7a7a'},{n:'Rahu',y:18,c:'#8b6fb8'},
-    {n:'Jupiter',y:16,c:'#ffd98a'},{n:'Saturn',y:19,c:'#5f9ee3'},{n:'Mercury',y:17,c:'#5fe3d8'}
+    {n:'Ketu',    s:'Ketu',      y:7,  c:'#7d6be0', t:'A stripping-down chapter. Ketu removes rather than adds — attachments, roles and situations that have finished their work — and what it takes is rarely handed back. Classically tied to detachment, research and the turn inward. Disorienting while it runs, and often the seven years people later point to as the change of direction.'},
+    {n:'Venus',   s:'Śukra',     y:20, c:'#f2c879', t:'The longest chapter, and usually the most materially comfortable. Relationships, marriage, art, vehicles, refinement and pleasure move to the foreground. Whether it delivers depends entirely on Venus’s condition in the chart — a weak Venus makes twenty years of wanting rather than twenty years of having.'},
+    {n:'Sun',     s:'Sūrya',     y:6,  c:'#ff9a5a', t:'Short and defining. The Sun’s chapter pushes identity, authority, recognition and the father into the foreground — questions of who you are in public, and by what right. Six years is very little time, so it tends to concentrate events rather than unfold them.'},
+    {n:'Moon',    s:'Candra',    y:10, c:'#cfd8ea', t:'Mind, mother, home and emotional life. The most changeable of the nine — mood, circumstances and public standing all move with it. Nourishing and steadying when the Moon is strong in the chart; depleting and unsettled when it isn’t.'},
+    {n:'Mars',    s:'Maṅgala',   y:7,  c:'#ff7a7a', t:'Energy, conflict, property and courage. Mars’s chapter forces things — disputes get had, decisions get made under pressure, land and siblings often feature. Productive when there is somewhere for the force to go, corrosive when there isn’t.'},
+    {n:'Rahu',    s:'Rāhu',      y:18, c:'#8b6fb8', t:'Amplification without a limit. Rāhu magnifies whatever it touches — ambition, foreign connections, unconventional gain, obsession — and rarely arrives gently. Eighteen years of fast, disorienting movement that can build enormously and distort judgement just as easily.'},
+    {n:'Jupiter', s:'Bṛhaspati', y:16, c:'#ffd98a', t:'Expansion, knowledge, teachers, children and dharma. Traditionally the most protective of the nine, and generally the chapter where guidance turns up when it is needed. Its quality still rests on Jupiter’s dignity — an afflicted Jupiter expands the wrong things.'},
+    {n:'Saturn',  s:'Śani',      y:19, c:'#5f9ee3', t:'The long consolidation. Work, structure, delay, endurance and consequence. Saturn gives slowly and takes shortcuts away, which makes this the hardest chapter to live through and often the most durable in what it leaves standing. Nineteen years is close to a quarter of an adult life.'},
+    {n:'Mercury', s:'Budha',     y:17, c:'#5fe3d8', t:'Intellect, communication, commerce, skill and network. Mercury’s chapter brings learning, trade, writing and negotiation forward — mentally fast and highly productive where there is an outlet, scattered and restless where there isn’t.'}
   ];
-  var bar=document.getElementById('dbar'), leg=document.getElementById('dlegend');
+
+  var bar=document.getElementById('dbar'), leg=document.getElementById('dlegend'),
+      det=document.getElementById('ddetail'), sel=document.getElementById('nakStart'),
+      note=document.getElementById('dctlNote');
   if(!bar) return;
-  var bh='', lh='';
-  D.forEach(function(d){
-    bh += '<div class="dseg" style="flex-basis:'+(d.y/120*100)+'%;background:linear-gradient(160deg,'+d.c+'cc,'+d.c+'55)" title="'+d.n+' — '+d.y+' years"><span>'+d.y+'</span></div>';
-    lh += '<div class="dleg"><i style="background:'+d.c+'"></i>'+d.n+'<em>'+d.y+'y</em></div>';
+
+  var order=D.slice(), active=null;
+
+  // antardasha length = MD years x AD years / 120, in the classical 360-day year
+  function ymd(mdY, adY){
+    var days=Math.round(mdY*adY/120*360);
+    var y=Math.floor(days/360); days-=y*360;
+    var m=Math.floor(days/30);  var d=days-m*30;
+    return ((y?y+'y ':'')+(m?m+'m ':'')+(d?d+'d':'')).trim() || '0d';
+  }
+  function idxOf(name){ for(var i=0;i<D.length;i++) if(D[i].n===name) return i; return 0; }
+
+  function render(){
+    var bh='', lh='', cum=0;
+    order.forEach(function(d,i){
+      d._from=cum; cum+=d.y; d._to=cum;
+      bh+='<div class="dseg" data-n="'+d.n+'" role="button" tabindex="0" '+
+          'style="--w:'+(d.y/120*100).toFixed(4)+'%;background:linear-gradient(160deg,'+d.c+'cc,'+d.c+'55)" '+
+          'title="'+d.n+' — '+d.y+' years (years '+d._from+'–'+d._to+')"><span>'+d.y+'</span></div>';
+      lh+='<div class="dleg" data-n="'+d.n+'"><i style="background:'+d.c+'"></i>'+d.n+'<em>'+d.y+'y</em></div>';
+    });
+    bar.innerHTML=bh; leg.innerHTML=lh;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.classList.add('in'); }); });
+    if(active) show(active); else cue();
+  }
+
+  function cue(){
+    bar.classList.remove('sel');
+    bar.querySelectorAll('.dseg.on').forEach(function(x){x.classList.remove('on');});
+    leg.querySelectorAll('.dleg.on').forEach(function(x){x.classList.remove('on');});
+    det.innerHTML='<div class="dd-cue"><i></i>Select any chapter to open its nine sub-periods</div>';
+  }
+
+  function show(name){
+    active=name;
+    var d=order[0], k;
+    for(k=0;k<order.length;k++) if(order[k].n===name) d=order[k];
+    bar.classList.add('sel');
+    bar.querySelectorAll('.dseg').forEach(function(x){ x.classList.toggle('on', x.dataset.n===name); });
+    leg.querySelectorAll('.dleg').forEach(function(x){ x.classList.toggle('on', x.dataset.n===name); });
+
+    // antardasha sequence starts with the mahadasha lord, then follows the cycle
+    var st=idxOf(name), ab='', al='';
+    for(var j=0;j<9;j++){
+      var a=D[(st+j)%9], frac=(a.y/120*100).toFixed(4);
+      ab+='<div class="adseg" style="flex:0 0 '+frac+'%;background:linear-gradient(160deg,'+a.c+'cc,'+a.c+'4d)" '+
+          'title="'+d.n+'–'+a.n+' · '+ymd(d.y,a.y)+'"><span>'+(a.y>=10?a.n.slice(0,2):'')+'</span></div>';
+      al+='<div class="adrow"><i style="background:'+a.c+'"></i>'+d.n+'–'+a.n+'<em>'+ymd(d.y,a.y)+'</em></div>';
+    }
+    det.innerHTML=
+      '<div class="dd-in">'+
+        '<div class="dd-head">'+
+          '<span class="dd-name">'+d.n+' <span style="color:var(--ink-3);font-size:.8em">· '+d.s+'</span></span>'+
+          '<span class="dd-meta"><b>'+d.y+' years</b> · years '+d._from+'–'+d._to+' of the cycle</span>'+
+        '</div>'+
+        '<p class="dd-text">'+d.t+'</p>'+
+        '<div class="dd-sub">Its nine antardaśās <em>— exact, to the day</em></div>'+
+        '<div class="adbar">'+ab+'</div>'+
+        '<div class="adlist">'+al+'</div>'+
+      '</div>';
+  }
+
+  function pick(e){
+    var el=e.target.closest('[data-n]'); if(!el) return;
+    if(active===el.dataset.n) cue(); else show(el.dataset.n);
+  }
+  bar.addEventListener('click', pick);
+  leg.addEventListener('click', pick);
+  bar.addEventListener('keydown', function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(e); }
   });
-  bar.innerHTML=bh; leg.innerHTML=lh;
+
+  // reorder the sequence to the visitor's own starting mahadasha
+  if(sel){
+    var CYC=['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+    var oh='<option value="">Canonical order</option>';
+    for(var q=0;q<27;q++) oh+='<option value="'+q+'">'+(q+1<10?'0':'')+(q+1)+' · '+NAKS[q]+'</option>';
+    sel.innerHTML=oh;
+    sel.addEventListener('change', function(){
+      var v=sel.value;
+      if(v===''){
+        order=D.slice(); note.innerHTML='Canonical order shown — pick one to see your sequence';
+      } else {
+        var lord=CYC[(+v)%9], st=idxOf(lord);
+        order=[]; for(var z=0;z<9;z++) order.push(D[(st+z)%9]);
+        note.innerHTML='Born with the Moon in '+NAKS[+v]+', your first chapter is <b>'+lord+'</b> — though you enter it part-way through. The exact balance needs your birth time.';
+      }
+      bar.classList.remove('in');
+      render();
+    });
+  }
+
+  // grow the bar when it scrolls into view
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ bar.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.25});
+  render();
+  bar.classList.remove('in');
+  io.observe(bar);
 })();
 
 /* ============================================================
@@ -1256,12 +1738,60 @@ function dms(deg){
   if(!btn) return;
   var out=document.getElementById('resBody'), empty=document.getElementById('resEmpty');
 
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function fill(id, from, to, labels, ph){
+    var el=document.getElementById(id), h='<option value="">'+ph+'</option>';
+    for(var v=from; v<=to; v++){
+      h += '<option value="'+v+'">'+(labels ? labels[v-from] : (v<10?'0'+v:v))+'</option>';
+    }
+    el.innerHTML=h;
+  }
+  var thisYear=new Date().getFullYear();
+  fill('bday',1,31,null,'Day');
+  fill('bmon',1,12,MON,'Month');
+  (function(){
+    var el=document.getElementById('byear'), h='<option value="">Year</option>';
+    for(var y=thisYear; y>=1930; y--) h+='<option value="'+y+'">'+y+'</option>';
+    el.innerHTML=h;
+  })();
+  fill('bhour',0,23,null,'Hour');
+  fill('bmin',0,59,null,'Min');
+
+  var errBox=document.getElementById('calcErr');
+  function fail(msg, ids){
+    errBox.textContent=msg; errBox.classList.add('on');
+    ['bday','bmon','byear'].forEach(function(i){ document.getElementById(i).classList.remove('err'); });
+    (ids||[]).forEach(function(i){ document.getElementById(i).classList.add('err'); });
+  }
+  function clearErr(){
+    errBox.classList.remove('on');
+    ['bday','bmon','byear'].forEach(function(i){ document.getElementById(i).classList.remove('err'); });
+  }
+  ['bday','bmon','byear','bhour','bmin'].forEach(function(i){
+    document.getElementById(i).addEventListener('change', clearErr);
+  });
+
   btn.addEventListener('click', function(){
-    var dv=document.getElementById('bdate').value;
-    if(!dv){ document.getElementById('bdate').focus(); return; }
-    var tv=document.getElementById('btime').value || '12:00';
-    var parts=dv.split('-'), tp=tv.split(':');
-    var dt=new Date(Date.UTC(+parts[0], +parts[1]-1, +parts[2], +tp[0], +tp[1]));
+    var dd=document.getElementById('bday').value,
+        mm=document.getElementById('bmon').value,
+        yy=document.getElementById('byear').value;
+    if(!dd||!mm||!yy){
+      fail('Pick a day, month and year to continue.',
+        [!dd?'bday':null,!mm?'bmon':null,!yy?'byear':null].filter(Boolean));
+      return;
+    }
+    dd=+dd; mm=+mm; yy=+yy;
+    var hh=document.getElementById('bhour').value, mi=document.getElementById('bmin').value;
+    hh = hh==='' ? 12 : +hh;
+    mi = mi==='' ? 0  : +mi;
+
+    // local-time constructor: assumes the visitor's device timezone matches their birthplace
+    var dt=new Date(yy, mm-1, dd, hh, mi);
+    if(dt.getDate()!==dd || dt.getMonth()!==mm-1){
+      fail(MON[mm-1]+' '+yy+' has no day '+dd+'. Check the date.', ['bday','bmon']);
+      return;
+    }
+    clearErr();
 
     var trop=sunLongitude(dt);
     var ay=ayanamsa(dt);
@@ -1305,9 +1835,9 @@ function dms(deg){
       {duration:RM?1:640, easing:'cubic-bezier(.22,1,.36,1)'}) : null;
   });
 
-  ['bdate','btime'].forEach(function(id){
+  ['bday','bmon','byear','bhour','bmin'].forEach(function(id){
     document.getElementById(id).addEventListener('keydown', function(e){
-      if(e.key==='Enter') btn.click();
+      if(e.key==='Enter'){ e.preventDefault(); btn.click(); }
     });
   });
 })();
@@ -1332,7 +1862,11 @@ function dms(deg){
     ['How is this computed?',
      'Positions come from Swiss Ephemeris data with the Lahiri ayanāṁśa, resolved to arcsecond precision rather than read off a rendered chart image. Interpretation follows classical Parāśarī method, with claims cross-checked across divisional charts and against Aṣṭakavarga scoring. The reasoning is shown in the written summary so you can audit it rather than take it on trust.'],
     ['What should I bring to the session?',
-     'Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. Beyond that: one question you actually care about. Open-ended "tell me about myself" sessions are the least useful version of this.']
+     'Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. The booking form also has a box for a short query: a few lines on what you would like the reading to cover. You do not need a single neat question — a theme is enough, and the more specific it is, the more the fifteen minutes can do. That note is what the chart gets prepared around before we meet.'],
+    ['Why do I pay afterwards instead of upfront?',
+     'Because you have no way of knowing whether this is worth ₹250 until you have sat through it, and asking for money first puts the risk on the wrong person. Booking takes nothing — no card, no deposit. A Razorpay link reaches you when the call ends. If the fifteen minutes did not earn it, ignore the link; you will not be chased and you are welcome to book again.'],
+    ['Only one thing on offer? No packages or deeper readings?',
+     'One session, one price. Longer analyses do exist as a discipline — divisional charts, yoga audits, full daśā mapping — but selling tiers to someone who has not yet decided whether they trust the method is how this field lost its credibility. If a fifteen-minute reading is useful to you, the rest can be discussed then, as a conversation rather than a checkout.']
   ];
   var wrapEl=document.getElementById('faqList');
   if(!wrapEl) return;
