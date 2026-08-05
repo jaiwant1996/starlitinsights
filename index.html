@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Starlit Insights — Vedic Astrology, Computed to the Arcsecond</title>
-<meta name="description" content="Sidereal Vedic astrology built on Swiss Ephemeris precision and classical Parashari method. Find out why your horoscope has been 24 degrees wrong your whole life.">
+<meta name="description" content="Starlit Insights offers one product: a 15-minute one-to-one Vedic astrology consultation for Rs. 250, delivered online. Payment is requested after the session. Sidereal charts computed with Swiss Ephemeris and the Lahiri ayanamsha.">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Starlit Insights — Vedic Astrology, Computed to the Arcsecond">
@@ -466,6 +466,13 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
 .slist li{position:relative;padding-left:21px;font-size:.88rem;color:var(--ink-2);line-height:1.58}
 .slist li::before{content:'✦';position:absolute;left:0;top:.32em;color:var(--gold);font-size:.72rem}
 .slist li b{color:var(--ink);font-weight:500;font-family:var(--f-disp);letter-spacing:-.01em}
+.prodspec{display:flex;flex-direction:column;gap:1px;margin:6px 0 18px;border-radius:var(--r-md);
+  overflow:hidden;border:1px solid var(--line)}
+.prow{display:flex;gap:14px;padding:11px 14px;background:rgba(255,255,255,.028);flex-wrap:wrap}
+.prow span{flex:0 0 108px;font-family:var(--f-mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.prow b{font-size:.83rem;color:var(--ink);font-weight:500;min-width:0;line-height:1.45}
+@media(max-width:600px){.prow span{flex:0 0 100%}}
 .payafter{display:flex;align-items:center;gap:14px;margin:4px 0 20px;padding:14px 16px;
   border-radius:var(--r-md);border:1px solid rgba(95,227,216,.28);
   background:linear-gradient(120deg,rgba(95,227,216,.09),rgba(242,200,121,.05))}
@@ -515,7 +522,7 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
    ============================================================ */
 footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-index:3;
   background:linear-gradient(180deg,transparent,rgba(0,0,0,.42))}
-.fgrid{display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:36px;margin-bottom:40px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.05fr;gap:34px;margin-bottom:40px}
 .fgrid h4{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);margin-bottom:16px;font-weight:400}
 .fgrid ul{list-style:none;display:flex;flex-direction:column;gap:10px}
@@ -801,7 +808,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <h3>Two "planets" that aren't there</h3>
         <p>Rāhu and Ketu are the lunar nodes — the two points where the Moon's tilted orbit crosses
         Earth's orbital plane. Eclipses can <em>only</em> happen near them, which is why myth casts them as
-        a severed serpent swallowing the Sun. They drift backwards through the zodiac on an 18.6-year
+        a serpent swallowing the Sun. They drift backwards through the zodiac on an 18.6-year
         cycle. Vedic tradition assigns Rāhu an 18-year daśā. Make of that what you will.</p>
       </article>
 
@@ -878,14 +885,14 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="card rv" data-d="1" style="padding:30px 28px">
         <div class="eyebrow" style="color:var(--rose)">What we are not</div>
         <ul class="mlist dont">
-          <li><i class="tick">✕</i><div><strong>Fear as a sales tool</strong>
-            <p>No manufactured doṣas, no "urgent remedy" upsells, no gemstone you must buy today. Doṣas get checked for cancellation and reported honestly.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Pressure selling</strong>
+            <p>No manufactured problems, no urgent add-on purchases, nothing sold to you beyond the reading itself. Classical checks are run properly and reported honestly either way.</p></div></li>
           <li><i class="tick">✕</i><div><strong>Auto-generated yogas taken on faith</strong>
             <p>Popular kundli apps routinely invent yogas that don't survive a degree check. Every one is verified independently before it's mentioned.</p></div></li>
-          <li><i class="tick">✕</i><div><strong>Death, terminal illness, or disaster predictions</strong>
-            <p>Out of scope. Permanently. No responsible reading of a chart delivers those, whatever the tradition claims is possible.</p></div></li>
-          <li><i class="tick">✕</i><div><strong>Deterministic fatalism</strong>
-            <p>A chart describes karmic temperament and timing pressure — the weather system you're flying through. It is not a sentence handed down.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Questions outside the practice's scope</strong>
+            <p>Certain categories — anything touching health outcomes or lifespan — are permanently declined. Where something serious is going on, the right answer is a qualified professional, not a chart.</p></div></li>
+          <li><i class="tick">✕</i><div><strong>Treating a chart as fixed destiny</strong>
+            <p>A chart describes karmic temperament and timing — the weather system you're flying through. It is a description, not a verdict, and it never removes your own agency.</p></div></li>
           <li><i class="tick">✕</i><div><strong>Vagueness dressed as depth</strong>
             <p>If a statement would be true of anyone, it isn't insight. Readings name specific windows, specific mechanisms, specific trade-offs.</p></div></li>
         </ul>
@@ -984,6 +991,14 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
           <li><b>Every claim is sourced as it's made</b>, so you can go and verify any of it yourself once we're done.</li>
           <li><b>Nothing is charged to book.</b> The ₹250 link reaches you only after the session — and only if it earned it.</li>
         </ul>
+        <div class="prodspec">
+          <div class="prow"><span>Product</span><b>15-Minute Vedic Astrology Reading</b></div>
+          <div class="prow"><span>Price</span><b>₹250 (INR) — inclusive of applicable taxes</b></div>
+          <div class="prow"><span>Duration</span><b>15 minutes</b></div>
+          <div class="prow"><span>Format</span><b>One-to-one online consultation (audio or video)</b></div>
+          <div class="prow"><span>Delivery</span><b>At your chosen appointment time — no physical goods</b></div>
+          <div class="prow"><span>Payment</span><b>Requested after the session, by secure payment link</b></div>
+        </div>
         <div class="payafter">
           <span>₹0 today</span>
           <p>Take a slot without paying anything. Settle up afterwards, if the session delivered.</p>
@@ -1086,7 +1101,28 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="eyebrow rv">Questions</div>
       <h2 class="rv" data-d="1">The ones worth asking.</h2>
     </div>
-    <div class="faq rv" id="faqList"></div>
+    <div class="faq rv" id="faqList">
+      <button class="q" type="button" aria-expanded="false">Do I have to believe in astrology for this to be worth it?</button>
+      <div class="a"><div>No. Plenty of people come in as sceptics and treat a reading as a structured mirror — a framework for thinking about timing, temperament and recurring patterns, which they can accept or reject line by line. The method here is stated openly precisely so you can push back on it. Disagreement is useful; it usually sharpens the reading.</div></div>
+      <button class="q" type="button" aria-expanded="false">Why is my birth time such a big deal?</button>
+      <div class="a"><div>Because the ascendant moves a full degree every four minutes. It changes sign roughly every two hours, and the navāṁśa sub-division shifts every 13 minutes 20 seconds. A vague birth time doesn’t make a reading slightly less accurate — it makes entire layers of it unusable. If your time is uncertain, say so upfront and it gets handled with rectification techniques rather than quietly guessed.</div></div>
+      <button class="q" type="button" aria-expanded="false">What if I don’t know my birth time at all?</button>
+      <div class="a"><div>A reading is still possible, but limited to what doesn’t depend on the ascendant — planetary sign positions, some daśā structure, broad temperament. You’ll be told exactly which conclusions are solid and which are off the table. What won’t happen is a confident-sounding reading built on a made-up time.</div></div>
+      <button class="q" type="button" aria-expanded="false">Is this the same as my Instagram horoscope?</button>
+      <div class="a"><div>It isn’t even the same zodiac. Popular horoscopes use the tropical zodiac, fixed to the equinox roughly 2,000 years ago and now drifted about 24° from the actual constellations. This practice uses the sidereal zodiac with the Lahiri ayanāṁśa, anchored to the real stars. And a horoscope column addresses one twelfth of humanity at once. A chart addresses one birth moment.</div></div>
+      <button class="q" type="button" aria-expanded="false">Are there questions you won’t answer?</button>
+      <div class="a"><div>Yes, and they’re stated upfront. Anything concerning health outcomes, lifespan or serious personal difficulty is permanently outside the scope of this practice — not for a higher fee, not as a special case. Where something serious is going on in someone’s life, the right answer is a qualified professional, not a chart.</div></div>
+      <button class="q" type="button" aria-expanded="false">Will I be asked to buy anything else?</button>
+      <div class="a"><div>No. One session, one price, and nothing else is sold to you. Where classical remedial measures exist in the tradition, they can be explained as context — never as a purchase you must make, and never as protection you’ll go without. Pressure selling is the oldest problem in this field, and this practice doesn’t participate in it.</div></div>
+      <button class="q" type="button" aria-expanded="false">How is this computed?</button>
+      <div class="a"><div>Positions come from Swiss Ephemeris data with the Lahiri ayanāṁśa, resolved to arcsecond precision rather than read off a rendered chart image. Interpretation follows classical Parāśarī method, with claims cross-checked across divisional charts and against Aṣṭakavarga scoring. The reasoning is shown as we go, so you can audit it rather than take it on trust.</div></div>
+      <button class="q" type="button" aria-expanded="false">What should I bring to the session?</button>
+      <div class="a"><div>Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. The booking form also has a box for a short query: a few lines on what you’d like the reading to cover. You don’t need a single neat question; a theme is enough, and the more specific it is, the more the fifteen minutes can do.</div></div>
+      <button class="q" type="button" aria-expanded="false">Why do I pay afterwards instead of upfront?</button>
+      <div class="a"><div>Because you have no way of knowing whether this is worth ₹250 until you’ve sat through it, and asking for money first puts the risk on the wrong person. Booking takes nothing — no card, no deposit. A payment link reaches you when the call ends. If the fifteen minutes didn’t earn it, ignore the link; you won’t be chased, and you’re welcome to book again.</div></div>
+      <button class="q" type="button" aria-expanded="false">Only one thing on offer? No packages or deeper readings?</button>
+      <div class="a"><div>One session, one price. Longer analyses do exist as a discipline — divisional charts, yoga audits, full daśā mapping — but selling tiers to someone who hasn’t yet decided whether they trust the method is how this field lost its credibility. If a fifteen-minute reading is useful to you, the rest can be discussed then, as a conversation rather than a checkout.</div></div>
+    </div>
   </div>
 </section>
 
@@ -1108,9 +1144,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         </p>
         <div class="disclaimer">
           <b style="color:var(--ink-2)">Please read:</b> Readings are offered for reflection, self-understanding
-          and timing perspective. They are not medical, psychological, legal or financial advice, and are no
-          substitute for a qualified professional. No reading covers death, terminal illness or disaster.
-          You remain fully responsible for your own decisions. Consultations are for adults (18+).
+          and perspective on timing. They are interpretive, and are never a substitute for guidance from a
+          qualified professional. Questions concerning health outcomes or lifespan are outside the scope of
+          this practice. You remain fully responsible for your own decisions. For adults 18+.
         </div>
       </div>
       <div>
@@ -1130,6 +1166,16 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
           <li><a href="#book">Book a slot</a></li>
           <li><a href="#pay">How payment works</a></li>
           <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="shipping.html">Shipping &amp; Delivery</a></li>
+          <li><a href="refunds.html">Cancellation &amp; Refunds</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
         </ul>
       </div>
     </div>
@@ -1414,15 +1460,15 @@ function dms(deg){
    7. NAKSHATRA MARQUEE
    ============================================================ */
 var NAKDATA = [
-  ['Aśvinī','Aries 0°00′ – 13°20′','Ketu','Aśvinī Kumāras','Horse\'s head','Deva','Śīghra-vyāpani — to reach swiftly','Horse','The zodiac\'s opening impulse, and it behaves like one: fast, instinctive, first on the scene. Associated with the celestial physicians, it carries a real gift for rapid healing and rescue — the one who acts while everyone else is still deciding. The same speed is its friction. Momentum arrives before deliberation does, and things get started far more easily than they get finished.'],
+  ['Aśvinī','Aries 0°00′ – 13°20′','Ketu','Aśvinī Kumāras','Horse\'s head','Deva','Śīghra-vyāpani — to reach swiftly','Horse','The zodiac\'s opening impulse, and it behaves like one: fast, instinctive, first on the scene. Associated with the twin celestial riders, it carries a real gift for rapid response and repair — the one who acts while everyone else is still deciding. The same speed is its friction. Momentum arrives before deliberation does, and things get started far more easily than they get finished.'],
   ['Bharaṇī','Aries 13°20′ – 26°40′','Venus','Yama','Yoni — the womb','Manuṣya','Apabharaṇī — to carry away','Elephant','Governed by Yama, keeper of limits. Bharaṇī bears things: pressure, consequence, other people\'s weight, long gestation before anything shows. Its strength is capacity — an unusual tolerance for holding a difficult situation until it genuinely transforms rather than merely ends. The cost is intensity turned inward, and a habit of carrying what should have been set down.'],
   ['Kṛttikā','Aries 26°40′ – Taurus 10°00′','Sun','Agni','Razor, flame','Rākṣasa','Dahana — to burn','Sheep','Ruled by Agni, and it burns. Sharp perception that cuts straight to what is false, a low tolerance for pretence, and a willingness to say the thing nobody else will. It purifies whatever it touches, which is valuable and rarely comfortable. The friction is plain: the blade that clarifies also wounds, and criticism can arrive faster than care.'],
   ['Rohiṇī','Taurus 10°00′ – 23°20′','Moon','Brahmā (Prajāpati)','Ox cart','Manuṣya','Rohaṇa — to grow, to ascend','Serpent','The most fertile ground in the zodiac, and the Moon\'s favourite place to sit. Beauty, magnetism, and a genuine capacity to make things flourish — materially and artistically. People are drawn here without quite knowing why. The shadow is attachment: what grows well becomes hard to release, and possessiveness can quietly replace devotion.'],
   ['Mṛgaśīrṣa','Taurus 23°20′ – Gemini 6°40′','Mars','Soma','Deer\'s head','Deva','Prīṇana — to give fulfilment','Serpent','The deer\'s head, permanently scanning. Curious, quick, gentle, and genuinely good at finding things — information, people, openings. It thrives while searching. The difficulty is arrival: satisfaction always sits just past whatever has already been reached, so restlessness outlives every acquisition and the search itself becomes the point.'],
-  ['Ārdrā','Gemini 6°40′ – 20°00′','Rāhu','Rudra','Teardrop','Manuṣya','Yatna — to make effort','Dog','Rudra\'s storm. Ārdrā breaks things open — assumptions, structures, comfortable stories — and the clarity that follows the disruption could not have arrived any other way. Real intellectual force, and no patience for a tidy answer. The cost is turbulence: emotional weather that lands hard, and a habit of tearing down before deciding what replaces it.'],
+  ['Ārdrā','Gemini 6°40′ – 20°00′','Rāhu','Rudra','Teardrop','Manuṣya','Yatna — to make effort','Dog','Rudra\'s storm. Ārdrā opens things up — assumptions, structures, comfortable stories — and the clarity that follows the disruption could not have arrived any other way. Real intellectual force, and no patience for a tidy answer. The cost is turbulence: emotional weather that lands hard, and a habit of clearing the ground before deciding what replaces it.'],
   ['Punarvasu','Gemini 20°00′ – Cancer 3°20′','Jupiter','Aditi','Quiver of arrows','Deva','Vasutva-prāpana — to regain substance','Cat','“Good again.” Aditi\'s nakṣatra is the capacity to return — after loss, after failure, after a wrong turn — and to rebuild without carrying the grievance forward. Generous, philosophical, easy to be around. The friction is repetition: the same lesson gets circled more than once, and being good at recovery quietly reduces the urgency to avoid the fall.'],
   ['Puṣya','Cancer 3°20′ – 16°40′','Saturn','Bṛhaspati','Cow\'s udder','Deva','Brahmavarcasa — to create spiritual energy','Sheep','Held to be the most auspicious of the 27, and it earns it. Nourishing, dependable, protective — the person others structurally rely on, often without acknowledging it. Ruled by Saturn but presided over by Bṛhaspati, it pairs duty with real care. The shadow is over-responsibility: giving past capacity, and mistaking being needed for being valued.'],
-  ['Āśleṣā','Cancer 16°40′ – 30°00′','Mercury','The Nāgas','Coiled serpent','Rākṣasa','Viṣāśleṣaṇa — to entwine, to poison','Cat','The coiled serpent: penetrating, strategic, and unusually accurate about what people are actually doing rather than what they claim. It reads a room on entry. That same faculty is why it withholds — information, intent, feeling — and the line between discretion and manipulation is one this nakṣatra has to draw for itself.'],
+  ['Āśleṣā','Cancer 16°40′ – 30°00′','Mercury','The Nāgas','Coiled serpent','Rākṣasa','Viṣāśleṣaṇa — to entwine, to bind','Cat','The coiled serpent: penetrating, strategic, and unusually accurate about what people are actually doing rather than what they claim. It reads a room on entry. That same faculty is why it withholds — information, intent, feeling — and the line between discretion and quiet influence is one this nakṣatra has to draw for itself.'],
   ['Maghā','Leo 0°00′ – 13°20′','Ketu','The Pitṛs','Royal throne','Rākṣasa','Tyāge kṣepaṇī — to leave the body','Rat','The throne of the ancestors. Authority arrives here by inheritance rather than negotiation, together with a strong sense of lineage, tradition and what is owed to those who came before. Dignified, naturally commanding. The friction is entitlement: position mistaken for achievement, and real difficulty operating in rooms where the throne counts for nothing.'],
   ['Pūrva Phalgunī','Leo 13°20′ – 26°40′','Venus','Bhaga','Front of a bed','Manuṣya','Prajanana — to procreate','Rat','Bhaga\'s nakṣatra — enjoyment, rest, and creative play. It knows how to appreciate what has been built, and how to make that pleasure contagious. Warm, charming, socially fluent, genuinely good company. The cost is ease: comfort gets defended a little too well, and effort is deferred until enjoyment stops being a reward and becomes an avoidance.'],
   ['Uttara Phalgunī','Leo 26°40′ – Virgo 10°00′','Sun','Aryaman','Back of a bed','Manuṣya','Cayanī — to accumulate through union','Cow','Where friendship becomes contract. Aryaman governs the bonds that actually hold — patronage, alliance, marriage, the agreements that survive inconvenience. Reliable, generous, good at formalising trust. The friction is that obligation outlasts affection: arrangements get maintained on principle long after they stopped nourishing anyone.'],
@@ -1431,13 +1477,13 @@ var NAKDATA = [
   ['Svātī','Libra 6°40′ – 20°00′','Rāhu','Vāyu','Young shoot in wind','Deva','Pradhvaṁsa — to scatter like wind','Buffalo','The young shoot bending in wind. Independent, adaptable, diplomatic, and deeply resistant to being held down or spoken for. It moves around obstacles rather than through them, and it trades and negotiates well. The cost is rootlessness — flexibility without anchor, and a reluctance to commit that feels like freedom from inside and evasion from outside.'],
   ['Viśākhā','Libra 20°00′ – Scorpio 3°20′','Jupiter','Indra–Agni','Triumphal archway','Rākṣasa','Vyāpanī — to attain many fruits','Tiger','The forked branch, and a fixed target. Ambition here is patient and specific: it keeps working long after enthusiasm has burned off, which is usually why it arrives. Determined, competitive, goal-shaped. The friction is the price of the goal — rest, relationships and everything unrelated get postponed, and arrival satisfies less than the pursuit did.'],
   ['Anurādhā','Scorpio 3°20′ – 16°40′','Saturn','Mitra','Lotus','Deva','Rādhana — to worship, to honour','Deer','Mitra\'s nakṣatra: friendship, devotion, and an ability to build cooperation between people with nothing obvious in common. It travels well, works well among strangers and outsiders, and stays loyal across distance. The shadow is that devotion can be handed to something undeserving, and hardship is tolerated well past the point it should have been named.'],
-  ['Jyeṣṭhā','Scorpio 16°40′ – 30°00′','Mercury','Indra','Circular amulet','Rākṣasa','Ārohaṇa — to rise and conquer','Deer','The eldest. Seniority, protectiveness, and real capability — the one deferred to, and the one carrying what that costs. Indra\'s nakṣatra, so there is both power and the isolation trailing it. The friction is the burden itself: authority held too tightly, help offered as control, and a deep reluctance to be seen struggling.'],
-  ['Mūla','Sagittarius 0°00′ – 13°20′','Ketu','Nirṛti','Bunch of roots','Rākṣasa','Barhaṇa — to break apart','Dog','The root, and Nirṛti who presides over dissolution. It digs until it reaches the origin of a thing — motive, cause, first principle — and is unsatisfied by any account that stops short. Formidable for research, philosophy, and anything requiring the floor be taken up. Uprooting is not gentle, and what gets destroyed along the way is real.'],
+  ['Jyeṣṭhā','Scorpio 16°40′ – 30°00′','Mercury','Indra','Umbrella','Rākṣasa','Ārohaṇa — to rise and conquer','Deer','The eldest. Seniority, protectiveness, and real capability — the one deferred to, and the one carrying what that costs. Indra\'s nakṣatra, so there is both power and the isolation trailing it. The friction is the burden itself: authority held too tightly, help offered as control, and a deep reluctance to be seen struggling.'],
+  ['Mūla','Sagittarius 0°00′ – 13°20′','Ketu','Nirṛti','Bunch of roots','Rākṣasa','Barhaṇa — to reach the root','Dog','The root, and Nirṛti who presides over endings. It digs until it reaches the origin of a thing — motive, cause, first principle — and is unsatisfied by any account that stops short. Formidable for research, philosophy, and anything requiring the floor be taken up. Uprooting is not gentle, and what gets disturbed along the way is real.'],
   ['Pūrva Āṣāḍhā','Sagittarius 13°20′ – 26°40′','Venus','Āpas','Winnowing fan','Manuṣya','Varcograhaṇa — to invigorate','Monkey','The undefeated. Conviction here is close to unshakeable and it is contagious — this nakṣatra persuades, invigorates, and carries others along on certainty alone. Associated with the waters, it purifies as it moves. The friction is that certainty rarely audits itself: being convinced and being correct feel identical from the inside.'],
   ['Uttara Āṣāḍhā','Sagittarius 26°40′ – Capricorn 10°00′','Sun','Viśvadevas','Elephant tusk','Manuṣya','Apradhṛṣya — unchallengeable victory','Mongoose','The later victory — the one that holds. It wins slowly, by integrity rather than speed, and what it builds tends to outlast it. Principled, patient, unusually safe with responsibility. The cost is rigidity: the principles that make it dependable make it slow to move position, and it carries a burden long after help was available.'],
   ['Śravaṇa','Capricorn 10°00′ – 23°20′','Moon','Viṣṇu','The ear','Deva','Saṁhanana — to connect','Monkey','The ear. Viṣṇu\'s nakṣatra is about receiving — listening, learning, remembering, and passing knowledge on intact to whoever comes next. Excellent for teaching, languages, counsel and scholarship. The shadow is absorption without a filter: other people\'s opinions take up residence, and reputation matters more than it should to someone who hears everything said.'],
   ['Dhaniṣṭhā','Capricorn 23°20′ – Aquarius 6°40′','Mars','The Vasus','Drum','Rākṣasa','Khyāpayitrī — to give fame','Lion','The drum. Rhythm, timing, performance, and a real capacity for wealth and public recognition. It works well in groups and knows instinctively when to come in. The friction is the need to be heard — status becomes the measure of everything, and the beat is sometimes kept at the expense of the people playing alongside.'],
-  ['Śatabhiṣā','Aquarius 6°40′ – 20°00′','Rāhu','Varuṇa','Empty circle','Rākṣasa','Bheṣaja — to heal','Horse','A hundred healers, and an empty circle. Solitary, unconventional, drawn to what is hidden — and often able to diagnose or repair what nobody else could even identify. Strong links to medicine, mysticism and technology. The cost is the enclosure: privacy hardens into isolation, and help is offered far more readily than it is ever accepted.'],
+  ['Śatabhiṣā','Aquarius 6°40′ – 20°00′','Rāhu','Varuṇa','Empty circle','Rākṣasa','Bheṣaja — to restore','Horse','A hundred stars, and an empty circle. Solitary, unconventional, drawn to what is hidden — and often able to identify and repair what nobody else could even name. Strong links to research, seclusion and technology. The cost is the enclosure: privacy hardens into isolation, and help is offered far more readily than it is ever accepted.'],
   ['Pūrva Bhādrapadā','Aquarius 20°00′ – Pisces 3°20′','Jupiter','Aja Ekapāda','Two-faced man','Manuṣya','Yajamāna-udyamana — to raise up','Lion','Austerity with an edge. Idealism sharp enough to cut, unusual intensity, and a willingness to trade comfort for a principle. It sees through the world\'s arrangements and is not much interested in pretending otherwise. The friction is severity — toward others, and considerably more toward itself — with a pull to extremes that moderation rarely survives.'],
   ['Uttara Bhādrapadā','Pisces 3°20′ – 16°40′','Saturn','Ahir Budhnya','Serpent of the deep','Manuṣya','Varṣodyamana — to bring rain','Cow','The serpent of the deep. Stillness, patience, and wisdom that accumulated quietly and feels no need to announce itself. Compassionate, hard to unsettle, good in a crisis precisely because it does not react. The shadow is withdrawal: depth used as somewhere to retreat into, and difficulty translating an inner life into anything reachable by anyone else.'],
   ['Revatī','Pisces 16°40′ – 30°00′','Mercury','Pūṣan','Fish','Deva','Kṣīrādyāpanī — to nourish','Elephant','Pūṣan, the guide who sees travellers safely home. Nourishing, kind, protective of whatever is vulnerable, and unusually good at endings — it completes cycles and hands things on well. The last nakṣatra, so it carries a sense of finish. The friction is porousness: boundaries run thin, other people\'s needs get absorbed as one\'s own, and letting go costs more than it should.']
@@ -1843,51 +1889,25 @@ var NAKDATA = [
 })();
 
 /* ============================================================
-   10. FAQ
+   10. FAQ  (markup is static in the HTML above - this only wires the accordion)
    ============================================================ */
 (function(){
-  var QA=[
-    ['Do I have to believe in astrology for this to be worth it?',
-     'No. Plenty of people come in as sceptics and treat a reading as a structured mirror — a framework for thinking about timing, temperament and recurring patterns that they can accept or reject line by line. The method here is stated openly precisely so you can push back on it. Disagreement is useful; it usually sharpens the reading.'],
-    ['Why is my birth time such a big deal?',
-     'Because the ascendant moves a full degree every four minutes. It changes sign roughly every two hours, and the navāṁśa sub-division shifts every 13 minutes 20 seconds. A vague birth time doesn’t make a reading slightly less accurate — it makes entire layers of it unusable. If your time is uncertain, say so upfront and it gets handled with rectification techniques rather than quietly guessed.'],
-    ['What if I don’t know my birth time at all?',
-     'A reading is still possible, but it will be limited to what doesn’t depend on the ascendant — planetary sign positions, some daśā structure, broad temperament. You’ll be told exactly which conclusions are solid and which are off the table. What won’t happen is a confident-sounding reading built on a made-up time.'],
-    ['Is this the same as my Instagram horoscope?',
-     'It isn’t even the same zodiac. Popular horoscopes use the tropical zodiac, fixed to the equinox roughly 2,000 years ago and now drifted about 24° from the actual constellations. This practice uses the sidereal zodiac with the Lahiri ayanāṁśa, anchored to the real stars. And a horoscope column addresses one twelfth of humanity at once. A chart addresses one birth moment.'],
-    ['Will you tell me about death, illness, or disaster?',
-     'No. Not now, not for a higher fee, not as a special case. Those questions are permanently out of scope. If something in your chart raises a genuine health or safety concern, the honest response is to point you toward a qualified professional — not to speculate from planetary positions.'],
-    ['Do I need to buy gemstones or perform remedies?',
-     'Nothing is sold to you here beyond the reading itself. Where classical remedial measures exist, they can be explained as part of the tradition — but they’re presented as context, not as a purchase you must make and not as protection you’ll suffer without. Fear-based upselling is the oldest scam in this field.'],
-    ['How is this computed?',
-     'Positions come from Swiss Ephemeris data with the Lahiri ayanāṁśa, resolved to arcsecond precision rather than read off a rendered chart image. Interpretation follows classical Parāśarī method, with claims cross-checked across divisional charts and against Aṣṭakavarga scoring. The reasoning is shown in the written summary so you can audit it rather than take it on trust.'],
-    ['What should I bring to the session?',
-     'Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. The booking form also has a box for a short query: a few lines on what you would like the reading to cover. You do not need a single neat question — a theme is enough, and the more specific it is, the more the fifteen minutes can do. That note is what the chart gets prepared around before we meet.'],
-    ['Why do I pay afterwards instead of upfront?',
-     'Because you have no way of knowing whether this is worth ₹250 until you have sat through it, and asking for money first puts the risk on the wrong person. Booking takes nothing — no card, no deposit. A payment link reaches you when the call ends. If the fifteen minutes did not earn it, ignore the link; you will not be chased and you are welcome to book again.'],
-    ['Only one thing on offer? No packages or deeper readings?',
-     'One session, one price. Longer analyses do exist as a discipline — divisional charts, yoga audits, full daśā mapping — but selling tiers to someone who has not yet decided whether they trust the method is how this field lost its credibility. If a fifteen-minute reading is useful to you, the rest can be discussed then, as a conversation rather than a checkout.']
-  ];
   var wrapEl=document.getElementById('faqList');
   if(!wrapEl) return;
-  QA.forEach(function(qa,i){
-    var b=document.createElement('button');
-    b.className='q'; b.type='button'; b.textContent=qa[0];
-    b.setAttribute('aria-expanded','false');
-    var a=document.createElement('div');
-    a.className='a'; a.innerHTML='<div>'+qa[1]+'</div>';
+  wrapEl.querySelectorAll('.q').forEach(function(b){
+    var a=b.nextElementSibling;
+    if(!a||!a.classList.contains('a')) return;
     b.addEventListener('click', function(){
-      var open=b.classList.contains('on');
+      var isOpen=b.classList.contains('on');
       wrapEl.querySelectorAll('.q.on').forEach(function(o){
         o.classList.remove('on'); o.setAttribute('aria-expanded','false');
         o.nextElementSibling.style.maxHeight=0;
       });
-      if(!open){
+      if(!isOpen){
         b.classList.add('on'); b.setAttribute('aria-expanded','true');
         a.style.maxHeight=a.scrollHeight+'px';
       }
     });
-    wrapEl.appendChild(b); wrapEl.appendChild(a);
   });
 })();
 
@@ -1916,11 +1936,5 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 })();
 </script>
 
-<!-- ============================================================
-     LEGAL / POLICY MODULE  (Terms, Privacy, Shipping, Refunds, Contact)
-     Self-contained. Delete legal.js to remove the feature entirely —
-     nothing else on the page depends on it.
-     ============================================================ -->
-<script src="legal.js" defer></script>
 </body>
 </html>
