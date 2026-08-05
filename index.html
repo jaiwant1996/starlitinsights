@@ -974,7 +974,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <span class="stag">No advance payment</span>
         <div class="eyebrow" style="margin-bottom:10px">The only thing on offer</div>
         <h3>15-Minute Reading</h3>
-        <div class="price">₹250<small> / 15 min · settled after the session</small></div>
+        <div class="price">₹250<small> / 15 min · Paid after the session</small></div>
         <p style="font-size:.92rem;color:var(--ink-2)">Fifteen minutes inside your real chart, built around
         the thing you're actually carrying — and you decide it was worth ₹250 once you've had it.</p>
         <ul class="slist">
@@ -1008,7 +1008,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="step">
         <span class="stepn">03</span>
         <h4>Then — and only then — ₹250</h4>
-        <p>A Razorpay link arrives once the session is done. UPI, card, net banking or wallet. If the
+        <p>A payment link arrives once the session is done. UPI, card, net banking or wallet. If the
         reading didn't deliver for you, ignore the link. No chasing, no invoice, no hard feelings.</p>
       </div>
     </div>
@@ -1068,12 +1068,12 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="ic">₹</div>
       <h3 style="margin-bottom:10px">Nothing is charged to book</h3>
       <p style="font-size:.9rem;max-width:56ch;margin-inline:auto">
-        Not at booking, not before the call. Once your session is done you'll get a Razorpay link for
+        Not at booking, not before the call. Once your session is done you'll get a payment link for
         <b class="hl">₹250</b> — UPI, card, net banking or wallet. Settle it then, if the fifteen
         minutes were worth it to you.
       </p>
       <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--ink-3);margin-top:20px">
-        RAZORPAY LINK — GOES LIVE SHORTLY
+        Payment LINK — GOES LIVE SHORTLY
       </p>
     </div>
   </div>
@@ -1864,7 +1864,7 @@ var NAKDATA = [
     ['What should I bring to the session?',
      'Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. The booking form also has a box for a short query: a few lines on what you would like the reading to cover. You do not need a single neat question — a theme is enough, and the more specific it is, the more the fifteen minutes can do. That note is what the chart gets prepared around before we meet.'],
     ['Why do I pay afterwards instead of upfront?',
-     'Because you have no way of knowing whether this is worth ₹250 until you have sat through it, and asking for money first puts the risk on the wrong person. Booking takes nothing — no card, no deposit. A Razorpay link reaches you when the call ends. If the fifteen minutes did not earn it, ignore the link; you will not be chased and you are welcome to book again.'],
+     'Because you have no way of knowing whether this is worth ₹250 until you have sat through it, and asking for money first puts the risk on the wrong person. Booking takes nothing — no card, no deposit. A payment link reaches you when the call ends. If the fifteen minutes did not earn it, ignore the link; you will not be chased and you are welcome to book again.'],
     ['Only one thing on offer? No packages or deeper readings?',
      'One session, one price. Longer analyses do exist as a discipline — divisional charts, yoga audits, full daśā mapping — but selling tiers to someone who has not yet decided whether they trust the method is how this field lost its credibility. If a fifteen-minute reading is useful to you, the rest can be discussed then, as a conversation rather than a checkout.']
   ];
@@ -1915,5 +1915,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 });
 })();
 </script>
+
+<!-- ============================================================
+     LEGAL / POLICY MODULE  (Terms, Privacy, Shipping, Refunds, Contact)
+     Self-contained. Delete legal.js to remove the feature entirely —
+     nothing else on the page depends on it.
+     ============================================================ -->
+<script src="legal.js" defer></script>
 </body>
 </html>
