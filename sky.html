@@ -806,22 +806,23 @@ function makeGlow(color,size){
   sp.scale.set(size,size,1);
   return sp;
 }
-function makeLabel(text,color,scale){
-  var pr=2, pad=8, fs=34;
+/* px = the on-screen height in CSS pixels this label should always occupy */
+function makeLabel(text,color,px){
+  var pr=2, pad=10, fs=40;
   var cv=document.createElement('canvas'), cx=cv.getContext('2d');
-  cx.font='500 '+fs+'px "Space Grotesk", sans-serif';
+  cx.font='600 '+fs+'px "Space Grotesk", sans-serif';
   var w=Math.ceil(cx.measureText(text).width)+pad*2;
   cv.width=w*pr; cv.height=(fs+pad*2)*pr; cx.scale(pr,pr);
-  cx.font='500 '+fs+'px "Space Grotesk", sans-serif';
+  cx.font='600 '+fs+'px "Space Grotesk", sans-serif';
   cx.fillStyle=color; cx.textBaseline='middle';
-  cx.shadowColor='rgba(0,0,0,.9)'; cx.shadowBlur=8;
+  cx.shadowColor='rgba(0,0,0,1)'; cx.shadowBlur=10;
+  cx.fillText(text,pad,(fs+pad*2)/2);
   cx.fillText(text,pad,(fs+pad*2)/2);
   var tex=new THREE.CanvasTexture(cv); tex.minFilter=THREE.LinearFilter;
   var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
-  var s=(scale||1)*0.055;
-  sp.userData.bw=cv.width/pr*s; sp.userData.bh=cv.height/pr*s;
-  sp.userData.fixed=true;
-  sp.scale.set(sp.userData.bw, sp.userData.bh, 1);
+  sp.userData.px=(px||14)*(cv.height/pr)/fs;   /* scale target up for the padding band */
+  sp.userData.aspect=cv.width/cv.height;
+  labelSprites.push(sp);
   return sp;
 }
 /* arc segment on the ecliptic plane, used to highlight a rasi / nakshatra */
@@ -856,6 +857,7 @@ function buildScene(){
   root=new THREE.Group(); scene.add(root);
 
   /* --- starfield --- */
+  labelSprites=[];
   var SN=RM?800:2600, pos=new Float32Array(SN*3), col=new Float32Array(SN*3);
   for(var i=0;i<SN;i++){
     var u=Math.random()*2-1, th=Math.random()*6.2832, rr=Math.sqrt(1-u*u), R=340+Math.random()*260;
@@ -876,7 +878,7 @@ function buildScene(){
     new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.16,side:THREE.BackSide})));
   root.add(new THREE.Mesh(new THREE.SphereGeometry(5.6,32,24),
     new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.05,side:THREE.BackSide})));
-  var el=makeLabel('EARTH','rgba(174,184,204,.85)',0.5); el.position.set(0,-5.4,0); root.add(el);
+  var el=makeLabel('EARTH','rgba(174,184,204,.9)',11); el.position.set(0,-5.4,0); root.add(el);
 
   /* --- ecliptic disc --- */
   var disc=new THREE.Mesh(new THREE.RingGeometry(6,50,128),
@@ -891,7 +893,7 @@ function buildScene(){
     var lon=k*(360/27), a=lon*D2R;
     tp.push(new THREE.Vector3(52*Math.cos(a),0,-52*Math.sin(a)));
     tp.push(new THREE.Vector3(56*Math.cos(a),0,-56*Math.sin(a)));
-    var lb=makeLabel(NAK[k],'rgba(95,227,216,.9)',0.42);
+    var lb=makeLabel(NAK[k],'rgba(120,240,230,1)',13);
     lb.position.copy(polar(59.5,lon+(360/54),0)); root.add(lb);
   }
   var tg=new THREE.BufferGeometry().setFromPoints(tp);
@@ -904,7 +906,7 @@ function buildScene(){
     var lz=z*30, az=lz*D2R;
     rp.push(new THREE.Vector3(64*Math.cos(az),0,-64*Math.sin(az)));
     rp.push(new THREE.Vector3(70*Math.cos(az),0,-70*Math.sin(az)));
-    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(242,200,121,.92)',0.5);
+    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(248,214,145,1)',17);
     gl.position.copy(polar(74,lz+15,0)); root.add(gl);
   }
   var rg=new THREE.BufferGeometry().setFromPoints(rp);
@@ -924,7 +926,7 @@ function buildScene(){
       var lline=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
         new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.9}));
       root.add(lline);
-      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',0.55);
+      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',15);
       llb.position.copy(polar(76,data.sid,2.5)); root.add(llb);
       GMAP.Lagna={line:lline,label:llb,key:'Lagna',lon:data.sid};
       grahaMeshes.push(GMAP.Lagna);
@@ -947,7 +949,7 @@ function buildScene(){
       new THREE.MeshBasicMaterial({color:B.c,transparent:true,opacity:.4}));
     natal.position.copy(polar(B.r,data.sid,0)); natal.visible=false; root.add(natal);
 
-    var lb2=makeLabel(B.k,hex,0.5);
+    var lb2=makeLabel(B.k,hex,16);
     lb2.position.copy(polar(B.r,data.sid,B.sz+3.4)); root.add(lb2);
 
     GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,natal:natal,
@@ -970,14 +972,15 @@ function loop(){
   rafId=requestAnimationFrame(loop);
   if(ctrl) ctrl.update();
   if(scene&&cam){
-    /* keep every label the same apparent size no matter how far you zoom */
-    var k=cam.position.length()/120;
-    k=Math.max(0.62,Math.min(2.6,k));
-    scene.traverse(function(o){
-      if(o.isSprite&&o.userData.fixed){
-        o.scale.set(o.userData.bw*k,o.userData.bh*k,1);
-      }
-    });
+    /* hold every label at a constant on-screen pixel height, whatever the zoom */
+    var vh=renderer?renderer.domElement.clientHeight:800;
+    var f=2*Math.tan(cam.fov*D2R/2)/Math.max(320,vh);
+    for(var li=0;li<labelSprites.length;li++){
+      var sp=labelSprites[li];
+      var dist=cam.position.distanceTo(sp.position);
+      var hh=sp.userData.px*f*dist;
+      sp.scale.set(hh*sp.userData.aspect,hh,1);
+    }
     if(SELECTED&&GMAP[SELECTED]&&GMAP[SELECTED].glow){
       var t=performance.now()*0.0032;
       GMAP[SELECTED].glow.material.opacity=0.62+Math.sin(t)*0.3;
@@ -1382,36 +1385,46 @@ function placeAt(jd){
       });
     }
   }
-  range.addEventListener('input',function(){ stopPlay(); apply(+range.value); });
+  range.addEventListener('input',function(){ stopPlay(); POS=+range.value; apply(POS); });
 
+  /* a range input snaps to its step, so reading .value back each frame rounded the
+     sub-pixel increment away and the playhead froze. Keep the position as a float. */
+  var POS=0;
+  range.step='any';
   function stopPlay(){
     PLAYING=false; if(playRAF)cancelAnimationFrame(playRAF);
     $('playbtn').textContent='▶ Play'; $('playbtn').classList.remove('on');
   }
   function startPlay(){
+    if(POS>=999.5) POS=0;
     PLAYING=true; $('playbtn').textContent='❚❚ Pause'; $('playbtn').classList.add('on');
     var last=performance.now();
-    (function step(now){
+    playRAF=requestAnimationFrame(function step(now){
       if(!PLAYING) return;
-      var dt=(now-last)/1000; last=now;
-      var v=+range.value + dt*1000/22;      /* ~22s for a full 90-year sweep */
-      if(v>=1000){ v=1000; range.value=v; apply(v,true); stopPlay(); return; }
-      range.value=v; apply(v,true);
+      var dt=Math.min(0.1,(now-last)/1000); last=now;
+      POS += dt*(1000/32);                 /* ~32s for the full 90-year sweep */
+      if(POS>=1000){ POS=1000; range.value=POS; safeApply(POS); stopPlay(); return; }
+      range.value=POS;
+      safeApply(POS);
       playRAF=requestAnimationFrame(step);
-    })(last);
+    });
+  }
+  function safeApply(v){
+    try{ apply(v,true); }
+    catch(e){ stopPlay(); if(window.console) console.error('sky: playback halted',e); }
   }
   $('scrub').addEventListener('click',function(e){
     var b=e.target.closest('button'); if(!b)return;
     var j=b.dataset.j;
     if(j==='play'){ PLAYING?stopPlay():startPlay(); return; }
     stopPlay();
-    if(j==='birth'){ range.value=0; apply(0); b.classList.add('on'); }
+    if(j==='birth'){ POS=0; range.value=0; apply(0); b.classList.add('on'); }
     if(j==='now'){
       var v=Math.max(0,Math.min(1000,(todayJD()-CHART._jd)/(SPAN_Y*365.2425)*1000));
-      range.value=v; apply(v); b.classList.add('on');
+      POS=v; range.value=v; apply(v); b.classList.add('on');
     }
   });
-  window.__scrubInit=function(){ range.value=0; apply(0); };
+  window.__scrubInit=function(){ stopPlay(); POS=0; range.value=0; apply(0); };
 })();
 
 /* graceful degradation if WebGL/Three fails */
