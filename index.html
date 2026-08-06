@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Starlit Insights — Vedic Astrology, Computed to the Arcsecond</title>
-<meta name="description" content="Starlit Insights offers one product: a 15-minute one-to-one Vedic astrology consultation for Rs. 250, delivered online. Payment is requested after the session. Sidereal charts computed with Swiss Ephemeris and the Lahiri ayanamsha.">
+<meta name="description" content="Starlit Insights offers one product: a 15-minute one-to-one Jyotisha (Vedic astrology) reading for Rs. 250, delivered online. Payment is requested after the session. Sidereal charts computed with Swiss Ephemeris and the Lahiri ayanamsha.">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Starlit Insights — Vedic Astrology, Computed to the Arcsecond">
+<meta property="og:title" content="Starlit Insights — Jyotiṣa (Vedic Astrology), Computed to the Arcsecond">
 <meta property="og:description" content="Your horoscope has been off by 24 degrees. Here's the math that fixes it.">
 <meta property="og:url" content="https://starlitinsights.com">
 <meta name="twitter:card" content="summary_large_image">
@@ -344,6 +344,14 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
   .skyfeats span{font-size:9px;padding:5px 10px}
 }
 @media(prefers-reduced-motion:reduce){.skyglow,.skyart g{animation:none}}
+.glosscard{padding:32px 30px;margin-top:22px}
+.glosgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:2px;
+  border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line)}
+.glosgrid>div{padding:14px 16px;background:rgba(255,255,255,.028)}
+.glosgrid b{display:block;font-family:var(--f-disp);font-weight:500;font-size:.96rem;
+  color:var(--gold);letter-spacing:-.015em;margin-bottom:4px}
+.glosgrid span{font-size:.82rem;line-height:1.6;color:var(--ink-2)}
+@media(max-width:600px){.glosscard{padding:24px 18px}.glosgrid>div{padding:12px 14px}}
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:20px}
 .icard{padding:30px 26px}
 .icard .n{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--gold);
@@ -667,7 +675,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <a href="sky.html">Your Birth Sky</a>
       <a href="#insights">Insights</a>
       <a href="#method">Method</a>
-      <a href="#services">Readings</a>
+      <a href="#services">The reading</a>
       <a href="#faq">FAQ</a>
     </nav>
     <a href="#book" class="btn btn-p nav-cta"><span>Book now · Pay after</span></a>
@@ -689,23 +697,24 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 <section class="hero" id="top">
   <div class="wrap hero-grid">
     <div>
-      <div class="badge rv"><i class="dot"></i> Sidereal · Lahiri Ayanamsha · Swiss Ephemeris</div>
+      <div class="badge rv"><i class="dot"></i> Jyotiṣa · Vedic astrology · real planetary positions</div>
       <h1 class="rv" data-d="1">The sky was never<br><em class="shimmer">vague.</em></h1>
       <p class="lead rv" data-d="2">
         Most of what passes for astrology online is a personality quiz wearing a costume.
-        Starlit Insights does the other thing: real sidereal positions, computed to the arcsecond,
-        read through <span class="hl">classical Parashari method</span> — and stated plainly enough
-        that you can check the math yourself.
+        This is the other thing: a <span class="hl">Jyotiṣa reading</span> — Vedic astrology, the Indian
+        tradition — built from where the planets actually were at the minute you were born, read through
+        <span class="hl">classical Parāśarī method</span> (the oldest and most widely used school of it),
+        and explained in plain English so you can argue with any part of it.
       </p>
       <div class="hero-cta rv" data-d="3">
         <a href="#book" class="btn btn-p"><span>Book a 15-minute reading</span></a>
         <a href="#drift" class="btn btn-g">Find my real sign →</a>
       </div>
       <div class="hero-stats rv" data-d="4">
-        <div class="stat"><b><span class="cnt" data-to="24" data-dec="2">0</span>°</b><span>Zodiac drift today</span></div>
-        <div class="stat"><b><span class="cnt" data-to="27">0</span></b><span>Nakshatras tracked</span></div>
-        <div class="stat"><b><span class="cnt" data-to="16">0</span>+</b><span>Divisional charts</span></div>
-        <div class="stat"><b>0.001″</b><span>Ephemeris precision</span></div>
+        <div class="stat"><b><span class="cnt" data-to="24" data-dec="2">0</span>°</b><span>How far the zodiac slipped</span></div>
+        <div class="stat"><b><span class="cnt" data-to="27">0</span></b><span>Moon-houses in the sky</span></div>
+        <div class="stat"><b><span class="cnt" data-to="16">0</span>+</b><span>Charts inside your chart</span></div>
+        <div class="stat"><b>0.001″</b><span>Accuracy of the maths</span></div>
       </div>
     </div>
 
@@ -815,19 +824,19 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         around 2,000 years ago and never re-pegged it. The stars kept moving. The labels didn't.
       </p>
       <p class="lead rv" data-d="3" style="margin-top:16px">
-        So the "Leo" in your Instagram bio is a <em>seasonal marker</em>, not a constellation.
-        Vedic astrology never made that trade. It stayed fixed to the actual stars — the
-        <span class="hl">sidereal</span> zodiac — and corrects for the gap with a number called the
-        <span class="hl">ayanāṁśa</span>. Today that correction is just over 24 degrees. Which is
-        wide enough to move most people one whole sign.
+        So the "Leo" in your Instagram bio marks a <em>season</em>, not a place in the sky. That's the
+        <b>tropical</b> zodiac. Jyotiṣa never made that trade — it uses the <b>sidereal</b> zodiac, meaning
+        it keeps measuring against the actual stars, and corrects for the gap with a number called the
+        <span class="hl">ayanāṁśa</span>. Today that correction is just over 24 degrees, wide enough to
+        move most people one whole sign back.
       </p>
     </div>
 
     <div class="calc">
       <div class="card calc-form rv">
         <div class="eyebrow" style="margin-bottom:16px">Live computation</div>
-        <h3 style="margin-bottom:8px">Find your sidereal sign</h3>
-        <p style="font-size:.86rem;margin-bottom:24px">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+        <h3 style="margin-bottom:8px">So what sign are you actually?</h3>
+        <p style="font-size:.86rem;margin-bottom:24px">Enter your birth date and find out. This runs entirely on your own device — nothing is stored or sent anywhere.</p>
 
         <div class="field">
           <label for="bday">Date of birth</label>
@@ -847,9 +856,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         </div>
         <button class="btn btn-p" id="calcBtn" style="width:100%;margin-top:6px"><span>Compute →</span></button>
         <p class="hint">
-          Uses a low-precision solar ephemeris (±0.01°) with the Lahiri ayanāṁśa — accurate enough to
-          settle the sign question. A real reading resolves the full chart from Swiss Ephemeris data
-          at arcsecond precision.
+          This works out where the Sun really was on your birthday, then subtracts the 24° correction.
+          Accurate to a hundredth of a degree — plenty to settle the sign question. A full reading
+          resolves every planet, not just the Sun.
         </p>
       </div>
 
@@ -859,12 +868,33 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
             <circle cx="50" cy="50" r="34"/><circle cx="50" cy="50" r="20" stroke-dasharray="3 5"/>
             <circle cx="50" cy="16" r="4" fill="#f2c879" stroke="none"/>
           </svg>
-          <p style="font-size:.9rem">Enter your birth date to see the gap between the sign you were told<br>and the sign the sky actually held.</p>
+          <p style="font-size:.9rem">Enter your birth date to see the gap between the sign<br>you were always told, and the one the sky was actually holding.</p>
         </div>
         <div id="resBody" style="display:none"></div>
       </div>
     </div>
   </div>
+
+    <div class="card rv glosscard">
+      <div class="eyebrow">The Sanskrit, decoded · ten words, ten lines</div>
+      <div class="glosgrid">
+        <div><b>Jyotiṣa</b><span>"Science of light" — the Indian name for this whole tradition. Vedic astrology.</span></div>
+        <div><b>Graha</b><span>A planet, as astrology counts them. There are nine, and two of them aren't objects.</span></div>
+        <div><b>Rāśi</b><span>A sign — one of the twelve 30° slices of sky. Aries, Taurus, and so on.</span></div>
+        <div><b>Nakṣatra</b><span>A finer slice. The sky also divides into 27, one per night the Moon spends crossing it.</span></div>
+        <div><b>Lagna</b><span>Your rising sign — the exact bit of sky coming up over the eastern horizon as you were born.</span></div>
+        <div><b>Bhāva</b><span>A house. Twelve areas of life — money, home, work, marriage — laid out from your lagna.</span></div>
+        <div><b>Ayanāṁśa</b><span>The correction that fixes the 24° gap between the seasonal zodiac and the real stars.</span></div>
+        <div><b>Daśā</b><span>A chapter of life. Nine of them, in fixed order, timed from where your Moon was.</span></div>
+        <div><b>Navāṁśa</b><span>A second chart hidden inside the first, read for marriage and inner character.</span></div>
+        <div><b>Doṣa</b><span>A structural difficulty in a chart. Often oversold elsewhere; here it gets checked properly.</span></div>
+      </div>
+      <p class="hint" style="margin-top:18px">
+        Jyotiṣa keeps its Sanskrit vocabulary because the words are precise — "house" and <em>bhāva</em>
+        aren't quite the same idea. So the terms are used throughout this site rather than watered down,
+        and glossed every time they appear. That's genuinely the whole vocabulary you need.
+      </p>
+    </div>
 </section>
 
 <!-- ==================== WOW INSIGHTS ==================== -->
@@ -874,8 +904,9 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="eyebrow rv">Things nobody tells you</div>
       <h2 class="rv" data-d="1">Eight facts that reframe<br>the whole subject.</h2>
       <p class="lead rv" data-d="2" style="margin-top:20px">
-        None of these require you to believe anything. They're astronomy, history, and arithmetic —
-        and they're the reason this system is far stranger and more precise than its reputation.
+        You don't need to know anything about astrology to follow these. They are astronomy, history and
+        arithmetic — and together they explain why this system is far stranger, and far more exact, than
+        its reputation suggests. Sanskrit terms appear, but always with the plain meaning first.
       </p>
     </div>
 
@@ -901,19 +932,19 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <article class="card icard rv" data-d="2"><span class="n">03 / NAVAMSA</span>
         <div class="big">13m 20s</div>
         <h3>There are charts inside your chart</h3>
-        <p>Vedic astrology subdivides each sign into 9 parts of 3°20′ to build the <em>navāṁśa</em> (D9) —
-        a second chart read for marriage and inner character. The ascendant crosses one navāṁśa every
-        13 minutes 20 seconds. There are sixteen such divisional charts in standard use. Career has its
-        own. So does wealth. So does spiritual life.</p>
+        <p>Your birth chart isn't one picture. Each sign gets cut into nine slices to build a second,
+        finer chart — the <em>navāṁśa</em> — read for marriage and inner character. Sixteen of these nested
+        charts are in normal use: one for career, one for wealth, one for spiritual life. The marriage one
+        changes every 13 minutes 20 seconds, which is one more reason your exact birth time matters.</p>
       </article>
 
       <article class="card icard rv" data-d="3"><span class="n">04 / VIMSHOTTARI</span>
         <div class="big">120 yrs</div>
         <h3>A clock keyed to the Moon</h3>
-        <p>The nine planetary periods of the Vimśottarī daśā sum to exactly 120 years — an idealised full
-        human life. Your starting point isn't your birthday; it's how far the Moon had travelled through
-        its nakshatra at your first breath. Two people born on the same day in different hours can be
-        running entirely different decades.</p>
+        <p>Indian astrology maps a life onto nine planetary chapters that add up to exactly 120 years —
+        an idealised full lifespan. The system is called <em>Vimśottarī daśā</em>. Which chapter you start
+        in isn't decided by your birthday but by exactly where the Moon sat at your first breath. Two
+        people born the same day, hours apart, can be living in completely different decades.</p>
       </article>
 
       <article class="card icard rv" data-d="4"><span class="n">05 / RAHU & KETU</span>
@@ -937,10 +968,10 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <article class="card icard rv" data-d="6"><span class="n">07 / ASHTAKAVARGA</span>
         <div class="big">337</div>
         <h3>It has a scoring system</h3>
-        <p>Aṣṭakavarga is a bindu-counting framework that distributes exactly 337 points across the twelve
-        houses — average 28.08 each. A house scoring 32 is structurally supported; one scoring 22 isn't.
-        It's a numerical second opinion on every interpretive claim, and it routinely contradicts the
-        pretty story. That's the point of it.</p>
+        <p>There is a scoring system — <em>Aṣṭakavarga</em> — that spreads exactly 337 points across the
+        twelve areas of a chart, averaging 28 each. Score 32 in one and that part of life is genuinely
+        well-supported; score 22 and it isn't. You cannot argue the number into being friendlier, which is
+        why it regularly contradicts a flattering reading. That is the whole point of it.</p>
       </article>
 
       <article class="card icard rv" data-d="6"><span class="n">08 / HISTORY</span>
@@ -1022,11 +1053,12 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <div class="eyebrow">The 27-fold sky</div>
         <h2 style="font-size:clamp(1.6rem,3.4vw,2.4rem)">Before there were 12 signs,<br>there were 27 Moon-houses.</h2>
         <p class="lead" style="margin-top:16px;font-size:1rem">
-          The Moon covers roughly 13°20′ of sky per day. Divide 360° by that and you get 27 — the
-          <em>nakṣatras</em>, the lunar mansions the Moon sleeps in on successive nights. This division is
-          older than the solar zodiac in Indian tradition, and it's the layer doing most of the real
-          work: your daśā sequence, your temperament, your compatibility filters all key off the
-          nakṣatra the Moon occupied at your birth. Not your Sun sign. Your Moon's address.
+          The Moon crosses about 13°20′ of sky a day. Divide the circle by that and you get 27 — the
+          <em>nakṣatras</em>, or lunar mansions: the 27 rooms the Moon sleeps in on successive nights.
+          This way of cutting the sky is older than the twelve signs in India, and it does most of the real
+          work. Your life-timing sequence, much of your temperament, and the filters used in marriage
+          matching all key off the room the Moon was in when you were born. Not your Sun sign. Your
+          Moon's address.
         </p>
       </div>
       <div class="nak-scroll"><div class="nak-track" id="nakTrack"></div></div>
@@ -1047,10 +1079,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <div class="eyebrow rv">Timing</div>
       <h2 class="rv" data-d="1">A 120-year clock, started<br>at your first breath.</h2>
       <p class="lead rv" data-d="2" style="margin-top:18px">
-        This is what separates Vedic astrology from the horoscope column. Vimśottarī daśā divides a life
-        into nine planetary chapters, in fixed order, summing to exactly 120 years. Where <em>you</em> enter
-        the sequence depends on the Moon's exact position at birth — so the same chapter arrives at a
-        different age for everyone. Readings that talk about "windows" are talking about this.
+        A horoscope column tells you what you're like. This tells you <em>when</em> — and that is the real
+        difference. A life divides into nine planetary chapters in a fixed order, adding up to exactly 120
+        years. Where <em>you</em> enter that sequence depends on the Moon's exact position at birth, so the
+        same chapter arrives at a different age for everyone. When a reading mentions a "window", this is
+        the machinery underneath it.
       </p>
     </div>
 
@@ -1081,7 +1114,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
   <div class="wrap">
     <div style="max-width:700px;margin:0 auto 42px;text-align:center">
       <div class="eyebrow rv">The reading</div>
-      <h2 class="rv" data-d="1">₹250 — and only<br><span class="hl">after it delivers.</span></h2>
+      <h2 class="rv" data-d="1">A Jyotiṣa reading for ₹250 —<br><span class="hl">and only after it delivers.</span></h2>
       <p class="lead rv" data-d="2" style="margin:18px auto 0">
         One session. One price. No packages, no advance payment, nothing to decide before we've actually
         spoken. You take the slot, we spend fifteen minutes inside your chart, and the payment link
@@ -1093,10 +1126,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <article class="card scard feat rv">
         <span class="stag">No advance payment</span>
         <div class="eyebrow" style="margin-bottom:10px">The only thing on offer</div>
-        <h3>15-Minute Reading</h3>
+        <h3>15-Minute Jyotiṣa Reading</h3>
         <div class="price">₹250<small> / 15 min · Paid after the session</small></div>
-        <p style="font-size:.92rem;color:var(--ink-2)">Fifteen minutes inside your real chart, built around
-        the thing you're actually carrying — and you decide it was worth ₹250 once you've had it.</p>
+        <p style="font-size:.92rem;color:var(--ink-2)">Fifteen minutes inside your real <em>kuṇḍalī</em> —
+        your birth chart — built around the thing you're actually carrying. You decide it was worth ₹250
+        once you've had it.</p>
         <ul class="slist">
           <li><b>Tell me what's on your mind.</b> The booking form has a box for it — a decision you're stuck on, a pattern that keeps repeating, a timing question, or simply what you'd like read.</li>
           <li><b>Your chart is ready before you arrive.</b> Computed from Swiss Ephemeris positions and cross-checked against what you wrote. Not one of your fifteen minutes goes on setup.</li>
@@ -1215,6 +1249,26 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
       <h2 class="rv" data-d="1">The ones worth asking.</h2>
     </div>
     <div class="faq rv" id="faqList">
+      <button class="q" type="button" aria-expanded="false">What is Jyotiṣa, and how is it different from the astrology I already know?</button>
+      <div class="a"><div><b>Jyotiṣa</b> (pronounced <em>jyo-ti-sha</em>) means "science of light". It is the Indian
+      astrological tradition — most people in English call it Vedic astrology — and it is one of the six
+      <em>Vedāṅgas</em>, the limbs of the Veda, which is why it sits close to astronomy in Indian thought.
+      <br><br>Three things make it different from the Western astrology you've met in magazines. First, the
+      <b>zodiac</b>: Jyotiṣa uses the <em>sidereal</em> zodiac, fixed to the actual stars, where Western
+      astrology uses the <em>tropical</em> one fixed to the spring equinox — the two have drifted about 24°
+      apart, which is why your sign here is usually one earlier. Second, the <b>Moon</b> matters far more
+      than the Sun; your <em>nakṣatra</em>, the Moon's position among 27 divisions, drives most of the
+      reading. Third, and most importantly, Jyotiṣa has <b>timing systems</b> — the <em>daśā</em> cycles —
+      that say <em>when</em> something is likely to come forward, not just what you are like.</div></div>
+      <button class="q" type="button" aria-expanded="false">Why keep the Sanskrit words instead of just saying "rising sign"?</button>
+      <div class="a"><div>Because the translations leak. <em>Bhāva</em> is usually rendered "house", but it
+      literally means a state or mode of being, and it carries connotations that "house" doesn't. <em>Graha</em>
+      gets translated "planet", yet two of the nine grahas — <em>Rāhu</em> and <em>Ketu</em> — aren't objects
+      at all, they're the points where the Moon's orbit crosses the Sun's path. Calling them planets is simply
+      wrong.<br><br>So the Sanskrit stays, and it is glossed every single time: <em>lagna</em> (rising sign),
+      <em>daśā</em> (life chapter), <em>nakṣatra</em> (lunar mansion). You'll pick up ten words over the course
+      of one reading and they'll make everything else legible. There's a short glossary further up this page
+      if you'd like them all in one place.</div></div>
       <button class="q" type="button" aria-expanded="false">Do I have to believe in astrology for this to be worth it?</button>
       <div class="a"><div>No. Plenty of people come in as sceptics and treat a reading as a structured mirror — a framework for thinking about timing, temperament and recurring patterns, which they can accept or reject line by line. The method here is stated openly precisely so you can push back on it. Disagreement is useful; it usually sharpens the reading.</div></div>
       <button class="q" type="button" aria-expanded="false">Why is my birth time such a big deal?</button>

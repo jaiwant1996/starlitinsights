@@ -232,10 +232,41 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   letter-spacing:.13em;text-transform:uppercase;transition:.25s}
 .scrubbtns button:hover{color:var(--gold);border-color:var(--gold)}
 .scrubbtns button.on{background:rgba(242,200,121,.14);color:var(--gold);border-color:rgba(242,200,121,.4)}
+.spanrow{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:9px;border-top:1px solid var(--line)}
+.spanrow>span{font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);margin-right:2px}
+.spanrow button{padding:5px 13px;border-radius:100px;border:1px solid var(--line);cursor:pointer;
+  background:none;color:var(--ink3);font-family:var(--fm);font-size:8.5px;letter-spacing:.11em;
+  text-transform:uppercase;transition:.25s}
+.spanrow button:hover{color:var(--ink2);border-color:var(--line2)}
+.spanrow button.on{color:var(--cyan);border-color:rgba(95,227,216,.45);background:rgba(95,227,216,.1)}
+.spanrow em{font-style:normal;margin-left:auto;font-family:var(--fm);font-size:8.5px;
+  letter-spacing:.1em;color:var(--ink3);white-space:nowrap}
+@media(max-width:760px){.spanrow em{display:none}}
 .viewnote{position:absolute;left:20px;top:58px;z-index:3;max-width:260px;pointer-events:none;
   font-family:var(--fm);font-size:9px;letter-spacing:.11em;line-height:1.9;color:var(--ink3);
   text-transform:uppercase}
 .viewnote b{color:var(--cyan);font-weight:400}
+.trhead{padding:11px 12px;border-radius:11px;margin-bottom:12px;
+  border:1px solid rgba(95,227,216,.28);background:linear-gradient(140deg,rgba(95,227,216,.1),rgba(242,200,121,.04))}
+.trhead b{display:block;font-family:var(--fd);font-weight:500;font-size:.95rem;margin-bottom:3px}
+.trhead em{font-style:normal;font-family:var(--fm);font-size:.68rem;color:var(--ink2);line-height:1.6;display:block}
+.trflag{padding:11px 12px;border-radius:11px;margin-bottom:9px;border:1px solid rgba(242,200,121,.32);
+  background:rgba(242,200,121,.08)}
+.trflag b{display:block;font-family:var(--fd);font-weight:500;font-size:.88rem;color:var(--gold);margin-bottom:4px}
+.trflag span{font-size:.78rem;line-height:1.6;color:var(--ink2)}
+.trrow{padding:10px 11px;border-radius:10px;margin-bottom:6px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line)}
+.trtop{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.trtop i{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.trtop b{font-family:var(--fd);font-weight:500;font-size:.86rem}
+.trtop u{text-decoration:none;font-family:var(--fm);font-size:.66rem;color:var(--ink3)}
+.trbadge{margin-left:auto;font-family:var(--fm);font-size:8px;letter-spacing:.13em;text-transform:uppercase;
+  padding:3px 8px;border-radius:100px;white-space:nowrap}
+.trbadge.up{background:rgba(127,227,160,.14);color:#8fe8ae;border:1px solid rgba(127,227,160,.3)}
+.trbadge.dn{background:rgba(255,157,178,.11);color:#ffa8bc;border:1px solid rgba(255,157,178,.28)}
+.trrow p{font-size:.76rem;line-height:1.58;color:var(--ink2);margin:0}
+.trrow p em{font-style:normal;color:var(--cyan)}
 .retblk{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .rethead{font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--ink3);margin-bottom:9px}
@@ -392,11 +423,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <button class="pmin" id="pmin" aria-label="Collapse">–</button>
     </div>
     <div class="ptabs" id="ptabs">
-      <button class="ptab on" data-pane="pSky" type="button">The sky</button>
-      <button class="ptab" data-pane="pDas" type="button">Your timing</button>
+      <button class="ptab on" data-pane="pSky" type="button">Chart</button>
+      <button class="ptab" data-pane="pTra" type="button">Transits</button>
+      <button class="ptab" data-pane="pDas" type="button">Timing</button>
     </div>
     <div class="pbody">
       <div class="pane on" id="pSky"><div id="pbody"></div><div id="pdetail"></div></div>
+      <div class="pane" id="pTra"></div>
       <div class="pane" id="pDas"></div>
     </div>
   </div>
@@ -413,6 +446,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <button type="button" data-j="birth" class="on">Birth</button>
       <button type="button" data-j="play" id="playbtn">▶ Play</button>
       <button type="button" data-j="now">Today</button>
+    </div>
+    <div class="spanrow">
+      <span>Speed</span>
+      <button type="button" data-rate="slow">Slow</button>
+      <button type="button" data-rate="med" class="on">Medium</button>
+      <button type="button" data-rate="fast">Fast</button>
+      <em id="rateout"></em>
     </div>
   </div>
 
@@ -724,7 +764,7 @@ $('again').addEventListener('click',function(){
   $('pdetail').innerHTML=''; $('pbody').style.display='';
   $('ptitle').textContent='Your sky, that moment';
   $('ptabs').querySelectorAll('.ptab').forEach(function(x,i){x.classList.toggle('on',i===0);});
-  $('pSky').classList.add('on'); $('pDas').classList.remove('on');
+  $('pSky').classList.add('on'); $('pTra').classList.remove('on'); $('pDas').classList.remove('on');
   $('backlink').style.display='';
 });
 
@@ -944,15 +984,10 @@ function buildScene(){
       new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.16}));
     root.add(spoke);
 
-    /* faint marker where it stood at birth - stays put while you scrub time */
-    var natal=new THREE.Mesh(new THREE.SphereGeometry(B.sz*0.42,10,8),
-      new THREE.MeshBasicMaterial({color:B.c,transparent:true,opacity:.4}));
-    natal.position.copy(polar(B.r,data.sid,0)); natal.visible=false; root.add(natal);
-
     var lb2=makeLabel(B.k,hex,16);
     lb2.position.copy(polar(B.r,data.sid,B.sz+3.4)); root.add(lb2);
 
-    GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,natal:natal,
+    GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,
                key:B.k,base:B,lon:data.sid,natalLon:data.sid,hex:hex};
     grahaMeshes.push(GMAP[B.k]);
   }
@@ -1103,6 +1138,7 @@ function revealScene(){
     renderDetail(r.dataset.key);
   });
   renderDasha();
+  try{ renderTransit(todayJD()); }catch(e){}
   $('viewnote').innerHTML='<b>Geocentric view</b> — Earth at centre,<br>each graha at its apparent<br>'+
     'ecliptic longitude. Orbit sizes<br>are spaced to be readable,<br>not to scale.';
   if(window.__scrubInit) window.__scrubInit();
@@ -1283,14 +1319,23 @@ function renderDetail(key){
 $('ptabs').addEventListener('click',function(e){
   var b=e.target.closest('.ptab'); if(!b)return;
   $('ptabs').querySelectorAll('.ptab').forEach(function(x){x.classList.toggle('on',x===b);});
-  ['pSky','pDas'].forEach(function(id){ $(id).classList.toggle('on',id===b.dataset.pane); });
-  $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimśottarī daśā' : 'Your sky, that moment';
+  ['pSky','pTra','pDas'].forEach(function(id){ $(id).classList.toggle('on',id===b.dataset.pane); });
+  $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimśottarī daśā'
+                          : b.dataset.pane==='pTra' ? 'Transits (gochara)'
+                          : 'Your sky, that moment';
+  /* opening Transits while parked at birth isn't useful - jump to now */
+  if(b.dataset.pane==='pTra' && window.__jumpToday) window.__jumpToday(true);
 });
 
 /* ==================================================================
    11. TIME TRAVEL  —  watch the sky move across your whole life
    ================================================================== */
 var SPAN_Y=90, PLAYING=false, playRAF=null;
+/* playback rates, expressed as years of sky per second of real time */
+var RATES={slow:{y:7/365.2425, label:'7 days / sec'},
+           med :{y:2.2/12,     label:'2.2 months / sec'},
+           fast:{y:1.6,        label:'1.6 years / sec'}};
+var RATE='med';
 
 function angDiff(a,b){ var d=((a-b)%360+540)%360-180; return d; }
 
@@ -1352,7 +1397,7 @@ function renderReturns(){
 /* move every graha to where it stood on a given Julian Day */
 function placeAt(jd){
   if(!root||!BIRTH) return;
-  var c=chartAtJD(jd,BIRTH.lat,BIRTH.lon), moved=Math.abs(jd-CHART._jd)>0.5;
+  var c=chartAtJD(jd,BIRTH.lat,BIRTH.lon);
   for(var k in GMAP){
     var G=GMAP[k], d=c[k]; if(!d) continue;
     G.lon=d.sid;
@@ -1362,7 +1407,6 @@ function placeAt(jd){
     if(G.glow) G.glow.position.copy(polar(r,d.sid,0));
     if(G.label) G.label.position.copy(polar(r,d.sid,G.base.sz+3.4));
     if(G.spoke) G.spoke.geometry.setFromPoints([polar(4,d.sid,0),polar(70,d.sid,0)]);
-    if(G.natal) G.natal.visible=moved;
   }
   if(SELECTED) selectGraha(SELECTED);
   return c;
@@ -1402,7 +1446,7 @@ function placeAt(jd){
     playRAF=requestAnimationFrame(function step(now){
       if(!PLAYING) return;
       var dt=Math.min(0.1,(now-last)/1000); last=now;
-      POS += dt*(1000/32);                 /* ~32s for the full 90-year sweep */
+      POS += dt*(RATES[RATE].y/SPAN_Y)*1000;
       if(POS>=1000){ POS=1000; range.value=POS; safeApply(POS); stopPlay(); return; }
       range.value=POS;
       safeApply(POS);
@@ -1424,8 +1468,121 @@ function placeAt(jd){
       POS=v; range.value=v; apply(v); b.classList.add('on');
     }
   });
-  window.__scrubInit=function(){ stopPlay(); POS=0; range.value=0; apply(0); };
+  function setRate(r){
+    RATE=r;
+    $('scrub').querySelectorAll('.spanrow button').forEach(function(b){
+      b.classList.toggle('on', b.dataset.rate===r);
+    });
+    $('rateout').textContent='≈ '+RATES[r].label;
+  }
+  /* switching speed mid-playback keeps it running - no restart, no jump */
+  $('scrub').addEventListener('click',function(e){
+    var b=e.target.closest('[data-rate]'); if(!b)return;
+    setRate(b.dataset.rate);
+  });
+  window.__jumpToday=function(onlyIfAtBirth){
+    if(onlyIfAtBirth && POS>0.5) return;
+    stopPlay();
+    var v=Math.max(0,Math.min(1000,(todayJD()-CHART._jd)/(SPAN_Y*365.2425)*1000));
+    POS=v; range.value=v; apply(v);
+    $('scrub').querySelectorAll('.scrubbtns button').forEach(function(x){
+      if(x.dataset.j!=='play') x.classList.toggle('on', x.dataset.j==='now');
+    });
+  };
+  window.__scrubInit=function(){ stopPlay(); setRate('med'); POS=0; range.value=0; apply(0); };
 })();
+
+
+/* ==================================================================
+   12. GOCHARA  —  transits, counted from the natal Moon
+   ================================================================== */
+/* classical gochara: houses from the natal Moon where each graha is held supportive */
+var GOCHARA={Sun:[3,6,10,11], Moon:[1,3,6,7,10,11], Mars:[3,6,11],
+             Mercury:[2,4,6,8,10,11], Jupiter:[2,5,7,9,11],
+             Venus:[1,2,3,4,5,8,9,11,12], Saturn:[3,6,11],
+             Rahu:[3,6,10,11], Ketu:[3,6,11]};
+var TRWORK={
+ Sun:'visibility, authority and where you are being seen',
+ Moon:'mood, domestic life and what you are drawn toward',
+ Mars:'drive, friction and where energy gets spent',
+ Mercury:'conversation, paperwork, negotiation and study',
+ Jupiter:'growth, guidance and where doors tend to open',
+ Venus:'relationships, comfort, money and what feels worth having',
+ Saturn:'work, delay, structure and what has to be earned slowly',
+ Rahu:'appetite, ambition and the thing that becomes hard to put down',
+ Ketu:'letting go, disinterest and what quietly finishes'
+};
+var TRORDER=['Saturn','Jupiter','Rahu','Ketu','Mars','Sun','Venus','Mercury','Moon'];
+
+function houseFrom(refSid,sid){
+  return ((Math.floor(sid/30)-Math.floor(refSid/30)+12)%12)+1;
+}
+
+function renderTransit(jd){
+  if(!CHART||!BIRTH) return;
+  var c=chartAtJD(jd,BIRTH.lat,BIRTH.lon);
+  var moonSid=CHART.Moon.sid, lagSid=CHART.Lagna.sid;
+  var moonSign=SIGN[Math.floor(moonSid/30)];
+  var isToday=Math.abs(jd-todayJD())<1.5;
+
+  var h='<div class="trhead"><b>'+(isToday?'Where the grahas are today':fdate(jd))+'</b>'+
+        '<em>Counted from your natal Moon in <b style="color:var(--cyan)">'+moonSign+'</b> — the reference '+
+        'Jyotiṣa uses for transits (gochara). House from your lagna is shown too.</em></div>';
+
+  /* --- headline conditions --- */
+  var satH=houseFrom(moonSid,c.Saturn.sid), jupH=houseFrom(moonSid,c.Jupiter.sid);
+  if(satH===12||satH===1||satH===2){
+    var phase=satH===12?'first phase — the approach':(satH===1?'peak phase':'final phase — the release');
+    h+='<div class="trflag"><b>Sade Sati is running · '+phase+'</b><span>Saturn is passing through the '+
+       satH+(satH===1?'st':(satH===2?'nd':'th'))+' from your natal Moon, the roughly seven-and-a-half-year '+
+       'stretch Jyotiṣa calls Sade Sati. Classically a period of consolidation and honest accounting rather '+
+       'than the catastrophe it is often sold as — its actual weight depends on Saturn\'s strength in your '+
+       'birth chart.</span></div>';
+  } else if(satH===4){
+    h+='<div class="trflag"><b>Kaṇṭaka Śani</b><span>Saturn transits the 4th from your Moon — classically '+
+       'associated with pressure on home, property and peace of mind, and with slow work that pays off later.</span></div>';
+  } else if(satH===8){
+    h+='<div class="trflag"><b>Aṣṭama Śani</b><span>Saturn transits the 8th from your Moon — traditionally a '+
+       'period of upheaval and reorganisation. Read alongside Saturn\'s dignity in the birth chart before '+
+       'drawing conclusions.</span></div>';
+  }
+  if([2,5,7,9,11].indexOf(jupH)>=0){
+    h+='<div class="trflag" style="border-color:rgba(255,217,138,.32);background:rgba(255,217,138,.07)">'+
+       '<b>Jupiter is well placed</b><span>Bṛhaspati transits the '+jupH+'th from your Moon, one of the five '+
+       'positions classical texts count as supportive. Traditionally the most protective transit there is.</span></div>';
+  }
+  /* anything sitting on its own birth degree right now */
+  for(var q=0;q<TRORDER.length;q++){
+    var kq=TRORDER[q], dd=Math.abs(angDiff(c[kq].sid,CHART[kq].sid));
+    if(dd<1.2){
+      h+='<div class="trflag" style="border-color:rgba(95,227,216,.35);background:rgba(95,227,216,.08)">'+
+         '<b>'+kq+' is on its birth degree</b><span>'+kq+' is within '+dd.toFixed(1)+'° of exactly where it '+
+         'stood when you were born — a '+kq+' return, happening now.</span></div>';
+    }
+  }
+
+  /* --- every graha --- */
+  for(var i=0;i<TRORDER.length;i++){
+    var k=TRORDER[i], d=c[k], B=null;
+    for(var b=0;b<BODIES.length;b++) if(BODIES[b].k===k) B=BODIES[b];
+    var hm=houseFrom(moonSid,d.sid), hl=houseFrom(lagSid,d.sid);
+    var good=GOCHARA[k].indexOf(hm)>=0;
+    var t=posText(d.sid), hex='#'+('000000'+B.c.toString(16)).slice(-6);
+    var retro=(d.retro&&k!=='Rahu'&&k!=='Ketu');
+    h+='<div class="trrow">'+
+      '<div class="trtop"><i style="background:'+hex+'"></i><b>'+k+'</b>'+
+        '<u>'+t.sign+' '+t.deg+(retro?' ℞':'')+'</u>'+
+        '<span class="trbadge '+(good?'up':'dn')+'">'+(good?'Supportive':'Demanding')+'</span></div>'+
+      '<p><em>'+ORD[hm-1]+' from your Moon</em> · '+ORD[hl-1]+' from lagna — '+HOUSEOF[hl-1]+'.<br>'+
+      'Brings '+TRWORK[k]+' to that part of life.</p></div>';
+  }
+
+  h+='<div class="dnote">A transit is a modifier, never the whole story — it acts on what your birth chart '+
+     'already promised, and a supportive transit over a weak placement still has little to work with. '+
+     'Classical gochara also applies <em>vedha</em>, a rule where one transit cancels another; that refinement '+
+     'is not computed here. Positions are exact; the interpretation is a starting point, not a verdict.</div>';
+  $('pTra').innerHTML=h;
+}
 
 /* graceful degradation if WebGL/Three fails */
 if(!THREE_OK){
