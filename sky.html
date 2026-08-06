@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Birth Sky in 3D — Starlit Insights</title>
+<meta name="description" content="Travel back to the moment you were born and see the sky in three dimensions — all nine grahas at their true sidereal positions, ringed by the 27 nakshatras. Runs entirely in your browser.">
+<meta name="theme-color" content="#04060c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Your Birth Sky in 3D — Starlit Insights">
+<meta property="og:description" content="See where every planet actually stood at the moment you were born.">
+<meta property="og:url" content="https://starlitinsights.com/sky.html">
+<link rel="canonical" href="https://starlitinsights.com/sky.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4l10 32 32 10-32 10-10 32-10-32-32-10 32-10z' fill='%23f5c86b'/%3E%3C/svg%3E">
+
+<style>
+:root{
+  --void:#04060c; --gold:#f2c879; --gold2:#c9973f; --cyan:#5fe3d8; --violet:#9b8cff;
+  --ink:#eef2fa; --ink2:#aeb8cc; --ink3:#6f7c96;
+  --line:rgba(255,255,255,.1); --line2:rgba(255,255,255,.18);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --fd:'Space Grotesk',system-ui,sans-serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--void);color:var(--ink);font-family:var(--fb);
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+canvas{display:block}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+::selection{background:rgba(242,200,121,.3)}
+
+#scene{position:fixed;inset:0;z-index:0}
+#warpc{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .6s}
+#warpc.on{opacity:1}
+
+.stage{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+  padding:24px;opacity:0;visibility:hidden;transition:opacity .7s var(--ease),visibility .7s}
+.stage.on{opacity:1;visibility:visible}
+.stage.veil{background:radial-gradient(ellipse at 50% 40%,rgba(8,13,24,.86),rgba(2,4,9,.96))}
+
+.eyebrow{font-family:var(--fm);font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--gold);display:inline-flex;align-items:center;gap:10px;margin-bottom:16px}
+.eyebrow::before{content:'';width:22px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+h1{font-family:var(--fd);font-weight:500;letter-spacing:-.035em;line-height:1.05;
+  font-size:clamp(1.9rem,5.2vw,3.4rem);margin-bottom:14px}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold),#fff6e0 40%,var(--cyan));
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shim 8s linear infinite}
+@keyframes shim{to{background-position:220% 0}}
+.lead{color:var(--ink2);font-size:clamp(.92rem,1.6vw,1.04rem);line-height:1.68;max-width:56ch}
+
+/* ---------- form card ---------- */
+.card{width:min(560px,100%);max-height:92vh;overflow-y:auto;padding:34px 32px;border-radius:24px;
+  border:1px solid var(--line);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  box-shadow:0 40px 100px -40px rgba(0,0,0,.9)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:15px}
+.field label{display:block;font-family:var(--fm);font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.ctl{display:block;width:100%;max-width:100%;min-width:0;padding:12px 13px;border-radius:10px;
+  background-color:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink);
+  font-family:var(--fm);font-size:.86rem;transition:.25s;color-scheme:dark;
+  -webkit-appearance:none;appearance:none}
+select.ctl{padding-right:30px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23f2c879' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1.5 2L6 6.2L10.5 2'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;background-size:10px}
+select.ctl option{background:#0a0f1c;color:var(--ink)}
+.ctl:focus{outline:none;border-color:var(--gold);background-color:rgba(255,255,255,.08);
+  box-shadow:0 0 0 3px rgba(242,200,121,.12)}
+.ctl.err{border-color:#ff8fa8;box-shadow:0 0 0 3px rgba(255,143,168,.12)}
+.trio{display:grid;grid-template-columns:.82fr 1.25fr .95fr;gap:8px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.ac{position:relative}
+.aclist{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:230px;
+  overflow-y:auto;border-radius:12px;border:1px solid var(--line2);background:#0a0f1c;
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.95);display:none}
+.aclist.on{display:block}
+.acitem{padding:11px 14px;cursor:pointer;font-size:.85rem;color:var(--ink2);
+  border-bottom:1px solid rgba(255,255,255,.05);transition:.15s}
+.acitem:last-child{border-bottom:none}
+.acitem:hover,.acitem.sel{background:rgba(242,200,121,.11);color:var(--gold)}
+.acitem b{color:var(--ink);font-weight:500}
+.acitem span{float:right;font-family:var(--fm);font-size:10px;color:var(--ink3)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  padding:15px 26px;border-radius:100px;border:1px solid transparent;cursor:pointer;
+  font-family:var(--fd);font-weight:500;font-size:.95rem;position:relative;overflow:hidden;
+  transition:transform .3s var(--ease),box-shadow .3s;-webkit-tap-highlight-color:transparent}
+.btn-p{background:linear-gradient(105deg,var(--gold),#ffe4ab 45%,var(--gold2));color:#160f02;
+  box-shadow:0 10px 32px -12px rgba(242,200,121,.6)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 16px 44px -12px rgba(242,200,121,.8)}
+.btn-p span{position:relative;z-index:2}
+.btn-p::before{content:'';position:absolute;inset:0;transform:translateX(-130%);transition:transform .8s var(--ease);
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.7),transparent)}
+.btn-p:hover::before{transform:translateX(130%)}
+.btn-g{background:rgba(255,255,255,.045);border-color:var(--line2);color:var(--ink)}
+.btn-g:hover{background:rgba(255,255,255,.09);border-color:var(--gold)}
+.hint{font-size:.75rem;color:var(--ink3);line-height:1.55;margin-top:10px}
+.errmsg{display:none;margin-top:10px;font-size:.79rem;color:#ff8fa8}
+.errmsg.on{display:block}
+
+/* ---------- confirm stage ---------- */
+.confirm{width:min(620px,100%);text-align:center}
+.tick{display:flex;flex-direction:column;gap:1px;margin:26px 0 30px;border-radius:16px;
+  overflow:hidden;border:1px solid var(--line);text-align:left}
+.tickrow{display:flex;gap:16px;padding:13px 17px;background:rgba(255,255,255,.03);flex-wrap:wrap}
+.tickrow span{flex:0 0 120px;font-family:var(--fm);font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink3);padding-top:3px}
+.tickrow b{font-size:.92rem;color:var(--ink);font-weight:500;min-width:0}
+.tickrow b em{font-style:normal;color:var(--cyan)}
+.cbtns{display:flex;gap:11px;flex-wrap:wrap}
+.cbtns .btn{width:auto;flex:1 1 190px}
+
+/* ---------- warp stage ---------- */
+.warpui{text-align:center;pointer-events:none}
+.wyear{font-family:var(--fd);font-weight:400;letter-spacing:-.05em;line-height:1;
+  font-size:clamp(3.4rem,15vw,9rem);
+  background:linear-gradient(160deg,var(--gold),var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 80px rgba(242,200,121,.25)}
+.wlabel{font-family:var(--fm);font-size:10.5px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--ink3);margin-top:18px}
+.wbar{width:min(320px,70vw);height:2px;margin:26px auto 0;border-radius:2px;
+  background:rgba(255,255,255,.1);overflow:hidden}
+.wbar i{display:block;height:100%;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold),var(--cyan))}
+
+/* ---------- result HUD ---------- */
+#hud{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .9s .3s}
+#hud.on{opacity:1}
+.hudtop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+  align-items:flex-start;gap:14px;padding:20px 22px;pointer-events:none}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--fd);font-weight:600;
+  font-size:.95rem;letter-spacing:-.02em;pointer-events:auto}
+.brand svg{width:20px;height:20px;animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hudmeta{text-align:right;font-family:var(--fm);font-size:10px;letter-spacing:.11em;
+  color:var(--ink3);line-height:1.7}
+.hudmeta b{color:var(--gold);font-weight:400}
+
+.panel{position:absolute;left:20px;bottom:20px;width:min(330px,calc(100vw - 40px));
+  max-height:min(60vh,520px);overflow-y:auto;pointer-events:auto;border-radius:18px;
+  border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;backdrop-filter:blur(18px);
+  background:rgba(8,13,24,.75);z-index:2}
+.phead b{font-family:var(--fd);font-weight:500;font-size:.92rem;letter-spacing:-.02em}
+.pmin{width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);cursor:pointer;
+  background:rgba(255,255,255,.05);color:var(--ink2);font-size:14px;line-height:1;transition:.25s}
+.pmin:hover{background:rgba(255,255,255,.11);color:#fff}
+.pbody{padding:8px 10px 12px}
+.panel.min .pbody{display:none}
+.grow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:8px 8px;border-radius:10px;cursor:pointer;transition:background .25s}
+.grow:hover{background:rgba(255,255,255,.05)}
+.gdot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.gname{font-family:var(--fd);font-weight:500;font-size:.85rem;letter-spacing:-.01em}
+.gname i{font-style:normal;color:#ff8fa8;font-family:var(--fm);font-size:9px;margin-left:5px}
+.gpos{font-family:var(--fm);font-size:.7rem;color:var(--ink3);line-height:1.5}
+.gdeg{font-family:var(--fm);font-size:.72rem;color:var(--cyan);text-align:right;white-space:nowrap}
+
+.ptabs{display:flex;gap:4px;padding:10px 12px 0}
+.ptab{flex:1;padding:8px 10px;border-radius:9px 9px 0 0;border:1px solid transparent;border-bottom:none;
+  background:none;cursor:pointer;font-family:var(--fm);font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink3);transition:.25s}
+.ptab:hover{color:var(--ink2)}
+.ptab.on{color:var(--gold);background:rgba(242,200,121,.09);border-color:rgba(242,200,121,.25)}
+.pane{display:none}.pane.on{display:block}
+
+.back2{display:inline-flex;align-items:center;gap:7px;margin:2px 0 12px;padding:6px 12px;border-radius:100px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.04);cursor:pointer;
+  font-family:var(--fm);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);transition:.25s}
+.back2:hover{color:var(--gold);border-color:var(--gold)}
+.dt-h{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.dt-h b{font-family:var(--fd);font-size:1.12rem;letter-spacing:-.02em}
+.dt-h em{font-style:normal;font-family:var(--fm);font-size:.68rem;color:var(--ink3)}
+.dt-pos{font-family:var(--fm);font-size:.78rem;color:var(--cyan);margin-bottom:14px}
+.dt-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.dt-c{padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+.dt-c span{display:block;font-family:var(--fm);font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:4px}
+.dt-c b{font-family:var(--fd);font-weight:500;font-size:.82rem;line-height:1.3;display:block}
+.dt-c b.up{color:#7fe3a0}.dt-c b.dn{color:#ff9db2}.dt-c b.ok{color:var(--gold)}
+.dt-t{font-size:.79rem;line-height:1.62;color:var(--ink2)}
+
+.dnow{padding:12px 13px;border-radius:12px;margin-bottom:12px;
+  border:1px solid rgba(242,200,121,.3);background:linear-gradient(140deg,rgba(242,200,121,.11),rgba(95,227,216,.05))}
+.dnow span{display:block;font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px}
+.dnow b{font-family:var(--fd);font-weight:500;font-size:1.02rem;letter-spacing:-.02em;display:block;margin-bottom:3px}
+.dnow em{font-style:normal;font-family:var(--fm);font-size:.7rem;color:var(--ink2)}
+.dbarmini{height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:9px}
+.dbarmini i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan))}
+.drow{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:7px 8px;
+  border-radius:8px;font-size:.78rem;transition:background .2s}
+.drow.cur{background:rgba(242,200,121,.1)}
+.drow.past{opacity:.42}
+.drow i{width:7px;height:7px;border-radius:2px;flex:0 0 auto}
+.drow b{font-family:var(--fd);font-weight:500;font-size:.8rem}
+.drow em{font-style:normal;font-family:var(--fm);font-size:.65rem;color:var(--ink3);white-space:nowrap}
+.dnote{font-size:.7rem;line-height:1.55;color:var(--ink3);margin-top:12px;padding-top:11px;
+  border-top:1px solid var(--line)}
+.hudbot{position:absolute;right:20px;bottom:20px;display:flex;flex-direction:column;
+  align-items:flex-end;gap:10px;pointer-events:auto}
+.cta{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:100px;
+  font-family:var(--fd);font-weight:500;font-size:.88rem;cursor:pointer;transition:.3s var(--ease);
+  background:linear-gradient(105deg,var(--gold),var(--gold2));color:#160f02;
+  box-shadow:0 10px 30px -12px rgba(242,200,121,.6)}
+.cta:hover{transform:translateY(-2px)}
+.ghost{padding:11px 18px;border-radius:100px;border:1px solid var(--line2);cursor:pointer;
+  background:rgba(255,255,255,.04);color:var(--ink2);font-size:.82rem;transition:.3s;
+  backdrop-filter:blur(10px)}
+.ghost:hover{color:var(--ink);border-color:var(--gold)}
+.tip{font-family:var(--fm);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);text-align:right;max-width:210px;line-height:1.8}
+
+.backlink{position:fixed;left:22px;top:22px;z-index:12;font-size:.82rem;color:var(--ink2);
+  transition:.3s;pointer-events:auto}
+.backlink:hover{color:var(--gold)}
+
+@media(max-width:760px){
+  .card{padding:26px 20px;border-radius:20px}
+  .grid2,.trio,.duo{grid-template-columns:1fr 1fr}
+  .trio{grid-template-columns:.8fr 1.3fr .95fr;gap:6px}
+  .ctl{font-size:16px;padding:11px}
+  .tickrow span{flex:0 0 100%}
+  .panel{left:12px;right:12px;bottom:12px;width:auto;max-height:42vh}
+  .hudbot{left:12px;right:12px;bottom:auto;top:64px;align-items:stretch;flex-direction:row}
+  .cta{flex:1;justify-content:center;font-size:.8rem;padding:11px 14px}
+  .ghost{font-size:.76rem;padding:10px 13px}
+  .tip{display:none}
+  .hudtop{padding:14px}
+  .hudmeta{font-size:9px}
+  .cbtns .btn{flex:1 1 100%}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+<canvas id="warpc"></canvas>
+
+<a href="index.html" class="backlink" id="backlink">← Starlit Insights</a>
+
+<!-- ============ STAGE 1 · FORM ============ -->
+<section class="stage veil on" id="s1">
+  <div class="card">
+    <div class="eyebrow">Runs entirely in your browser</div>
+    <h1>Where were the stars<br><em>when you arrived?</em></h1>
+    <p class="lead" style="margin-bottom:26px">
+      Give me the moment you were born and I'll rebuild that sky around you — all nine grahas at their
+      true sidereal positions, ringed by the 27 nakṣatras. Nothing is stored or sent anywhere.
+    </p>
+
+    <div class="field">
+      <label for="bday">Date of birth</label>
+      <div class="trio">
+        <select class="ctl" id="bday" aria-label="Day"></select>
+        <select class="ctl" id="bmon" aria-label="Month"></select>
+        <select class="ctl" id="byear" aria-label="Year"></select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="bhour">Time of birth <span style="text-transform:none;letter-spacing:0">(24-hour · as exact as you can)</span></label>
+      <div class="duo">
+        <select class="ctl" id="bhour" aria-label="Hour"></select>
+        <select class="ctl" id="bmin" aria-label="Minute"></select>
+      </div>
+    </div>
+
+    <div class="field ac">
+      <label for="bplace">Place of birth</label>
+      <input class="ctl" id="bplace" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Start typing a city…">
+      <div class="aclist" id="aclist"></div>
+    </div>
+
+    <div class="field" id="coordWrap" style="display:none">
+      <label>Coordinates &amp; time zone</label>
+      <div class="grid2">
+        <input class="ctl" id="blat" type="text" placeholder="Latitude e.g. 26.45">
+        <input class="ctl" id="blon" type="text" placeholder="Longitude e.g. 80.33">
+      </div>
+      <select class="ctl" id="btz" style="margin-top:8px" aria-label="UTC offset"></select>
+    </div>
+
+    <button class="btn btn-p" id="go" style="margin-top:6px"><span>Prepare the journey →</span></button>
+    <div class="errmsg" id="err"></div>
+    <p class="hint">
+      Can't find your town? <a href="#" id="manual" style="color:var(--cyan);border-bottom:1px solid rgba(95,227,216,.4)">Enter coordinates manually</a>.
+      Positions are computed from JPL orbital elements with the Lahiri ayanāṁśa — accurate to a few
+      arcminutes, which is close enough to place every graha in its correct sign and nakṣatra.
+    </p>
+  </div>
+</section>
+
+<!-- ============ STAGE 2 · CONFIRM ============ -->
+<section class="stage veil" id="s2">
+  <div class="confirm">
+    <div class="eyebrow" style="justify-content:center">Coordinates locked</div>
+    <h1>Ready to ride back<br><em>to the beginning?</em></h1>
+    <p class="lead" style="margin:0 auto" id="confLead"></p>
+    <div class="tick" id="confTick"></div>
+    <div class="cbtns">
+      <button class="btn btn-p" id="launch"><span>Take me back ↗</span></button>
+      <button class="btn btn-g" id="edit">Change the details</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAGE 3 · WARP ============ -->
+<section class="stage" id="s3">
+  <div class="warpui">
+    <div class="wyear" id="wyear">2026</div>
+    <div class="wlabel" id="wlabel">Winding the sky backwards</div>
+    <div class="wbar"><i id="wbar"></i></div>
+  </div>
+</section>
+
+<!-- ============ STAGE 4 · HUD ============ -->
+<div id="hud">
+  <div class="hudtop">
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 100 100" fill="none"><path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="#f2c879"/></svg>
+      Starlit Insights
+    </a>
+    <div class="hudmeta" id="hudmeta"></div>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="phead">
+      <b id="ptitle">Your sky, that moment</b>
+      <button class="pmin" id="pmin" aria-label="Collapse">–</button>
+    </div>
+    <div class="ptabs" id="ptabs">
+      <button class="ptab on" data-pane="pSky" type="button">The sky</button>
+      <button class="ptab" data-pane="pDas" type="button">Your timing</button>
+    </div>
+    <div class="pbody">
+      <div class="pane on" id="pSky"><div id="pbody"></div><div id="pdetail"></div></div>
+      <div class="pane" id="pDas"></div>
+    </div>
+  </div>
+
+  <div class="hudbot">
+    <div class="tip">Drag to orbit · scroll to zoom</div>
+    <button class="ghost" id="save">Save image</button>
+    <button class="ghost" id="again">Another birth moment</button>
+    <a href="index.html#book" class="cta">Have this chart read · ₹250</a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var CITY_BLOB = "Mumbai|Maharashtra|19.0760|72.8777|5.5\nDelhi|Delhi|28.6139|77.2090|5.5\nBengaluru|Karnataka|12.9716|77.5946|5.5\nHyderabad|Telangana|17.3850|78.4867|5.5\nChennai|Tamil Nadu|13.0827|80.2707|5.5\nKolkata|West Bengal|22.5726|88.3639|5.5\nPune|Maharashtra|18.5204|73.8567|5.5\nAhmedabad|Gujarat|23.0225|72.5714|5.5\nJaipur|Rajasthan|26.9124|75.7873|5.5\nSurat|Gujarat|21.1702|72.8311|5.5\nLucknow|Uttar Pradesh|26.8467|80.9462|5.5\nKanpur|Uttar Pradesh|26.4499|80.3319|5.5\nNagpur|Maharashtra|21.1458|79.0882|5.5\nIndore|Madhya Pradesh|22.7196|75.8577|5.5\nBhopal|Madhya Pradesh|23.2599|77.4126|5.5\nVisakhapatnam|Andhra Pradesh|17.6868|83.2185|5.5\nPatna|Bihar|25.5941|85.1376|5.5\nVadodara|Gujarat|22.3072|73.1812|5.5\nGhaziabad|Uttar Pradesh|28.6692|77.4538|5.5\nLudhiana|Punjab|30.9010|75.8573|5.5\nAgra|Uttar Pradesh|27.1767|78.0081|5.5\nNashik|Maharashtra|19.9975|73.7898|5.5\nFaridabad|Haryana|28.4089|77.3178|5.5\nMeerut|Uttar Pradesh|28.9845|77.7064|5.5\nRajkot|Gujarat|22.3039|70.8022|5.5\nVaranasi|Uttar Pradesh|25.3176|82.9739|5.5\nSrinagar|Jammu & Kashmir|34.0837|74.7973|5.5\nAurangabad|Maharashtra|19.8762|75.3433|5.5\nDhanbad|Jharkhand|23.7957|86.4304|5.5\nAmritsar|Punjab|31.6340|74.8723|5.5\nNavi Mumbai|Maharashtra|19.0330|73.0297|5.5\nPrayagraj (Allahabad)|Uttar Pradesh|25.4358|81.8463|5.5\nRanchi|Jharkhand|23.3441|85.3096|5.5\nHowrah|West Bengal|22.5958|88.2636|5.5\nCoimbatore|Tamil Nadu|11.0168|76.9558|5.5\nJabalpur|Madhya Pradesh|23.1815|79.9864|5.5\nGwalior|Madhya Pradesh|26.2183|78.1828|5.5\nVijayawada|Andhra Pradesh|16.5062|80.6480|5.5\nJodhpur|Rajasthan|26.2389|73.0243|5.5\nMadurai|Tamil Nadu|9.9252|78.1198|5.5\nRaipur|Chhattisgarh|21.2514|81.6296|5.5\nKota|Rajasthan|25.2138|75.8648|5.5\nChandigarh|Chandigarh|30.7333|76.7794|5.5\nGuwahati|Assam|26.1445|91.7362|5.5\nSolapur|Maharashtra|17.6599|75.9064|5.5\nHubli|Karnataka|15.3647|75.1240|5.5\nMysuru|Karnataka|12.2958|76.6394|5.5\nTiruchirappalli|Tamil Nadu|10.7905|78.7047|5.5\nBareilly|Uttar Pradesh|28.3670|79.4304|5.5\nAligarh|Uttar Pradesh|27.8974|78.0880|5.5\nMoradabad|Uttar Pradesh|28.8386|78.7733|5.5\nGurugram|Haryana|28.4595|77.0266|5.5\nNoida|Uttar Pradesh|28.5355|77.3910|5.5\nJalandhar|Punjab|31.3260|75.5762|5.5\nBhubaneswar|Odisha|20.2961|85.8245|5.5\nSalem|Tamil Nadu|11.6643|78.1460|5.5\nWarangal|Telangana|17.9689|79.5941|5.5\nGuntur|Andhra Pradesh|16.3067|80.4365|5.5\nSaharanpur|Uttar Pradesh|29.9680|77.5552|5.5\nGorakhpur|Uttar Pradesh|26.7606|83.3732|5.5\nBikaner|Rajasthan|28.0229|73.3119|5.5\nAmravati|Maharashtra|20.9374|77.7796|5.5\nJamshedpur|Jharkhand|22.8046|86.2029|5.5\nBhilai|Chhattisgarh|21.1938|81.3509|5.5\nCuttack|Odisha|20.4625|85.8830|5.5\nFirozabad|Uttar Pradesh|27.1592|78.3957|5.5\nKochi|Kerala|9.9312|76.2673|5.5\nNellore|Andhra Pradesh|14.4426|79.9865|5.5\nBhavnagar|Gujarat|21.7645|72.1519|5.5\nDehradun|Uttarakhand|30.3165|78.0322|5.5\nDurgapur|West Bengal|23.5204|87.3119|5.5\nAsansol|West Bengal|23.6739|86.9524|5.5\nRourkela|Odisha|22.2604|84.8536|5.5\nNanded|Maharashtra|19.1383|77.3210|5.5\nKolhapur|Maharashtra|16.7050|74.2433|5.5\nAjmer|Rajasthan|26.4499|74.6399|5.5\nAkola|Maharashtra|20.7002|77.0082|5.5\nKalaburagi (Gulbarga)|Karnataka|17.3297|76.8343|5.5\nJamnagar|Gujarat|22.4707|70.0577|5.5\nUjjain|Madhya Pradesh|23.1765|75.7885|5.5\nSiliguri|West Bengal|26.7271|88.3953|5.5\nJhansi|Uttar Pradesh|25.4484|78.5685|5.5\nJammu|Jammu & Kashmir|32.7266|74.8570|5.5\nSangli|Maharashtra|16.8524|74.5815|5.5\nBelagavi (Belgaum)|Karnataka|15.8497|74.4977|5.5\nMangaluru|Karnataka|12.9141|74.8560|5.5\nTirunelveli|Tamil Nadu|8.7139|77.7567|5.5\nGaya|Bihar|24.7914|85.0002|5.5\nJalgaon|Maharashtra|21.0077|75.5626|5.5\nUdaipur|Rajasthan|24.5854|73.7125|5.5\nTiruppur|Tamil Nadu|11.1085|77.3411|5.5\nKozhikode|Kerala|11.2588|75.7804|5.5\nKurnool|Andhra Pradesh|15.8281|78.0373|5.5\nBokaro|Jharkhand|23.6693|86.1511|5.5\nBallari (Bellary)|Karnataka|15.1394|76.9214|5.5\nPatiala|Punjab|30.3398|76.3869|5.5\nAgartala|Tripura|23.8315|91.2868|5.5\nBhagalpur|Bihar|25.2425|86.9842|5.5\nMuzaffarnagar|Uttar Pradesh|29.4727|77.7085|5.5\nLatur|Maharashtra|18.4088|76.5604|5.5\nDhule|Maharashtra|20.9042|74.7749|5.5\nRohtak|Haryana|28.8955|76.6066|5.5\nKorba|Chhattisgarh|22.3595|82.7501|5.5\nBhilwara|Rajasthan|25.3407|74.6313|5.5\nBrahmapur|Odisha|19.3150|84.7941|5.5\nMuzaffarpur|Bihar|26.1197|85.3910|5.5\nAhmednagar|Maharashtra|19.0948|74.7480|5.5\nMathura|Uttar Pradesh|27.4924|77.6737|5.5\nKollam|Kerala|8.8932|76.6141|5.5\nKadapa|Andhra Pradesh|14.4674|78.8241|5.5\nBilaspur|Chhattisgarh|22.0797|82.1391|5.5\nShahjahanpur|Uttar Pradesh|27.8815|79.9099|5.5\nSatara|Maharashtra|17.6805|74.0183|5.5\nVijayapura (Bijapur)|Karnataka|16.8302|75.7100|5.5\nRampur|Uttar Pradesh|28.8152|79.0250|5.5\nShivamogga|Karnataka|13.9299|75.5681|5.5\nChandrapur|Maharashtra|19.9615|79.2961|5.5\nJunagadh|Gujarat|21.5222|70.4579|5.5\nThrissur|Kerala|10.5276|76.2144|5.5\nAlwar|Rajasthan|27.5530|76.6346|5.5\nKakinada|Andhra Pradesh|16.9891|82.2475|5.5\nNizamabad|Telangana|18.6725|78.0941|5.5\nParbhani|Maharashtra|19.2608|76.7748|5.5\nTumakuru|Karnataka|13.3392|77.1140|5.5\nKhammam|Telangana|17.2473|80.1514|5.5\nPanipat|Haryana|29.3909|76.9635|5.5\nDarbhanga|Bihar|26.1542|85.8918|5.5\nAizawl|Mizoram|23.7271|92.7176|5.5\nDewas|Madhya Pradesh|22.9676|76.0534|5.5\nKarnal|Haryana|29.6857|76.9905|5.5\nBathinda|Punjab|30.2110|74.9455|5.5\nEluru|Andhra Pradesh|16.7107|81.0952|5.5\nPurnia|Bihar|25.7771|87.4753|5.5\nSatna|Madhya Pradesh|24.5670|80.8322|5.5\nSonipat|Haryana|28.9931|77.0151|5.5\nSagar|Madhya Pradesh|23.8388|78.7378|5.5\nDurg|Chhattisgarh|21.1904|81.2849|5.5\nImphal|Manipur|24.8170|93.9368|5.5\nRatlam|Madhya Pradesh|23.3315|75.0367|5.5\nAra (Arrah)|Bihar|25.5541|84.6635|5.5\nAnantapur|Andhra Pradesh|14.6819|77.6006|5.5\nKarimnagar|Telangana|18.4386|79.1288|5.5\nEtawah|Uttar Pradesh|26.7855|79.0150|5.5\nBharatpur|Rajasthan|27.2152|77.5030|5.5\nBegusarai|Bihar|25.4182|86.1272|5.5\nGandhidham|Gujarat|23.0753|70.1337|5.5\nPuducherry|Puducherry|11.9416|79.8083|5.5\nSikar|Rajasthan|27.6094|75.1399|5.5\nThoothukudi|Tamil Nadu|8.7642|78.1348|5.5\nRewa|Madhya Pradesh|24.5362|81.3037|5.5\nMirzapur|Uttar Pradesh|25.1337|82.5644|5.5\nRaichur|Karnataka|16.2076|77.3463|5.5\nPali|Rajasthan|25.7711|73.3234|5.5\nHaridwar|Uttarakhand|29.9457|78.1642|5.5\nKatihar|Bihar|25.5541|87.5719|5.5\nNagercoil|Tamil Nadu|8.1833|77.4119|5.5\nSri Ganganagar|Rajasthan|29.9038|73.8772|5.5\nThanjavur|Tamil Nadu|10.7870|79.1378|5.5\nBulandshahr|Uttar Pradesh|28.4038|77.8583|5.5\nNadiad|Gujarat|22.6939|72.8616|5.5\nSecunderabad|Telangana|17.4399|78.4983|5.5\nYamunanagar|Haryana|30.1290|77.2674|5.5\nBidar|Karnataka|17.9104|77.5199|5.5\nMunger|Bihar|25.3746|86.4737|5.5\nPanchkula|Haryana|30.6942|76.8606|5.5\nKharagpur|West Bengal|22.3460|87.2320|5.5\nDindigul|Tamil Nadu|10.3673|77.9803|5.5\nGandhinagar|Gujarat|23.2156|72.6369|5.5\nOngole|Andhra Pradesh|15.5057|80.0499|5.5\nDeoghar|Jharkhand|24.4823|86.6969|5.5\nChhapra|Bihar|25.7815|84.7273|5.5\nHaldia|West Bengal|22.0667|88.0698|5.5\nKhandwa|Madhya Pradesh|21.8245|76.3529|5.5\nNandyal|Andhra Pradesh|15.4777|78.4873|5.5\nMorena|Madhya Pradesh|26.4934|78.0009|5.5\nAmroha|Uttar Pradesh|28.9044|78.4675|5.5\nAnand|Gujarat|22.5645|72.9289|5.5\nBhind|Madhya Pradesh|26.5645|78.7873|5.5\nBhiwani|Haryana|28.7975|76.1322|5.5\nAmbala|Haryana|30.3782|76.7767|5.5\nMorbi|Gujarat|22.8173|70.8377|5.5\nRaebareli|Uttar Pradesh|26.2309|81.2338|5.5\nBhusawal|Maharashtra|21.0435|75.7851|5.5\nOrai|Uttar Pradesh|25.9900|79.4500|5.5\nBahraich|Uttar Pradesh|27.5743|81.5941|5.5\nVellore|Tamil Nadu|12.9165|79.1325|5.5\nMehsana|Gujarat|23.5880|72.3693|5.5\nSirsa|Haryana|29.5349|75.0280|5.5\nGuna|Madhya Pradesh|24.6469|77.3113|5.5\nJaunpur|Uttar Pradesh|25.7478|82.6837|5.5\nPanvel|Maharashtra|18.9894|73.1175|5.5\nShivpuri|Madhya Pradesh|25.4358|77.6584|5.5\nSurendranagar|Gujarat|22.7196|71.6369|5.5\nUnnao|Uttar Pradesh|26.5393|80.4878|5.5\nAlappuzha|Kerala|9.4981|76.3388|5.5\nKottayam|Kerala|9.5916|76.5222|5.5\nMachilipatnam|Andhra Pradesh|16.1875|81.1389|5.5\nShimla|Himachal Pradesh|31.1048|77.1734|5.5\nUdupi|Karnataka|13.3409|74.7421|5.5\nKatni|Madhya Pradesh|23.8343|80.3894|5.5\nMahbubnagar|Telangana|16.7488|77.9853|5.5\nSaharsa|Bihar|25.8800|86.6000|5.5\nDibrugarh|Assam|27.4728|94.9120|5.5\nJorhat|Assam|26.7509|94.2037|5.5\nHazaribagh|Jharkhand|23.9925|85.3637|5.5\nNagaon|Assam|26.3505|92.6842|5.5\nSilchar|Assam|24.8333|92.7789|5.5\nTiruvannamalai|Tamil Nadu|12.2253|79.0747|5.5\nKumbakonam|Tamil Nadu|10.9601|79.3788|5.5\nGangtok|Sikkim|27.3389|88.6065|5.5\nPanaji|Goa|15.4909|73.8278|5.5\nShillong|Meghalaya|25.5788|91.8933|5.5\nKohima|Nagaland|25.6751|94.1086|5.5\nItanagar|Arunachal Pradesh|27.0844|93.6053|5.5\nPort Blair|Andaman & Nicobar|11.6234|92.7265|5.5\nLeh|Ladakh|34.1526|77.5771|5.5\nRishikesh|Uttarakhand|30.0869|78.2676|5.5\nHaldwani|Uttarakhand|29.2183|79.5130|5.5\nNainital|Uttarakhand|29.3919|79.4542|5.5\nManali|Himachal Pradesh|32.2432|77.1892|5.5\nDharamshala|Himachal Pradesh|32.2190|76.3234|5.5\nSolan|Himachal Pradesh|30.9045|77.0967|5.5\nMandi|Himachal Pradesh|31.7080|76.9318|5.5\nTirupati|Andhra Pradesh|13.6288|79.4192|5.5\nRajahmundry|Andhra Pradesh|17.0005|81.8040|5.5\nChittoor|Andhra Pradesh|13.2172|79.1003|5.5\nHosur|Tamil Nadu|12.7409|77.8253|5.5\nErode|Tamil Nadu|11.3410|77.7172|5.5\nKarur|Tamil Nadu|10.9601|78.0766|5.5\nCuddalore|Tamil Nadu|11.7480|79.7714|5.5\nKanchipuram|Tamil Nadu|12.8342|79.7036|5.5\nSambalpur|Odisha|21.4669|83.9812|5.5\nPuri|Odisha|19.8135|85.8312|5.5\nBhadrak|Odisha|21.0574|86.4963|5.5\nBalasore|Odisha|21.4934|86.9335|5.5\nTinsukia|Assam|27.4900|95.3600|5.5\nBardhaman|West Bengal|23.2324|87.8615|5.5\nMalda|West Bengal|25.0000|88.1400|5.5\nKrishnanagar|West Bengal|23.4058|88.5017|5.5\nBarrackpore|West Bengal|22.7600|88.3700|5.5\nBankura|West Bengal|23.2324|87.0753|5.5\nMedinipur|West Bengal|22.4257|87.3199|5.5\nCooch Behar|West Bengal|26.3200|89.4500|5.5\nJalpaiguri|West Bengal|26.5215|88.7264|5.5\nRatnagiri|Maharashtra|16.9902|73.3120|5.5\nNagapattinam|Tamil Nadu|10.7660|79.8420|5.5\nNew York|USA|40.7128|-74.0060|-5\nLos Angeles|USA|34.0522|-118.2437|-8\nChicago|USA|41.8781|-87.6298|-6\nHouston|USA|29.7604|-95.3698|-6\nSan Francisco|USA|37.7749|-122.4194|-8\nSeattle|USA|47.6062|-122.3321|-8\nBoston|USA|42.3601|-71.0589|-5\nWashington DC|USA|38.9072|-77.0369|-5\nAtlanta|USA|33.7490|-84.3880|-5\nDallas|USA|32.7767|-96.7970|-6\nToronto|Canada|43.6532|-79.3832|-5\nVancouver|Canada|49.2827|-123.1207|-8\nMontreal|Canada|45.5017|-73.5673|-5\nLondon|UK|51.5074|-0.1278|0\nManchester|UK|53.4808|-2.2426|0\nBirmingham|UK|52.4862|-1.8904|0\nDublin|Ireland|53.3498|-6.2603|0\nParis|France|48.8566|2.3522|1\nBerlin|Germany|52.5200|13.4050|1\nFrankfurt|Germany|50.1109|8.6821|1\nMunich|Germany|48.1351|11.5820|1\nAmsterdam|Netherlands|52.3676|4.9041|1\nBrussels|Belgium|50.8503|4.3517|1\nZurich|Switzerland|47.3769|8.5417|1\nMadrid|Spain|40.4168|-3.7038|1\nBarcelona|Spain|41.3851|2.1734|1\nRome|Italy|41.9028|12.4964|1\nMilan|Italy|45.4642|9.1900|1\nLisbon|Portugal|38.7223|-9.1393|0\nVienna|Austria|48.2082|16.3738|1\nStockholm|Sweden|59.3293|18.0686|1\nOslo|Norway|59.9139|10.7522|1\nCopenhagen|Denmark|55.6761|12.5683|1\nHelsinki|Finland|60.1699|24.9384|2\nWarsaw|Poland|52.2297|21.0122|1\nPrague|Czechia|50.0755|14.4378|1\nBudapest|Hungary|47.4979|19.0402|1\nMoscow|Russia|55.7558|37.6173|3\nIstanbul|Turkey|41.0082|28.9784|3\nAthens|Greece|37.9838|23.7275|2\nDubai|UAE|25.2048|55.2708|4\nAbu Dhabi|UAE|24.4539|54.3773|4\nDoha|Qatar|25.2854|51.5310|3\nRiyadh|Saudi Arabia|24.7136|46.6753|3\nJeddah|Saudi Arabia|21.4858|39.1925|3\nMuscat|Oman|23.5880|58.3829|4\nKuwait City|Kuwait|29.3759|47.9774|3\nManama|Bahrain|26.2285|50.5860|3\nTel Aviv|Israel|32.0853|34.7818|2\nCairo|Egypt|30.0444|31.2357|2\nNairobi|Kenya|-1.2921|36.8219|3\nLagos|Nigeria|6.5244|3.3792|1\nJohannesburg|South Africa|-26.2041|28.0473|2\nCape Town|South Africa|-33.9249|18.4241|2\nKarachi|Pakistan|24.8607|67.0011|5\nLahore|Pakistan|31.5204|74.3587|5\nIslamabad|Pakistan|33.6844|73.0479|5\nDhaka|Bangladesh|23.8103|90.4125|6\nChittagong|Bangladesh|22.3569|91.7832|6\nKathmandu|Nepal|27.7172|85.3240|5.75\nColombo|Sri Lanka|6.9271|79.8612|5.5\nMale|Maldives|4.1755|73.5093|5\nThimphu|Bhutan|27.4728|89.6390|6\nYangon|Myanmar|16.8661|96.1951|6.5\nBangkok|Thailand|13.7563|100.5018|7\nSingapore|Singapore|1.3521|103.8198|8\nKuala Lumpur|Malaysia|3.1390|101.6869|8\nJakarta|Indonesia|-6.2088|106.8456|7\nManila|Philippines|14.5995|120.9842|8\nHanoi|Vietnam|21.0285|105.8542|7\nHo Chi Minh City|Vietnam|10.8231|106.6297|7\nHong Kong|Hong Kong|22.3193|114.1694|8\nBeijing|China|39.9042|116.4074|8\nShanghai|China|31.2304|121.4737|8\nShenzhen|China|22.5431|114.0579|8\nTaipei|Taiwan|25.0330|121.5654|8\nSeoul|South Korea|37.5665|126.9780|9\nTokyo|Japan|35.6762|139.6503|9\nOsaka|Japan|34.6937|135.5023|9\nSydney|Australia|-33.8688|151.2093|10\nMelbourne|Australia|-37.8136|144.9631|10\nBrisbane|Australia|-27.4698|153.0251|10\nPerth|Australia|-31.9505|115.8605|8\nAuckland|New Zealand|-36.8485|174.7633|12\nWellington|New Zealand|-41.2865|174.7762|12\nSao Paulo|Brazil|-23.5505|-46.6333|-3\nRio de Janeiro|Brazil|-22.9068|-43.1729|-3\nBuenos Aires|Argentina|-34.6037|-58.3816|-3\nSantiago|Chile|-33.4489|-70.6693|-4\nLima|Peru|-12.0464|-77.0428|-5\nBogota|Colombia|4.7110|-74.0721|-5\nMexico City|Mexico|19.4326|-99.1332|-6\nKabul|Afghanistan|34.5553|69.2075|4.5\nTashkent|Uzbekistan|41.2995|69.2401|5\nAlmaty|Kazakhstan|43.2220|76.8512|6\nTehran|Iran|35.6892|51.3890|3.5\nBaghdad|Iraq|33.3152|44.3661|3";
+</script>
+
+<script>
+(function(){
+"use strict";
+var D2R=Math.PI/180, R2D=180/Math.PI, RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var norm=function(d){return ((d%360)+360)%360;};
+
+/* ==================================================================
+   1. CITIES
+   ================================================================== */
+var CITIES=(function(){
+  var out=[],rows=CITY_BLOB.split("\n");
+  for(var i=0;i<rows.length;i++){
+    var p=rows[i].split("|"); if(p.length<5) continue;
+    out.push({n:p[0],r:p[1],lat:parseFloat(p[2]),lon:parseFloat(p[3]),tz:parseFloat(p[4])});
+  }
+  return out;
+})();
+
+/* ==================================================================
+   2. EPHEMERIS  (verified against Swiss Ephemeris to 1-5 arcmin)
+   ================================================================== */
+function jdFromUTC(y,mo,d,h,mi){
+  if(mo<=2){y-=1;mo+=12;}
+  var A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+  return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(mo+1))+d+B-1524.5+(h+mi/60)/24;
+}
+function T_of(jd){return (jd-2451545.0)/36525;}
+function ayanamsa(jd){return 23.85319+((jd-2451545.0)/365.25)*(50.29/3600);}
+function obliquity(T){return 23.439291-0.0130042*T-1.64e-7*T*T+5.04e-7*T*T*T;}
+
+function sunLon(T){
+  var L0=norm(280.46646+36000.76983*T+0.0003032*T*T);
+  var M=norm(357.52911+35999.05029*T-0.0001537*T*T)*D2R;
+  var C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)
+      +(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  return norm(L0+C);
+}
+var MT=[[6.288774,0,0,1,0],[1.274027,2,0,-1,0],[0.658314,2,0,0,0],[0.213618,0,0,2,0],
+[-0.185116,0,1,0,0],[-0.114332,0,0,0,2],[0.058793,2,0,-2,0],[0.057066,2,-1,-1,0],
+[0.053322,2,0,1,0],[0.045758,2,-1,0,0],[-0.040923,0,1,-1,0],[-0.034720,1,0,0,0],
+[-0.030383,0,1,1,0],[0.015327,2,0,0,-2],[-0.012528,0,0,1,2],[0.010980,0,0,1,-2],
+[0.010675,4,0,-1,0],[0.010034,0,0,3,0],[0.008548,4,0,-2,0],[-0.007888,2,1,-1,0],
+[-0.006766,2,1,0,0],[-0.005163,1,0,-1,0],[0.004987,1,1,0,0],[0.004036,2,-1,1,0],
+[0.003994,2,0,2,0],[0.003861,4,0,0,0],[0.003665,2,0,-3,0],[-0.002689,0,1,-2,0],
+[-0.002602,2,0,-1,2],[0.002390,2,-1,-2,0],[-0.002348,1,0,1,0],[0.002236,2,-2,0,0],
+[-0.002120,0,1,2,0],[-0.002069,0,2,0,0],[0.002048,2,-2,-1,0],[-0.001773,2,0,1,-2],
+[-0.001595,2,0,0,2],[0.001215,4,-1,-1,0],[-0.001110,0,0,2,2],[-0.000892,3,0,-1,0]];
+function moonLon(T){
+  var Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841-T*T*T*T/65194000);
+  var D=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868-T*T*T*T/113065000)*D2R;
+  var M=norm(357.5291092+35999.0502909*T-0.0001536*T*T+T*T*T/24490000)*D2R;
+  var Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699-T*T*T*T/14712000)*D2R;
+  var F=norm(93.2720950+483202.0175233*T-0.0036539*T*T-T*T*T/3526000+T*T*T*T/863310000)*D2R;
+  var E=1-0.002516*T-0.0000074*T*T,sum=0;
+  for(var i=0;i<MT.length;i++){
+    var t=MT[i],a=t[0]*Math.sin(t[1]*D-t[2]*M+t[3]*Mp+t[4]*F);
+    if(Math.abs(t[2])===1)a*=E; else if(Math.abs(t[2])===2)a*=E*E;
+    sum+=a;
+  }
+  return norm(Lp+sum);
+}
+function rahuLon(T){
+  return norm(125.0445479-1934.1362891*T+0.0020754*T*T+T*T*T/467441-T*T*T*T/60616000);
+}
+var EL={
+ mercury:[0.38709927,0.00000037,0.20563593,0.00001906,7.00497902,-0.00594749,252.25032350,149472.67411175,77.45779628,0.16047689,48.33076593,-0.12534081],
+ venus:[0.72333566,0.00000390,0.00677672,-0.00004107,3.39467605,-0.00078890,181.97909950,58517.81538729,131.60246718,0.00268329,76.67984255,-0.27769418],
+ earth:[1.00000261,0.00000562,0.01671123,-0.00004392,-0.00001531,-0.01294668,100.46457166,35999.37244981,102.93768193,0.32327364,0,0],
+ mars:[1.52371034,0.00001847,0.09339410,0.00007882,1.84969142,-0.00813131,-4.55343205,19140.30268499,-23.94362959,0.44441088,49.55953891,-0.29257343],
+ jupiter:[5.20288700,-0.00011607,0.04838624,-0.00013253,1.30439695,-0.00183714,34.39644051,3034.74612775,14.72847983,0.21252668,100.47390909,0.20469106],
+ saturn:[9.53667594,-0.00125060,0.05386179,-0.00050991,2.48599187,0.00193609,49.95424423,1222.49362201,92.59887831,-0.41897216,113.66242448,-0.28867794]};
+function helio(name,T){
+  var e0=EL[name];
+  var a=e0[0]+e0[1]*T,e=e0[2]+e0[3]*T,I=(e0[4]+e0[5]*T)*D2R;
+  var L=e0[6]+e0[7]*T,wb=e0[8]+e0[9]*T,om=(e0[10]+e0[11]*T)*D2R,w=wb*D2R-om;
+  var M=norm(L-wb); if(M>180)M-=360; M*=D2R;
+  var E=M+e*Math.sin(M);
+  for(var i=0;i<12;i++){var dE=(M-(E-e*Math.sin(E)))/(1-e*Math.cos(E));E+=dE;if(Math.abs(dE)<1e-12)break;}
+  var xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E);
+  var cw=Math.cos(w),sw=Math.sin(w),co=Math.cos(om),so=Math.sin(om),ci=Math.cos(I),si=Math.sin(I);
+  return [(cw*co-sw*so*ci)*xp+(-sw*co-cw*so*ci)*yp,
+          (cw*so+sw*co*ci)*xp+(-sw*so+cw*co*ci)*yp,
+          (sw*si)*xp+(cw*si)*yp];
+}
+function planetLon(name,T){
+  var p=helio(name,T),e=helio('earth',T);
+  return norm(Math.atan2(p[1]-e[1],p[0]-e[0])*R2D);
+}
+function gmst(jd){
+  var T=T_of(jd);
+  return norm(280.46061837+360.98564736629*(jd-2451545.0)+0.000387933*T*T-T*T*T/38710000);
+}
+function ascendant(jd,lat,lon){
+  var T=T_of(jd),th=norm(gmst(jd)+lon)*D2R,e=obliquity(T)*D2R,ph=lat*D2R;
+  return norm(Math.atan2(Math.cos(th),-(Math.sin(th)*Math.cos(e)+Math.tan(ph)*Math.sin(e)))*R2D);
+}
+var SIGN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+var SANS=['Meṣa','Vṛṣabha','Mithuna','Karka','Siṃha','Kanyā','Tulā','Vṛścika','Dhanu','Makara','Kumbha','Mīna'];
+var GLYPH=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+var NAK=['Aśvinī','Bharaṇī','Kṛttikā','Rohiṇī','Mṛgaśīrṣa','Ārdrā','Punarvasu','Puṣya','Āśleṣā','Maghā',
+'Pūrva Phalgunī','Uttara Phalgunī','Hasta','Citrā','Svātī','Viśākhā','Anurādhā','Jyeṣṭhā','Mūla',
+'Pūrva Āṣāḍhā','Uttara Āṣāḍhā','Śravaṇa','Dhaniṣṭhā','Śatabhiṣā','Pūrva Bhādrapadā','Uttara Bhādrapadā','Revatī'];
+
+var BODIES=[
+ {k:'Lagna',  s:'Lagna',  c:0xf2c879, r:9,  sz:0.0},
+ {k:'Moon',   s:'Candra', c:0xdfe7f5, r:13, sz:1.5},
+ {k:'Mercury',s:'Budha',  c:0x5fe3d8, r:17, sz:1.2},
+ {k:'Venus',  s:'Śukra',  c:0xf2c879, r:21, sz:1.5},
+ {k:'Sun',    s:'Sūrya',  c:0xffb056, r:25, sz:2.4},
+ {k:'Mars',   s:'Maṅgala',c:0xff7a7a, r:29, sz:1.3},
+ {k:'Jupiter',s:'Guru',   c:0xffd98a, r:34, sz:2.1},
+ {k:'Saturn', s:'Śani',   c:0x5f9ee3, r:39, sz:1.9},
+ {k:'Rahu',   s:'Rāhu',   c:0x8b6fb8, r:44, sz:1.3},
+ {k:'Ketu',   s:'Ketu',   c:0x7d6be0, r:44, sz:1.3}
+];
+
+function computeChart(y,mo,d,h,mi,tz,lat,lon){
+  var jd=jdFromUTC(y,mo,d,h-tz,mi), T=T_of(jd), T2=T_of(jd+1), ay=ayanamsa(jd);
+  var trop={Sun:sunLon(T),Moon:moonLon(T),Mars:planetLon('mars',T),Mercury:planetLon('mercury',T),
+            Jupiter:planetLon('jupiter',T),Venus:planetLon('venus',T),Saturn:planetLon('saturn',T),
+            Rahu:rahuLon(T)};
+  trop.Ketu=norm(trop.Rahu+180);
+  var nxt={Mars:planetLon('mars',T2),Mercury:planetLon('mercury',T2),Jupiter:planetLon('jupiter',T2),
+           Venus:planetLon('venus',T2),Saturn:planetLon('saturn',T2)};
+  var res={};
+  for(var k in trop){
+    var sid=norm(trop[k]-ay), retro=(k==='Rahu'||k==='Ketu');
+    if(nxt[k]!==undefined){var dd=nxt[k]-trop[k]; if(dd>180)dd-=360; if(dd<-180)dd+=360; retro=dd<0;}
+    res[k]={sid:sid,retro:retro};
+  }
+  res.Lagna={sid:norm(ascendant(jd,lat,lon)-ay),retro:false};
+  res._ay=ay; res._jd=jd;
+  return res;
+}
+function dms(x){var d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){d++;m=0;}return d+'°'+(m<10?'0':'')+m+"′";}
+function posText(sid){
+  var si=Math.floor(sid/30);
+  return {sign:SIGN[si],sans:SANS[si],glyph:GLYPH[si],deg:dms(sid-si*30),nak:NAK[Math.floor(sid/(360/27))]};
+}
+
+/* ==================================================================
+   3. FORM
+   ================================================================== */
+var $=function(id){return document.getElementById(id);};
+var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+(function fillSelects(){
+  function fill(id,from,to,labels,ph,pad){
+    var h='<option value="">'+ph+'</option>';
+    for(var v=from;v<=to;v++) h+='<option value="'+v+'">'+(labels?labels[v-from]:(pad&&v<10?'0'+v:v))+'</option>';
+    $(id).innerHTML=h;
+  }
+  fill('bday',1,31,null,'Day',true);
+  fill('bmon',1,12,MON,'Month');
+  var y=new Date().getFullYear(),h='<option value="">Year</option>';
+  for(var v=y;v>=1900;v--) h+='<option value="'+v+'">'+v+'</option>';
+  $('byear').innerHTML=h;
+  fill('bhour',0,23,null,'Hour',true);
+  fill('bmin',0,59,null,'Min',true);
+  var tz='',o;
+  for(o=-12;o<=14;o+=0.5){
+    var lbl='UTC'+(o<0?'−':'+')+String(Math.floor(Math.abs(o))).padStart(2,'0')+':'+(Math.abs(o)%1?'30':'00');
+    tz+='<option value="'+o+'"'+(o===5.5?' selected':'')+'>'+lbl+(o===5.5?' (India)':'')+'</option>';
+  }
+  $('btz').innerHTML=tz;
+})();
+
+var place=null;
+(function autocomplete(){
+  var inp=$('bplace'),list=$('aclist'),idx=-1,cur=[];
+  function render(items){
+    cur=items; idx=-1;
+    if(!items.length){list.classList.remove('on');return;}
+    list.innerHTML=items.map(function(c,i){
+      return '<div class="acitem" data-i="'+i+'"><b>'+c.n+'</b> <span>'+c.r+'</span></div>';
+    }).join('');
+    list.classList.add('on');
+  }
+  function pick(i){
+    var c=cur[i]; if(!c)return;
+    place=c; inp.value=c.n+', '+c.r;
+    $('btz').value=String(c.tz); $('blat').value=c.lat; $('blon').value=c.lon;
+    list.classList.remove('on'); inp.classList.remove('err');
+  }
+  inp.addEventListener('input',function(){
+    place=null;
+    var q=inp.value.trim().toLowerCase();
+    if(q.length<2){list.classList.remove('on');return;}
+    var starts=[],has=[];
+    for(var i=0;i<CITIES.length && starts.length+has.length<40;i++){
+      var n=CITIES[i].n.toLowerCase();
+      if(n.indexOf(q)===0) starts.push(CITIES[i]);
+      else if(n.indexOf(q)>0||CITIES[i].r.toLowerCase().indexOf(q)===0) has.push(CITIES[i]);
+    }
+    render(starts.concat(has).slice(0,25));
+  });
+  inp.addEventListener('keydown',function(e){
+    if(!list.classList.contains('on'))return;
+    var items=list.querySelectorAll('.acitem');
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault(); idx+=e.key==='ArrowDown'?1:-1;
+      if(idx<0)idx=items.length-1; if(idx>=items.length)idx=0;
+      items.forEach(function(x,i){x.classList.toggle('sel',i===idx);});
+      items[idx].scrollIntoView({block:'nearest'});
+    } else if(e.key==='Enter'){ e.preventDefault(); pick(idx<0?0:idx); }
+    else if(e.key==='Escape'){ list.classList.remove('on'); }
+  });
+  list.addEventListener('mousedown',function(e){
+    var it=e.target.closest('.acitem'); if(it){e.preventDefault();pick(+it.dataset.i);}
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.ac')) list.classList.remove('on');
+  });
+  $('manual').addEventListener('click',function(e){
+    e.preventDefault();
+    var w=$('coordWrap'); w.style.display=w.style.display==='none'?'block':'none';
+    if(w.style.display==='block') $('blat').focus();
+  });
+})();
+
+var BIRTH=null, CHART=null;
+function fail(m,ids){
+  $('err').textContent=m; $('err').classList.add('on');
+  ['bday','bmon','byear','bhour','bmin','bplace','blat','blon'].forEach(function(i){$(i).classList.remove('err');});
+  (ids||[]).forEach(function(i){$(i).classList.add('err');});
+}
+function clearFail(){
+  $('err').classList.remove('on');
+  ['bday','bmon','byear','bhour','bmin','bplace','blat','blon'].forEach(function(i){$(i).classList.remove('err');});
+}
+['bday','bmon','byear','bhour','bmin','bplace','blat','blon'].forEach(function(i){
+  $(i).addEventListener('change',clearFail); $(i).addEventListener('input',clearFail);
+});
+
+$('go').addEventListener('click',function(){
+  var d=$('bday').value,mo=$('bmon').value,y=$('byear').value,h=$('bhour').value,mi=$('bmin').value;
+  if(!d||!mo||!y) return fail('Pick a day, month and year.',[!d?'bday':'', !mo?'bmon':'', !y?'byear':''].filter(Boolean));
+  if(h===''||mi==='') return fail('Birth time is required — the sky moves a degree every four minutes.',[h===''?'bhour':'','bmin'].filter(Boolean));
+  d=+d;mo=+mo;y=+y;h=+h;mi=+mi;
+  var test=new Date(y,mo-1,d);
+  if(test.getDate()!==d||test.getMonth()!==mo-1) return fail(MON[mo-1]+' '+y+' has no day '+d+'.',['bday','bmon']);
+  var lat=parseFloat($('blat').value),lon=parseFloat($('blon').value),tz=parseFloat($('btz').value);
+  var label = place ? (place.n+', '+place.r) : ($('bplace').value.trim()||'your coordinates');
+  if(!place && (isNaN(lat)||isNaN(lon))){
+    $('coordWrap').style.display='block';
+    return fail('Pick a city from the list, or enter latitude and longitude.',['bplace']);
+  }
+  if(isNaN(lat)||isNaN(lon)) return fail('Latitude and longitude must be numbers.',['blat','blon']);
+  if(lat<-90||lat>90) return fail('Latitude must be between −90 and 90.',['blat']);
+  if(lon<-180||lon>180) return fail('Longitude must be between −180 and 180.',['blon']);
+  clearFail();
+  BIRTH={y:y,mo:mo,d:d,h:h,mi:mi,tz:tz,lat:lat,lon:lon,label:label};
+  CHART=computeChart(y,mo,d,h,mi,tz,lat,lon);
+  showConfirm();
+});
+
+/* ==================================================================
+   4. STAGES
+   ================================================================== */
+function stage(id){
+  ['s1','s2','s3'].forEach(function(x){ $(x).classList.toggle('on',x===id); });
+}
+function pad(n){return n<10?'0'+n:''+n;}
+function showConfirm(){
+  var b=BIRTH;
+  var when=b.d+' '+MON[b.mo-1]+' '+b.y+', '+pad(b.h)+':'+pad(b.mi);
+  var days=Math.round((Date.now()-new Date(b.y,b.mo-1,b.d).getTime())/86400000);
+  var yrs=(days/365.2425);
+  var tzl='UTC'+(b.tz<0?'−':'+')+pad(Math.floor(Math.abs(b.tz)))+':'+(Math.abs(b.tz)%1?'30':'00');
+  $('confLead').innerHTML='The sky is rebuilt for that exact minute — nine grahas, twenty-seven nakṣatras, '
+    +'and the degree that was rising on your eastern horizon.';
+  $('confTick').innerHTML=
+    '<div class="tickrow"><span>Moment</span><b>'+when+' <em>'+tzl+'</em></b></div>'+
+    '<div class="tickrow"><span>Place</span><b>'+b.label+' <em>'+b.lat.toFixed(3)+'°, '+b.lon.toFixed(3)+'°</em></b></div>'+
+    '<div class="tickrow"><span>Distance back</span><b>'+days.toLocaleString()+' days <em>≈ '+yrs.toFixed(1)+' years</em></b></div>'+
+    '<div class="tickrow"><span>Ayanāṁśa then</span><b>'+dms(CHART._ay)+' <em>Lahiri</em></b></div>';
+  stage('s2');
+}
+$('edit').addEventListener('click',function(){ stage('s1'); });
+$('launch').addEventListener('click',function(){ runWarp(); });
+$('again').addEventListener('click',function(){
+  $('hud').classList.remove('on'); teardown(); stage('s1');
+  $('pdetail').innerHTML=''; $('pbody').style.display='';
+  $('ptitle').textContent='Your sky, that moment';
+  $('ptabs').querySelectorAll('.ptab').forEach(function(x,i){x.classList.toggle('on',i===0);});
+  $('pSky').classList.add('on'); $('pDas').classList.remove('on');
+  $('backlink').style.display='';
+});
+
+/* ==================================================================
+   5. WARP
+   ================================================================== */
+function runWarp(){
+  stage('s3');
+  $('backlink').style.display='none';
+  var c=$('warpc'),ctx=c.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2);
+  function size(){c.width=innerWidth*dpr;c.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  size(); addEventListener('resize',size);
+  c.classList.add('on');
+
+  var N=RM?60:420, st=[];
+  for(var i=0;i<N;i++) st.push({a:Math.random()*6.2832,r:Math.random()*Math.min(innerWidth,innerHeight)*0.5,
+    v:Math.random()*0.9+0.25,w:Math.random()*1.6+0.4,
+    h:Math.random()<0.16?'242,200,121':(Math.random()<0.2?'95,227,216':'255,255,255')});
+
+  var yNow=new Date().getFullYear(), yEnd=BIRTH.y, dur=RM?600:5200, t0=performance.now(), built=false;
+  buildScene();
+
+  (function frame(now){
+    var p=Math.min((now-t0)/dur,1), ease=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    var W=innerWidth,H=innerHeight,cx=W/2,cy=H/2;
+    ctx.fillStyle='rgba(4,6,12,'+(RM?1:0.34)+')'; ctx.fillRect(0,0,W,H);
+    var speed=1+ease*22;
+    for(var i=0;i<st.length;i++){
+      var s=st[i]; s.r+=s.v*speed;
+      var mx=Math.hypot(W,H)*0.62;
+      if(s.r>mx){s.r=Math.random()*30;s.a=Math.random()*6.2832;}
+      var x1=cx+Math.cos(s.a)*s.r, y1=cy+Math.sin(s.a)*s.r;
+      var tail=Math.min(s.r*0.35,10+ease*95);
+      var x2=cx+Math.cos(s.a)*(s.r-tail), y2=cy+Math.sin(s.a)*(s.r-tail);
+      var g=ctx.createLinearGradient(x1,y1,x2,y2);
+      g.addColorStop(0,'rgba('+s.h+',0.95)'); g.addColorStop(1,'rgba('+s.h+',0)');
+      ctx.strokeStyle=g; ctx.lineWidth=s.w; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+    var yr=Math.round(yNow-(yNow-yEnd)*ease);
+    $('wyear').textContent=yr;
+    $('wbar').style.width=(p*100)+'%';
+    if(p>0.72) $('wlabel').textContent='Placing the grahas';
+    else if(p>0.42) $('wlabel').textContent='Rewinding '+Math.abs(yNow-yEnd)+' years of sky';
+    if(p<1) requestAnimationFrame(frame);
+    else{
+      c.classList.remove('on');
+      setTimeout(function(){ ctx.clearRect(0,0,innerWidth,innerHeight); },700);
+      stage(null); revealScene();
+    }
+  })(t0);
+}
+
+/* ==================================================================
+   6. THREE.JS SCENE
+   ================================================================== */
+var THREE_OK = (typeof THREE!=='undefined');
+var renderer,scene,cam,root,rafId,grahaMeshes=[],labelSprites=[],ctrl;
+
+function makeLabel(text,color,scale){
+  var pr=2, pad=8, fs=34;
+  var cv=document.createElement('canvas'), cx=cv.getContext('2d');
+  cx.font='500 '+fs+'px "Space Grotesk", sans-serif';
+  var w=Math.ceil(cx.measureText(text).width)+pad*2;
+  cv.width=w*pr; cv.height=(fs+pad*2)*pr; cx.scale(pr,pr);
+  cx.font='500 '+fs+'px "Space Grotesk", sans-serif';
+  cx.fillStyle=color; cx.textBaseline='middle';
+  cx.shadowColor='rgba(0,0,0,.9)'; cx.shadowBlur=8;
+  cx.fillText(text,pad,(fs+pad*2)/2);
+  var tex=new THREE.CanvasTexture(cv); tex.minFilter=THREE.LinearFilter;
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  var s=(scale||1)*0.055;
+  sp.scale.set(cv.width/pr*s, cv.height/pr*s, 1);
+  return sp;
+}
+function polar(r,lonDeg,y){
+  var a=lonDeg*D2R;
+  return new THREE.Vector3(r*Math.cos(a), y||0, -r*Math.sin(a));
+}
+function ringLine(radius,color,opacity,segs){
+  var pts=[],n=segs||180;
+  for(var i=0;i<=n;i++){var a=i/n*6.2832;pts.push(new THREE.Vector3(radius*Math.cos(a),0,-radius*Math.sin(a)));}
+  var g=new THREE.BufferGeometry().setFromPoints(pts);
+  return new THREE.Line(g,new THREE.LineBasicMaterial({color:color,transparent:true,opacity:opacity}));
+}
+
+function buildScene(){
+  if(!THREE_OK) return;
+  teardown();
+  var cv=$('scene');
+  renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  renderer.setSize(innerWidth,innerHeight);
+  scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x04060c,0.0032);
+  cam=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,3000);
+  root=new THREE.Group(); scene.add(root);
+
+  /* --- starfield --- */
+  var SN=RM?800:2600, pos=new Float32Array(SN*3), col=new Float32Array(SN*3);
+  for(var i=0;i<SN;i++){
+    var u=Math.random()*2-1, th=Math.random()*6.2832, rr=Math.sqrt(1-u*u), R=340+Math.random()*260;
+    pos[i*3]=R*rr*Math.cos(th); pos[i*3+1]=R*u*0.7; pos[i*3+2]=R*rr*Math.sin(th);
+    var t=Math.random(), c=t<0.14?[0.95,0.78,0.47]:(t<0.3?[0.37,0.89,0.85]:[1,1,1]), b=0.35+Math.random()*0.65;
+    col[i*3]=c[0]*b; col[i*3+1]=c[1]*b; col[i*3+2]=c[2]*b;
+  }
+  var sg=new THREE.BufferGeometry();
+  sg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  sg.setAttribute('color',new THREE.BufferAttribute(col,3));
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:1.7,vertexColors:true,transparent:true,opacity:.95,sizeAttenuation:true})));
+
+  /* --- Earth at centre --- */
+  var earth=new THREE.Mesh(new THREE.SphereGeometry(3,32,24),
+    new THREE.MeshBasicMaterial({color:0x2a4a7a}));
+  root.add(earth);
+  root.add(new THREE.Mesh(new THREE.SphereGeometry(3.5,32,24),
+    new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.16,side:THREE.BackSide})));
+  root.add(new THREE.Mesh(new THREE.SphereGeometry(5.6,32,24),
+    new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.05,side:THREE.BackSide})));
+  var el=makeLabel('EARTH','rgba(174,184,204,.85)',0.5); el.position.set(0,-5.4,0); root.add(el);
+
+  /* --- ecliptic disc --- */
+  var disc=new THREE.Mesh(new THREE.RingGeometry(6,50,128),
+    new THREE.MeshBasicMaterial({color:0x2a3050,transparent:true,opacity:.16,side:THREE.DoubleSide}));
+  disc.rotation.x=-Math.PI/2; root.add(disc);
+
+  /* --- nakshatra ring --- */
+  root.add(ringLine(52,0x5fe3d8,.38));
+  root.add(ringLine(56,0x5fe3d8,.16));
+  var tp=[];
+  for(var k=0;k<27;k++){
+    var lon=k*(360/27), a=lon*D2R;
+    tp.push(new THREE.Vector3(52*Math.cos(a),0,-52*Math.sin(a)));
+    tp.push(new THREE.Vector3(56*Math.cos(a),0,-56*Math.sin(a)));
+    var lb=makeLabel(NAK[k],'rgba(95,227,216,.9)',0.42);
+    lb.position.copy(polar(59.5,lon+(360/54),0)); root.add(lb);
+  }
+  var tg=new THREE.BufferGeometry().setFromPoints(tp);
+  root.add(new THREE.LineSegments(tg,new THREE.LineBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.42})));
+
+  /* --- rashi ring --- */
+  root.add(ringLine(64,0xf2c879,.3));
+  var rp=[];
+  for(var z=0;z<12;z++){
+    var lz=z*30, az=lz*D2R;
+    rp.push(new THREE.Vector3(64*Math.cos(az),0,-64*Math.sin(az)));
+    rp.push(new THREE.Vector3(70*Math.cos(az),0,-70*Math.sin(az)));
+    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(242,200,121,.92)',0.5);
+    gl.position.copy(polar(74,lz+15,0)); root.add(gl);
+  }
+  var rg=new THREE.BufferGeometry().setFromPoints(rp);
+  root.add(new THREE.LineSegments(rg,new THREE.LineBasicMaterial({color:0xf2c879,transparent:true,opacity:.36})));
+
+  /* --- grahas --- */
+  grahaMeshes=[]; labelSprites=[];
+  for(var b=0;b<BODIES.length;b++){
+    var B=BODIES[b], data=CHART[B.k]; if(!data) continue;
+    var hex='#'+('000000'+B.c.toString(16)).slice(-6);
+    if(B.k==='Lagna'){
+      var lp=[polar(4,data.sid,0),polar(78,data.sid,0)];
+      var lg=new THREE.BufferGeometry().setFromPoints(lp);
+      var lline=new THREE.Line(lg,new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.85}));
+      root.add(lline);
+      var llb=makeLabel('LAGNA — rising','rgba(242,200,121,1)',0.55);
+      llb.position.copy(polar(84,data.sid,2)); root.add(llb);
+      grahaMeshes.push({obj:lline,label:llb,key:B.k,lon:data.sid});
+      continue;
+    }
+    root.add(ringLine(B.r,B.c,.1,120));
+    var m=new THREE.Mesh(new THREE.SphereGeometry(B.sz,24,18),new THREE.MeshBasicMaterial({color:B.c}));
+    m.position.copy(polar(B.r,data.sid,0)); root.add(m);
+    var halo=new THREE.Mesh(new THREE.SphereGeometry(B.sz*2.6,20,16),
+      new THREE.MeshBasicMaterial({color:B.c,transparent:true,opacity:.13,side:THREE.BackSide}));
+    halo.position.copy(m.position); root.add(halo);
+    var spoke=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(B.r,data.sid,0)]),
+      new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.2}));
+    root.add(spoke);
+    var lb2=makeLabel(B.k+(data.retro&&B.k!=='Rahu'&&B.k!=='Ketu'?' ℞':''),hex,0.5);
+    lb2.position.copy(polar(B.r,data.sid,B.sz+3.2)); root.add(lb2);
+    grahaMeshes.push({obj:m,halo:halo,label:lb2,key:B.k,lon:data.sid,base:B});
+  }
+
+  cam.position.set(0,86,104);
+  ctrl=orbitControls(cam,renderer.domElement,new THREE.Vector3(0,0,0));
+  addEventListener('resize',onResize);
+  root.scale.set(0.001,0.001,0.001);
+  loop();
+}
+function onResize(){
+  if(!renderer)return;
+  cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+}
+function loop(){
+  rafId=requestAnimationFrame(loop);
+  if(ctrl) ctrl.update();
+  if(renderer) renderer.render(scene,cam);
+}
+function teardown(){
+  if(rafId) cancelAnimationFrame(rafId);
+  removeEventListener('resize',onResize);
+  if(ctrl&&ctrl.dispose) ctrl.dispose();
+  if(renderer){ renderer.dispose(); }
+  renderer=null;scene=null;grahaMeshes=[];
+}
+
+/* simple spherical orbit controls (no external dependency) */
+function orbitControls(camera,dom,target){
+  var s={r:135,th:Math.PI*0.32,ph:Math.PI*0.5}, tgt={r:135,th:Math.PI*0.32,ph:Math.PI*0.5};
+  var down=false,px=0,py=0,pinch=0,auto=true;
+  function set(e){down=true;px=e.clientX;py=e.clientY;auto=false;dom.style.cursor='grabbing';}
+  function move(e){
+    if(!down)return;
+    tgt.ph-=(e.clientX-px)*0.006; tgt.th-=(e.clientY-py)*0.006;
+    tgt.th=Math.max(0.12,Math.min(Math.PI-0.12,tgt.th));
+    px=e.clientX;py=e.clientY;
+  }
+  function up(){down=false;dom.style.cursor='grab';}
+  dom.style.cursor='grab';
+  dom.addEventListener('pointerdown',set);
+  addEventListener('pointermove',move);
+  addEventListener('pointerup',up);
+  addEventListener('pointercancel',up);
+  function wheel(e){ e.preventDefault(); auto=false; tgt.r=Math.max(28,Math.min(320,tgt.r*(1+e.deltaY*0.0011))); }
+  dom.addEventListener('wheel',wheel,{passive:false});
+  function tstart(e){ if(e.touches.length===2){auto=false;pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);} }
+  function tmove(e){
+    if(e.touches.length===2){
+      e.preventDefault();
+      var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      if(pinch) tgt.r=Math.max(28,Math.min(320,tgt.r*(pinch/d)));
+      pinch=d;
+    }
+  }
+  dom.addEventListener('touchstart',tstart,{passive:true});
+  dom.addEventListener('touchmove',tmove,{passive:false});
+  return {
+    update:function(){
+      if(auto&&!RM) tgt.ph-=0.0009;
+      s.r+=(tgt.r-s.r)*0.06; s.th+=(tgt.th-s.th)*0.09; s.ph+=(tgt.ph-s.ph)*0.09;
+      camera.position.set(
+        target.x+s.r*Math.sin(s.th)*Math.cos(s.ph),
+        target.y+s.r*Math.cos(s.th),
+        target.z+s.r*Math.sin(s.th)*Math.sin(s.ph));
+      camera.lookAt(target);
+    },
+    focus:function(lonDeg){
+      auto=false; tgt.ph=-lonDeg*D2R+Math.PI*0.5; tgt.r=78; tgt.th=Math.PI*0.36;
+    },
+    dispose:function(){
+      dom.removeEventListener('pointerdown',set);
+      removeEventListener('pointermove',move);
+      removeEventListener('pointerup',up);
+      dom.removeEventListener('wheel',wheel);
+    }
+  };
+}
+
+/* ==================================================================
+   7. REVEAL + HUD
+   ================================================================== */
+function revealScene(){
+  if(root){
+    var t0=performance.now(), dur=RM?1:1500;
+    (function grow(now){
+      var p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3);
+      root.scale.set(e,e,e);
+      if(p<1) requestAnimationFrame(grow);
+    })(t0);
+  }
+  var b=BIRTH, when=b.d+' '+MON[b.mo-1]+' '+b.y+' · '+pad(b.h)+':'+pad(b.mi);
+  $('hudmeta').innerHTML='<b>'+when+'</b><br>'+b.label+'<br>Ayanāṁśa '+dms(CHART._ay)+' · Lahiri';
+
+  var html='';
+  for(var i=0;i<BODIES.length;i++){
+    var B=BODIES[i], d=CHART[B.k]; if(!d) continue;
+    var t=posText(d.sid), hex='#'+('000000'+B.c.toString(16)).slice(-6);
+    var retro=(d.retro&&B.k!=='Rahu'&&B.k!=='Ketu')?'<i>℞</i>':'';
+    html+='<div class="grow" data-key="'+B.k+'" data-lon="'+d.sid.toFixed(4)+'">'+
+      '<span class="gdot" style="background:'+hex+'"></span>'+
+      '<span><span class="gname">'+(B.k==='Lagna'?'Lagna (rising)':B.k)+retro+'</span>'+
+      '<span class="gpos">'+t.glyph+' '+t.sign+' · '+t.nak+'</span></span>'+
+      '<span class="gdeg">'+t.deg+'</span></div>';
+  }
+  $('pbody').innerHTML=html;
+  $('pbody').addEventListener('click',function(e){
+    var r=e.target.closest('.grow'); if(!r)return;
+    renderDetail(r.dataset.key);
+  });
+  renderDasha();
+  $('hud').classList.add('on');
+}
+$('pmin').addEventListener('click',function(){
+  var p=$('panel'); p.classList.toggle('min');
+  $('pmin').textContent=p.classList.contains('min')?'+':'–';
+});
+
+
+/* ==================================================================
+   8. VIMSHOTTARI DASA  — computed from the Moon's exact position
+   ================================================================== */
+var CYC=[['Ketu',7,'#7d6be0'],['Venus',20,'#f2c879'],['Sun',6,'#ffb056'],['Moon',10,'#dfe7f5'],
+         ['Mars',7,'#ff7a7a'],['Rahu',18,'#8b6fb8'],['Jupiter',16,'#ffd98a'],['Saturn',19,'#5f9ee3'],
+         ['Mercury',17,'#5fe3d8']];
+var YRD=365.2425;
+function jdToDate(jd){
+  var z=Math.floor(jd+0.5), f=jd+0.5-z, A=z;
+  if(z>=2299161){var a=Math.floor((z-1867216.25)/36524.25); A=z+1+a-Math.floor(a/4);}
+  var B=A+1524, C=Math.floor((B-122.1)/365.25), D=Math.floor(365.25*C), E=Math.floor((B-D)/30.6001);
+  var day=B-D-Math.floor(30.6001*E)+f, mo=E<14?E-1:E-13, y=mo>2?C-4716:C-4715;
+  return {y:y,m:mo,d:Math.floor(day)};
+}
+var MSHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fdate(jd){var d=jdToDate(jd);return d.d+' '+MSHORT[d.m-1]+' '+d.y;}
+function fyear(jd){return jdToDate(jd).y;}
+function todayJD(){return Date.now()/86400000+2440587.5;}
+
+function vimshottari(moonSid,birthJD){
+  var arc=360/27, ni=Math.floor(moonSid/arc), frac=(moonSid-ni*arc)/arc, st=ni%9;
+  var jd=birthJD-CYC[st][1]*YRD*frac, md=[];
+  for(var i=0;i<9;i++){
+    var L=CYC[(st+i)%9], from=jd, to=jd+L[1]*YRD, ad=[], a=from;
+    for(var j=0;j<9;j++){
+      var A=CYC[(st+i+j)%9], len=L[1]*A[1]/120*YRD;
+      ad.push({lord:A[0],c:A[2],from:a,to:a+len}); a+=len;
+    }
+    md.push({lord:L[0],c:L[2],years:L[1],from:from,to:to,ad:ad}); jd=to;
+  }
+  return {ni:ni,frac:frac,md:md};
+}
+
+/* ==================================================================
+   9. GRAHA DETAIL DATA
+   ================================================================== */
+var EXALT={Sun:[0,10],Moon:[1,3],Mars:[9,28],Mercury:[5,15],Jupiter:[3,5],Venus:[11,27],Saturn:[6,20]};
+var OWN={Sun:[4],Moon:[3],Mars:[0,7],Mercury:[2,5],Jupiter:[8,11],Venus:[1,6],Saturn:[9,10]};
+var SIGNIF={
+ Lagna:'The body, temperament and physical frame — and the reference point every other placement is read against. The rising degree fixes all twelve houses.',
+ Sun:'Authority, vitality, the father, self-definition and public standing. Where you are visible, and by what right.',
+ Moon:'Mind, mother, emotional weather and receptivity. In Jyotiṣa the Moon carries far more weight than the Sun.',
+ Mars:'Energy, courage, initiative, property and siblings. Where force gets applied — usefully or otherwise.',
+ Mercury:'Intellect, speech, commerce, analysis and skill. The faculty that names things and negotiates.',
+ Jupiter:'Knowledge, teachers, children, expansion and dharma. Traditionally the most protective of the nine.',
+ Venus:'Relationships, art, comfort, refinement and partnership. What is valued, and how it is enjoyed.',
+ Saturn:'Work, structure, endurance, time and consequence. Gives slowly, and takes shortcuts away.',
+ Rahu:'Ambition and amplification — the foreign, the unconventional, the thing wanted past reason.',
+ Ketu:'Detachment and research — what is already finished, and what falls away without being chosen.'
+};
+function dignity(key,sid){
+  var si=Math.floor(sid/30), deg=sid-si*30;
+  if(EXALT[key]){
+    if(EXALT[key][0]===si) return {t:'Exalted',cls:'up',x:'deep '+SIGN[si]+' — peak at '+EXALT[key][1]+'°'};
+    if((EXALT[key][0]+6)%12===si) return {t:'Debilitated',cls:'dn',x:'weakest in '+SIGN[si]};
+  }
+  if(OWN[key]&&OWN[key].indexOf(si)>=0) return {t:'Own sign',cls:'ok',x:'rules '+SIGN[si]};
+  return {t:'Neutral',cls:'',x:'guest in '+SIGN[si]};
+}
+function houseOf(sid,lagnaSid){
+  return ((Math.floor(sid/30)-Math.floor(lagnaSid/30)+12)%12)+1;
+}
+var ORD=['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th'];
+var HOUSEOF=['body & temperament','wealth & speech','courage & effort','home & inner peace',
+'intelligence & creativity','service & obstacles','partnership','depth & upheaval','fortune & dharma',
+'career & action','gains & networks','seclusion & release'];
+
+/* ==================================================================
+   10. PANEL RENDERING
+   ================================================================== */
+var DASHA=null;
+function renderDasha(){
+  DASHA=vimshottari(CHART.Moon.sid,CHART._jd);
+  var now=todayJD(), cur=null, curAd=null;
+  for(var i=0;i<DASHA.md.length;i++){
+    var m=DASHA.md[i];
+    if(now>=m.from&&now<m.to){ cur=m;
+      for(var j=0;j<m.ad.length;j++) if(now>=m.ad[j].from&&now<m.ad[j].to) curAd=m.ad[j];
+    }
+  }
+  var h='';
+  if(cur){
+    var pct=((now-cur.from)/(cur.to-cur.from)*100);
+    h+='<div class="dnow"><span>Running right now</span>'+
+       '<b>'+cur.lord+(curAd?' — '+curAd.lord:'')+'</b>'+
+       '<em>'+(curAd?fdate(curAd.from)+' → '+fdate(curAd.to):fdate(cur.from)+' → '+fdate(cur.to))+'</em>'+
+       '<div class="dbarmini"><i style="width:'+pct.toFixed(1)+'%"></i></div>'+
+       '<em style="display:block;margin-top:7px;font-size:.64rem">'+cur.lord+' mahādaśā · '+
+       pct.toFixed(0)+'% elapsed of '+cur.years+' years</em></div>';
+  } else {
+    h+='<div class="dnow"><span>Note</span><b>Outside the 120-year cycle</b>'+
+       '<em>This birth date falls before or beyond the mapped sequence.</em></div>';
+  }
+  h+='<div style="font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;'+
+     'color:var(--ink3);margin:14px 0 6px">Full mahādaśā sequence</div>';
+  for(var k=0;k<DASHA.md.length;k++){
+    var m2=DASHA.md[k], cls=(m2===cur)?' cur':(m2.to<now?' past':'');
+    h+='<div class="drow'+cls+'"><i style="background:'+m2.c+'"></i>'+
+       '<span><b>'+m2.lord+'</b> <em style="margin-left:6px">'+m2.years+'y</em></span>'+
+       '<em>'+fyear(m2.from)+' – '+fyear(m2.to)+'</em></div>';
+  }
+  if(cur){
+    h+='<div style="font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;'+
+       'color:var(--ink3);margin:16px 0 6px">Sub-periods inside '+cur.lord+'</div>';
+    for(var q=0;q<cur.ad.length;q++){
+      var a2=cur.ad[q], c2=(a2===curAd)?' cur':(a2.to<now?' past':'');
+      h+='<div class="drow'+c2+'"><i style="background:'+a2.c+'"></i>'+
+         '<span><b>'+cur.lord+'–'+a2.lord+'</b></span>'+
+         '<em>'+fdate(a2.from)+' → '+fdate(a2.to)+'</em></div>';
+    }
+  }
+  h+='<div class="dnote">Your entry point in this 120-year cycle is set by how far the Moon had travelled '+
+     'through <b style="color:var(--ink2)">'+NAK[DASHA.ni]+'</b> at your first breath — '+
+     (DASHA.frac*100).toFixed(1)+'% of the way through it. Dates here are indicative to within a month or '+
+     'two; a rectified birth time sharpens them considerably.</div>';
+  $('pDas').innerHTML=h;
+}
+
+function renderDetail(key){
+  var B=null;
+  for(var i=0;i<BODIES.length;i++) if(BODIES[i].k===key) B=BODIES[i];
+  var d=CHART[key], t=posText(d.sid);
+  var nakIdx=Math.floor(d.sid/(360/27));
+  var pada=Math.floor((d.sid%(360/27))/(360/108))+1;
+  var nl=CYC[nakIdx%9][0];
+  var hs=houseOf(d.sid,CHART.Lagna.sid);
+  var dg=(key==='Lagna'||key==='Rahu'||key==='Ketu')?null:dignity(key,d.sid);
+  var hex='#'+('000000'+B.c.toString(16)).slice(-6);
+  var retro=(d.retro&&key!=='Rahu'&&key!=='Ketu');
+
+  var h='<button class="back2" id="dback">← All grahas</button>'+
+    '<div class="dt-h"><span class="gdot" style="background:'+hex+';width:11px;height:11px"></span>'+
+    '<b>'+(key==='Lagna'?'Lagna':key)+'</b><em>'+B.s+'</em></div>'+
+    '<div class="dt-pos">'+t.glyph+' '+t.sign+' '+t.deg+' · '+t.sans+'</div>'+
+    '<div class="dt-g">'+
+      '<div class="dt-c"><span>Nakṣatra</span><b>'+NAK[nakIdx]+'</b></div>'+
+      '<div class="dt-c"><span>Pāda</span><b>'+pada+' of 4</b></div>'+
+      '<div class="dt-c"><span>Nakṣatra lord</span><b>'+nl+'</b></div>'+
+      (key==='Lagna'
+        ? '<div class="dt-c"><span>Role</span><b class="ok">Sets all 12 houses</b></div>'
+        : '<div class="dt-c"><span>House</span><b>'+ORD[hs-1]+' — '+HOUSEOF[hs-1]+'</b></div>')+
+      (dg?'<div class="dt-c"><span>Dignity</span><b class="'+dg.cls+'">'+dg.t+'</b></div>':'')+
+      (key!=='Lagna'?'<div class="dt-c"><span>Motion</span><b'+(retro?' class="dn"':'')+'>'+
+        (key==='Rahu'||key==='Ketu'?'Always retrograde':(retro?'Retrograde ℞':'Direct'))+'</b></div>':'')+
+    '</div>'+
+    '<div class="dt-t">'+SIGNIF[key]+'</div>'+
+    (dg&&dg.cls?'<div class="dt-t" style="margin-top:9px;color:var(--ink3)">'+dg.t+' — '+dg.x+'.</div>':'')+
+    (retro?'<div class="dt-t" style="margin-top:9px;color:var(--ink3)">Retrograde motion is apparent, not '+
+      'real — Earth is overtaking it on the inside track. Classically read as an inward or repeating '+
+      'expression of that graha.</div>':'');
+  $('pdetail').innerHTML=h;
+  $('pbody').style.display='none';
+  $('ptitle').textContent=(key==='Lagna'?'Lagna':key)+' in detail';
+  $('dback').addEventListener('click',function(){
+    $('pdetail').innerHTML=''; $('pbody').style.display='';
+    $('ptitle').textContent='Your sky, that moment';
+  });
+  if(ctrl&&key!=='Lagna') ctrl.focus(d.sid);
+}
+
+/* tabs */
+$('ptabs').addEventListener('click',function(e){
+  var b=e.target.closest('.ptab'); if(!b)return;
+  $('ptabs').querySelectorAll('.ptab').forEach(function(x){x.classList.toggle('on',x===b);});
+  ['pSky','pDas'].forEach(function(id){ $(id).classList.toggle('on',id===b.dataset.pane); });
+  $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimśottarī daśā' : 'Your sky, that moment';
+});
+
+/* ==================================================================
+   11. SAVE IMAGE
+   ================================================================== */
+$('save').addEventListener('click',function(){
+  if(!renderer) return;
+  try{
+    renderer.render(scene,cam);
+    var src=renderer.domElement;
+    var W=src.width, H=src.height, sc=W/1600;
+    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    var cx=cv.getContext('2d');
+    cx.fillStyle='#04060c'; cx.fillRect(0,0,W,H);
+    cx.drawImage(src,0,0);
+    var g=cx.createLinearGradient(0,H*0.68,0,H);
+    g.addColorStop(0,'rgba(4,6,12,0)'); g.addColorStop(1,'rgba(4,6,12,.92)');
+    cx.fillStyle=g; cx.fillRect(0,H*0.68,W,H*0.32);
+    var b=BIRTH, pad=44*sc;
+    cx.textBaseline='alphabetic';
+    cx.fillStyle='#f2c879';
+    cx.font='500 '+(30*sc)+'px "Space Grotesk", sans-serif';
+    cx.fillText('STARLIT INSIGHTS', pad, H-pad-58*sc);
+    cx.fillStyle='#eef2fa';
+    cx.font='500 '+(38*sc)+'px "Space Grotesk", sans-serif';
+    cx.fillText(b.d+' '+MON[b.mo-1]+' '+b.y+' · '+pad2(b.h)+':'+pad2(b.mi)+' · '+b.label, pad, H-pad-14*sc);
+    cx.fillStyle='#6f7c96';
+    cx.font='400 '+(24*sc)+'px "JetBrains Mono", monospace';
+    var lg=posText(CHART.Lagna.sid), mo=posText(CHART.Moon.sid);
+    cx.fillText('Lagna '+lg.sign+' '+lg.deg+'  ·  Moon '+mo.nak+'  ·  starlitinsights.com', pad, H-pad+22*sc);
+    var a=document.createElement('a');
+    a.download='birth-sky-'+b.y+'-'+pad2(b.mo)+'-'+pad2(b.d)+'.png';
+    a.href=cv.toDataURL('image/png'); a.click();
+  }catch(err){
+    $('save').textContent='Could not save';
+    setTimeout(function(){ $('save').textContent='Save image'; },2200);
+  }
+});
+function pad2(n){return n<10?'0'+n:''+n;}
+
+/* graceful degradation if WebGL/Three fails */
+if(!THREE_OK){
+  window.addEventListener('load',function(){
+    if(typeof THREE==='undefined'){
+      var h=document.querySelector('#s1 .hint');
+      if(h) h.innerHTML='<b style="color:#ff8fa8">Note:</b> the 3D view needs WebGL, which this browser '+
+        'appears to have disabled. The chart figures will still be calculated and listed.';
+    }
+  });
+}
+})();
+</script>
+</body>
+</html>

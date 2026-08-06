@@ -292,6 +292,58 @@ header.stuck{background:rgba(4,6,12,.78);backdrop-filter:blur(22px);-webkit-back
 /* ============================================================
    INSIGHT CARDS
    ============================================================ */
+#skyteaser{padding-top:0;padding-bottom:clamp(56px,8vh,96px)}
+.skyhero{display:block;position:relative;border-radius:30px;padding:2px;text-decoration:none;
+  isolation:isolate;transition:transform .6s var(--ease)}
+.skyhero:hover{transform:translateY(-4px)}
+.skyglow{position:absolute;inset:-3px;border-radius:33px;z-index:-1;
+  background:linear-gradient(120deg,var(--gold),var(--cyan) 55%,var(--violet));
+  filter:blur(11px);opacity:.42;animation:skybreathe 4.5s ease-in-out infinite;transition:opacity .5s}
+.skyhero:hover .skyglow{opacity:.9;animation-duration:2.8s}
+@keyframes skybreathe{0%,100%{opacity:.28;filter:blur(9px)}50%{opacity:.72;filter:blur(15px)}}
+@keyframes skyrot{to{transform:rotate(360deg)}}
+.skyinner{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center;
+  border-radius:28px;padding:clamp(30px,4vw,50px) clamp(24px,4vw,52px);
+  background:linear-gradient(150deg,#0b1120,#070b15 55%,#0a0f1c);overflow:hidden}
+.skyinner::before{content:'';position:absolute;top:-40%;right:-10%;width:60%;height:180%;
+  background:radial-gradient(ellipse,rgba(95,227,216,.13),transparent 65%);pointer-events:none}
+.skybadge{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:100px;
+  border:1px solid rgba(242,200,121,.35);background:rgba(242,200,121,.09);
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px}
+.skybadge i{width:6px;height:6px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 10px var(--gold);animation:pulse 2s ease-in-out infinite;flex:0 0 auto}
+.skytext h2{font-size:clamp(1.85rem,4.4vw,3rem);line-height:1.04;margin-bottom:16px;color:var(--ink)}
+.skyshim{background:linear-gradient(100deg,var(--gold),#fff6e0 30%,var(--cyan) 62%,var(--gold));
+  background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shim 7s linear infinite}
+.skytext p{font-size:clamp(.94rem,1.5vw,1.05rem);line-height:1.7;color:var(--ink-2);max-width:60ch;
+  margin-bottom:20px}
+.skyfeats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.skyfeats span{padding:6px 13px;border-radius:100px;border:1px solid var(--line);
+  background:rgba(255,255,255,.03);font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.skybtn{display:inline-flex;align-items:center;gap:11px;padding:16px 32px;border-radius:100px;
+  background:linear-gradient(105deg,var(--gold),#ffe4ab 45%,var(--gold-2));color:#160f02;
+  font-family:var(--f-disp);font-weight:600;font-size:1rem;letter-spacing:-.01em;
+  box-shadow:0 12px 40px -12px rgba(242,200,121,.75);transition:.4s var(--ease)}
+.skybtn b{font-weight:600;transition:transform .4s var(--ease)}
+.skyhero:hover .skybtn{box-shadow:0 18px 50px -12px rgba(242,200,121,.95)}
+.skyhero:hover .skybtn b{transform:translateX(5px)}
+.skyart svg{width:100%;max-width:330px;margin-inline:auto;overflow:visible}
+.skyart g{transform-box:view-box;transform-origin:50% 50%}
+.skyr1{animation:skyrot 34s linear infinite}
+.skyr2{animation:skyrot 25s linear infinite reverse}
+.skyr3{animation:skyrot 18s linear infinite}
+.skyr4{animation:skyrot 12s linear infinite reverse}
+@media(max-width:860px){
+  .skyinner{grid-template-columns:1fr;gap:20px;padding:28px 22px;border-radius:24px}
+  .skyhero{border-radius:26px}
+  .skyart{order:-1}.skyart svg{max-width:190px}
+  .skybtn{width:100%;justify-content:center}
+  .skyfeats span{font-size:9px;padding:5px 10px}
+}
+@media(prefers-reduced-motion:reduce){.skyglow,.skyart g{animation:none}}
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:20px}
 .icard{padding:30px 26px}
 .icard .n{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--gold);
@@ -612,6 +664,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
     </a>
     <nav class="nav-links">
       <a href="#drift">The 24° Problem</a>
+      <a href="sky.html">Your Birth Sky</a>
       <a href="#insights">Insights</a>
       <a href="#method">Method</a>
       <a href="#services">Readings</a>
@@ -624,6 +677,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 
 <div id="drawer">
   <a href="#drift">The 24° Problem</a>
+  <a href="sky.html">Your Birth Sky</a>
   <a href="#insights">Insights</a>
   <a href="#method">Method</a>
   <a href="#services">Readings</a>
@@ -688,6 +742,65 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
     </div>
   </div>
   <div class="scrollcue"><span>Scroll</span><i></i></div>
+</section>
+
+<!-- ==================== 3D BIRTH SKY · FLAGSHIP ==================== -->
+<section id="skyteaser">
+  <div class="wrap">
+    <a href="sky.html" class="skyhero rv">
+      <div class="skyglow" aria-hidden="true"></div>
+      <div class="skyinner">
+        <div class="skytext">
+          <div class="skybadge"><i></i>Signature experience · nothing like it anywhere else</div>
+          <h2>Ride back to the sky<br><span class="skyshim">you were born under.</span></h2>
+          <p>
+            Enter the minute you arrived and travel back to it — in three dimensions. All nine grahas
+            at their true sidereal positions, ringed by the 27 nakṣatras, with the exact degree that
+            was rising on your eastern horizon. Then read your daśā timeline, computed live from where
+            the Moon stood.
+          </p>
+          <div class="skyfeats">
+            <span>Arcminute-accurate</span>
+            <span>Drag to orbit</span>
+            <span>Your daśā dates</span>
+            <span>Nothing leaves your browser</span>
+          </div>
+          <span class="skybtn"><span>Enter your birth moment</span> <b>→</b></span>
+        </div>
+        <div class="skyart" aria-hidden="true">
+          <svg viewBox="0 0 260 260" fill="none">
+            <defs>
+              <linearGradient id="sg1" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8" stop-opacity=".2"/>
+              </linearGradient>
+              <radialGradient id="sg2"><stop stop-color="#5fe3d8" stop-opacity=".3"/>
+                <stop offset="1" stop-color="#5fe3d8" stop-opacity="0"/></radialGradient>
+            </defs>
+            <circle cx="130" cy="130" r="120" fill="url(#sg2)"/>
+            <g class="skyr1">
+              <ellipse cx="130" cy="130" rx="122" ry="43" stroke="url(#sg1)" stroke-width="1.2" opacity=".7"/>
+              <circle cx="252" cy="130" r="5" fill="#f2c879"/>
+              <circle cx="8" cy="130" r="3.6" fill="#5f9ee3"/>
+            </g>
+            <g class="skyr2">
+              <ellipse cx="130" cy="130" rx="96" ry="34" stroke="#5fe3d8" stroke-width="1" opacity=".34"/>
+              <circle cx="226" cy="130" r="4.2" fill="#ffd98a"/>
+            </g>
+            <g class="skyr3">
+              <ellipse cx="130" cy="130" rx="68" ry="24" stroke="#f2c879" stroke-width="1" opacity=".26"/>
+              <circle cx="198" cy="130" r="3.4" fill="#ff7a7a"/>
+            </g>
+            <g class="skyr4">
+              <ellipse cx="130" cy="130" rx="40" ry="14" stroke="#9b8cff" stroke-width="1" opacity=".34"/>
+              <circle cx="170" cy="130" r="3" fill="#dfe7f5"/>
+            </g>
+            <circle cx="130" cy="130" r="10" fill="#2a4a7a"/>
+            <circle cx="130" cy="130" r="17" fill="#5fe3d8" opacity=".13"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- ==================== THE 24 DEGREE PROBLEM ==================== -->
@@ -1153,6 +1266,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <h4>Explore</h4>
         <ul>
           <li><a href="#drift">The 24° Problem</a></li>
+          <li><a href="sky.html">Your birth sky in 3D</a></li>
           <li><a href="#insights">Insights</a></li>
           <li><a href="#method">Method</a></li>
           <li><a href="#nakshatra">Nakṣatras</a></li>
