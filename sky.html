@@ -210,6 +210,45 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
 .drow em{font-style:normal;font-family:var(--fm);font-size:.65rem;color:var(--ink3);white-space:nowrap}
 .dnote{font-size:.7rem;line-height:1.55;color:var(--ink3);margin-top:12px;padding-top:11px;
   border-top:1px solid var(--line)}
+.scrub{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;z-index:3;
+  width:min(560px,calc(100vw - 380px));pointer-events:auto;padding:14px 18px 12px;border-radius:16px;
+  border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+  box-shadow:0 24px 60px -28px rgba(0,0,0,.9)}
+.scrubhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:9px}
+.scrubhead b{font-family:var(--fd);font-weight:500;font-size:1rem;letter-spacing:-.02em}
+.scrubhead b em{font-style:normal;color:var(--gold);font-family:var(--fm);font-size:.66rem;
+  letter-spacing:.12em;text-transform:uppercase;margin-left:9px}
+.scrubhead span{font-family:var(--fm);font-size:.68rem;color:var(--ink3);white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--gold),var(--cyan));outline:none;cursor:pointer;margin:2px 0 10px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:#fff;border:2px solid var(--gold);cursor:grab;box-shadow:0 0 12px rgba(242,200,121,.7)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;
+  border:2px solid var(--gold);cursor:grab}
+.scrubbtns{display:flex;gap:7px}
+.scrubbtns button{flex:1;padding:7px 6px;border-radius:8px;border:1px solid var(--line2);cursor:pointer;
+  background:rgba(255,255,255,.04);color:var(--ink2);font-family:var(--fm);font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase;transition:.25s}
+.scrubbtns button:hover{color:var(--gold);border-color:var(--gold)}
+.scrubbtns button.on{background:rgba(242,200,121,.14);color:var(--gold);border-color:rgba(242,200,121,.4)}
+.viewnote{position:absolute;left:20px;top:58px;z-index:3;max-width:260px;pointer-events:none;
+  font-family:var(--fm);font-size:9px;letter-spacing:.11em;line-height:1.9;color:var(--ink3);
+  text-transform:uppercase}
+.viewnote b{color:var(--cyan);font-weight:400}
+.retblk{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.rethead{font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:9px}
+.retrow{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:7px 8px;
+  border-radius:8px;font-size:.78rem}
+.retrow.next{background:rgba(95,227,216,.1)}
+.retrow i{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.retrow b{font-family:var(--fd);font-weight:500;font-size:.79rem}
+.retrow em{font-style:normal;font-family:var(--fm);font-size:.66rem;color:var(--ink3)}
+@media(max-width:760px){
+  .scrub{width:calc(100vw - 24px);left:12px;right:12px;transform:none;bottom:auto;top:112px;padding:11px 13px 10px}
+  .viewnote{display:none}
+}
 .hudbot{position:absolute;right:20px;bottom:20px;display:flex;flex-direction:column;
   align-items:flex-end;gap:10px;pointer-events:auto}
 .cta{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:100px;
@@ -262,7 +301,13 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
     <h1>Where were the stars<br><em>when you arrived?</em></h1>
     <p class="lead" style="margin-bottom:26px">
       Give me the moment you were born and I'll rebuild that sky around you — all nine grahas at their
-      true sidereal positions, ringed by the 27 nakṣatras. Nothing is stored or sent anywhere.
+      true sidereal positions, ringed by the 27 nakṣatras. Then travel forward through your life and
+      watch them move. Nothing is stored or sent anywhere.
+      <br><br><span style="font-size:.82rem;color:var(--ink3)">
+      <b style="color:var(--cyan);font-weight:500">Geocentric view.</b> Earth sits at the centre, because
+      that is where you were standing. Each graha is placed at the ecliptic longitude it <em>appeared</em>
+      at from your birthplace — the same frame a birth chart uses. Orbit sizes are spaced for legibility,
+      not to scale.</span>
     </p>
 
     <div class="field">
@@ -356,9 +401,23 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
     </div>
   </div>
 
+  <div class="viewnote" id="viewnote"></div>
+
+  <div class="scrub" id="scrub">
+    <div class="scrubhead">
+      <b id="scrubdate">—</b>
+      <span id="scrubage"></span>
+    </div>
+    <input type="range" id="scrubrange" min="0" max="1000" value="0" aria-label="Travel through time">
+    <div class="scrubbtns">
+      <button type="button" data-j="birth" class="on">Birth</button>
+      <button type="button" data-j="play" id="playbtn">▶ Play</button>
+      <button type="button" data-j="now">Today</button>
+    </div>
+  </div>
+
   <div class="hudbot">
     <div class="tip">Drag to orbit · scroll to zoom</div>
-    <button class="ghost" id="save">Save image</button>
     <button class="ghost" id="again">Another birth moment</button>
     <a href="index.html#book" class="cta">Have this chart read · ₹250</a>
   </div>
@@ -486,7 +545,19 @@ var BODIES=[
 ];
 
 function computeChart(y,mo,d,h,mi,tz,lat,lon){
-  var jd=jdFromUTC(y,mo,d,h-tz,mi), T=T_of(jd), T2=T_of(jd+1), ay=ayanamsa(jd);
+  return chartAtJD(jdFromUTC(y,mo,d,h-tz,mi),lat,lon);
+}
+function lonAt(key,jd){
+  var T=T_of(jd), ay=ayanamsa(jd), t;
+  if(key==='Sun')t=sunLon(T);
+  else if(key==='Moon')t=moonLon(T);
+  else if(key==='Rahu')t=rahuLon(T);
+  else if(key==='Ketu')t=norm(rahuLon(T)+180);
+  else t=planetLon(key.toLowerCase(),T);
+  return norm(t-ay);
+}
+function chartAtJD(jd,lat,lon){
+  var T=T_of(jd), T2=T_of(jd+1), ay=ayanamsa(jd);
   var trop={Sun:sunLon(T),Moon:moonLon(T),Mars:planetLon('mars',T),Mercury:planetLon('mercury',T),
             Jupiter:planetLon('jupiter',T),Venus:planetLon('venus',T),Saturn:planetLon('saturn',T),
             Rahu:rahuLon(T)};
@@ -712,7 +783,29 @@ function runWarp(){
    ================================================================== */
 var THREE_OK = (typeof THREE!=='undefined');
 var renderer,scene,cam,root,rafId,grahaMeshes=[],labelSprites=[],ctrl;
+var GMAP={},hiNak=null,hiRas=null,SELECTED=null,SCRUB=null;
 
+var GLOWTEX=null;
+function glowTexture(){
+  if(GLOWTEX) return GLOWTEX;
+  var cv=document.createElement('canvas'); cv.width=cv.height=128;
+  var cx=cv.getContext('2d');
+  var g=cx.createRadialGradient(64,64,0,64,64,64);
+  g.addColorStop(0,'rgba(255,255,255,1)');
+  g.addColorStop(0.28,'rgba(255,255,255,.42)');
+  g.addColorStop(0.62,'rgba(255,255,255,.09)');
+  g.addColorStop(1,'rgba(255,255,255,0)');
+  cx.fillStyle=g; cx.fillRect(0,0,128,128);
+  GLOWTEX=new THREE.CanvasTexture(cv);
+  return GLOWTEX;
+}
+function makeGlow(color,size){
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({
+    map:glowTexture(),color:color,transparent:true,opacity:.55,
+    blending:THREE.AdditiveBlending,depthWrite:false,depthTest:false}));
+  sp.scale.set(size,size,1);
+  return sp;
+}
 function makeLabel(text,color,scale){
   var pr=2, pad=8, fs=34;
   var cv=document.createElement('canvas'), cx=cv.getContext('2d');
@@ -726,8 +819,18 @@ function makeLabel(text,color,scale){
   var tex=new THREE.CanvasTexture(cv); tex.minFilter=THREE.LinearFilter;
   var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
   var s=(scale||1)*0.055;
-  sp.scale.set(cv.width/pr*s, cv.height/pr*s, 1);
+  sp.userData.bw=cv.width/pr*s; sp.userData.bh=cv.height/pr*s;
+  sp.userData.fixed=true;
+  sp.scale.set(sp.userData.bw, sp.userData.bh, 1);
   return sp;
+}
+/* arc segment on the ecliptic plane, used to highlight a rasi / nakshatra */
+function arcMesh(rIn,rOut,startDeg,spanDeg,color,op){
+  var g=new THREE.RingGeometry(rIn,rOut,64,1,(-startDeg-spanDeg)*D2R,spanDeg*D2R);
+  var m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:op,
+    side:THREE.DoubleSide,depthWrite:false}));
+  m.rotation.x=-Math.PI/2;
+  return m;
 }
 function polar(r,lonDeg,y){
   var a=lonDeg*D2R;
@@ -807,33 +910,49 @@ function buildScene(){
   var rg=new THREE.BufferGeometry().setFromPoints(rp);
   root.add(new THREE.LineSegments(rg,new THREE.LineBasicMaterial({color:0xf2c879,transparent:true,opacity:.36})));
 
+  /* --- highlight arcs (hidden until a graha is selected) --- */
+  hiNak=arcMesh(52,56,0,360/27,0x5fe3d8,.3); hiNak.visible=false; root.add(hiNak);
+  hiRas=arcMesh(64,70,0,30,0xf2c879,.22);    hiRas.visible=false; root.add(hiRas);
+
   /* --- grahas --- */
-  grahaMeshes=[]; labelSprites=[];
+  grahaMeshes=[]; GMAP={};
   for(var b=0;b<BODIES.length;b++){
     var B=BODIES[b], data=CHART[B.k]; if(!data) continue;
     var hex='#'+('000000'+B.c.toString(16)).slice(-6);
+
     if(B.k==='Lagna'){
-      var lp=[polar(4,data.sid,0),polar(78,data.sid,0)];
-      var lg=new THREE.BufferGeometry().setFromPoints(lp);
-      var lline=new THREE.Line(lg,new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.85}));
+      var lline=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
+        new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.9}));
       root.add(lline);
-      var llb=makeLabel('LAGNA — rising','rgba(242,200,121,1)',0.55);
-      llb.position.copy(polar(84,data.sid,2)); root.add(llb);
-      grahaMeshes.push({obj:lline,label:llb,key:B.k,lon:data.sid});
+      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',0.55);
+      llb.position.copy(polar(76,data.sid,2.5)); root.add(llb);
+      GMAP.Lagna={line:lline,label:llb,key:'Lagna',lon:data.sid};
+      grahaMeshes.push(GMAP.Lagna);
       continue;
     }
-    root.add(ringLine(B.r,B.c,.1,120));
+
+    var orb=ringLine(B.r,B.c,.09,120); root.add(orb);
     var m=new THREE.Mesh(new THREE.SphereGeometry(B.sz,24,18),new THREE.MeshBasicMaterial({color:B.c}));
     m.position.copy(polar(B.r,data.sid,0)); root.add(m);
-    var halo=new THREE.Mesh(new THREE.SphereGeometry(B.sz*2.6,20,16),
-      new THREE.MeshBasicMaterial({color:B.c,transparent:true,opacity:.13,side:THREE.BackSide}));
-    halo.position.copy(m.position); root.add(halo);
-    var spoke=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(B.r,data.sid,0)]),
-      new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.2}));
+
+    var gl=makeGlow(B.c,B.sz*7); gl.position.copy(m.position); root.add(gl);
+
+    /* spoke now runs all the way out to the rasi ring so you can read the placement */
+    var spoke=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
+      new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.16}));
     root.add(spoke);
-    var lb2=makeLabel(B.k+(data.retro&&B.k!=='Rahu'&&B.k!=='Ketu'?' ℞':''),hex,0.5);
-    lb2.position.copy(polar(B.r,data.sid,B.sz+3.2)); root.add(lb2);
-    grahaMeshes.push({obj:m,halo:halo,label:lb2,key:B.k,lon:data.sid,base:B});
+
+    /* faint marker where it stood at birth - stays put while you scrub time */
+    var natal=new THREE.Mesh(new THREE.SphereGeometry(B.sz*0.42,10,8),
+      new THREE.MeshBasicMaterial({color:B.c,transparent:true,opacity:.4}));
+    natal.position.copy(polar(B.r,data.sid,0)); natal.visible=false; root.add(natal);
+
+    var lb2=makeLabel(B.k,hex,0.5);
+    lb2.position.copy(polar(B.r,data.sid,B.sz+3.4)); root.add(lb2);
+
+    GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,natal:natal,
+               key:B.k,base:B,lon:data.sid,natalLon:data.sid,hex:hex};
+    grahaMeshes.push(GMAP[B.k]);
   }
 
   cam.position.set(0,86,104);
@@ -850,6 +969,20 @@ function onResize(){
 function loop(){
   rafId=requestAnimationFrame(loop);
   if(ctrl) ctrl.update();
+  if(scene&&cam){
+    /* keep every label the same apparent size no matter how far you zoom */
+    var k=cam.position.length()/120;
+    k=Math.max(0.62,Math.min(2.6,k));
+    scene.traverse(function(o){
+      if(o.isSprite&&o.userData.fixed){
+        o.scale.set(o.userData.bw*k,o.userData.bh*k,1);
+      }
+    });
+    if(SELECTED&&GMAP[SELECTED]&&GMAP[SELECTED].glow){
+      var t=performance.now()*0.0032;
+      GMAP[SELECTED].glow.material.opacity=0.62+Math.sin(t)*0.3;
+    }
+  }
   if(renderer) renderer.render(scene,cam);
 }
 function teardown(){
@@ -858,6 +991,29 @@ function teardown(){
   if(ctrl&&ctrl.dispose) ctrl.dispose();
   if(renderer){ renderer.dispose(); }
   renderer=null;scene=null;grahaMeshes=[];
+}
+
+/* highlight one graha: dim the rest, light its spoke, mark its rasi + nakshatra arcs */
+function selectGraha(key){
+  SELECTED=key;
+  for(var k in GMAP){
+    var G=GMAP[k], on=(k===key), any=!!key;
+    if(G.spoke) G.spoke.material.opacity = on?0.85:(any?0.05:0.16);
+    if(G.glow)  G.glow.material.opacity  = on?0.9 :(any?0.22:0.55);
+    if(G.orbit) G.orbit.material.opacity = on?0.35:(any?0.03:0.09);
+    if(G.label) G.label.material.opacity = on?1   :(any?0.3 :1);
+    if(G.mesh)  G.mesh.material.opacity  = 1;
+    if(G.line)  G.line.material.opacity  = on?1:(any?0.25:0.9);
+  }
+  if(!key){ if(hiNak)hiNak.visible=false; if(hiRas)hiRas.visible=false; return; }
+  var lon=GMAP[key]?GMAP[key].lon:0;
+  var nStart=Math.floor(lon/(360/27))*(360/27), rStart=Math.floor(lon/30)*30;
+  if(hiNak){ hiNak.geometry.dispose();
+    hiNak.geometry=new THREE.RingGeometry(52,56,64,1,(-nStart-(360/27))*D2R,(360/27)*D2R);
+    hiNak.visible=true; }
+  if(hiRas){ hiRas.geometry.dispose();
+    hiRas.geometry=new THREE.RingGeometry(64,70,64,1,(-rStart-30)*D2R,30*D2R);
+    hiRas.visible=true; }
 }
 
 /* simple spherical orbit controls (no external dependency) */
@@ -901,7 +1057,7 @@ function orbitControls(camera,dom,target){
       camera.lookAt(target);
     },
     focus:function(lonDeg){
-      auto=false; tgt.ph=-lonDeg*D2R+Math.PI*0.5; tgt.r=78; tgt.th=Math.PI*0.36;
+      auto=false; tgt.ph=-lonDeg*D2R+Math.PI*0.5; tgt.r=118; tgt.th=Math.PI*0.30;
     },
     dispose:function(){
       dom.removeEventListener('pointerdown',set);
@@ -944,6 +1100,12 @@ function revealScene(){
     renderDetail(r.dataset.key);
   });
   renderDasha();
+  $('viewnote').innerHTML='<b>Geocentric view</b> — Earth at centre,<br>each graha at its apparent<br>'+
+    'ecliptic longitude. Orbit sizes<br>are spaced to be readable,<br>not to scale.';
+  if(window.__scrubInit) window.__scrubInit();
+  setTimeout(function(){
+    try{ $('pDas').insertAdjacentHTML('beforeend', renderReturns()); }catch(e){}
+  },400);
   $('hud').classList.add('on');
 }
 $('pmin').addEventListener('click',function(){
@@ -1108,8 +1270,10 @@ function renderDetail(key){
   $('dback').addEventListener('click',function(){
     $('pdetail').innerHTML=''; $('pbody').style.display='';
     $('ptitle').textContent='Your sky, that moment';
+    selectGraha(null);
   });
-  if(ctrl&&key!=='Lagna') ctrl.focus(d.sid);
+  selectGraha(key);
+  if(ctrl) ctrl.focus(d.sid);
 }
 
 /* tabs */
@@ -1121,42 +1285,134 @@ $('ptabs').addEventListener('click',function(e){
 });
 
 /* ==================================================================
-   11. SAVE IMAGE
+   11. TIME TRAVEL  —  watch the sky move across your whole life
    ================================================================== */
-$('save').addEventListener('click',function(){
-  if(!renderer) return;
-  try{
-    renderer.render(scene,cam);
-    var src=renderer.domElement;
-    var W=src.width, H=src.height, sc=W/1600;
-    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
-    var cx=cv.getContext('2d');
-    cx.fillStyle='#04060c'; cx.fillRect(0,0,W,H);
-    cx.drawImage(src,0,0);
-    var g=cx.createLinearGradient(0,H*0.68,0,H);
-    g.addColorStop(0,'rgba(4,6,12,0)'); g.addColorStop(1,'rgba(4,6,12,.92)');
-    cx.fillStyle=g; cx.fillRect(0,H*0.68,W,H*0.32);
-    var b=BIRTH, pad=44*sc;
-    cx.textBaseline='alphabetic';
-    cx.fillStyle='#f2c879';
-    cx.font='500 '+(30*sc)+'px "Space Grotesk", sans-serif';
-    cx.fillText('STARLIT INSIGHTS', pad, H-pad-58*sc);
-    cx.fillStyle='#eef2fa';
-    cx.font='500 '+(38*sc)+'px "Space Grotesk", sans-serif';
-    cx.fillText(b.d+' '+MON[b.mo-1]+' '+b.y+' · '+pad2(b.h)+':'+pad2(b.mi)+' · '+b.label, pad, H-pad-14*sc);
-    cx.fillStyle='#6f7c96';
-    cx.font='400 '+(24*sc)+'px "JetBrains Mono", monospace';
-    var lg=posText(CHART.Lagna.sid), mo=posText(CHART.Moon.sid);
-    cx.fillText('Lagna '+lg.sign+' '+lg.deg+'  ·  Moon '+mo.nak+'  ·  starlitinsights.com', pad, H-pad+22*sc);
-    var a=document.createElement('a');
-    a.download='birth-sky-'+b.y+'-'+pad2(b.mo)+'-'+pad2(b.d)+'.png';
-    a.href=cv.toDataURL('image/png'); a.click();
-  }catch(err){
-    $('save').textContent='Could not save';
-    setTimeout(function(){ $('save').textContent='Save image'; },2200);
+var SPAN_Y=90, PLAYING=false, playRAF=null;
+
+function angDiff(a,b){ var d=((a-b)%360+540)%360-180; return d; }
+
+/* every moment a graha crosses back over the exact degree it held at your birth.
+   Crossings are counted in BOTH directions: a planet in retrograde crosses backwards,
+   and Rahu/Ketu move backwards permanently. */
+var PERIOD={Saturn:29.457,Jupiter:11.862,Rahu:18.613,Ketu:18.613,Mars:1.881,Sun:1,Venus:1,Mercury:1,Moon:0.0748};
+function findReturns(key,natalLon,birthJD,years){
+  var step=3, end=birthJD+years*365.2425, out=[];
+  var per=PERIOD[key]||1, skip=birthJD+per*365.2425*0.55;   /* ignore the birth-time retrograde loop */
+  var prev=angDiff(lonAt(key,birthJD),natalLon);
+  for(var jd=birthJD+step; jd<end; jd+=step){
+    var cur=angDiff(lonAt(key,jd),natalLon);
+    if(prev!==0 && (prev<0)!==(cur<0) && Math.abs(cur-prev)<90){
+      var a=jd-step,b=jd,sgn=(prev<0)?1:-1;
+      for(var i=0;i<26;i++){
+        var m=(a+b)/2;
+        if(angDiff(lonAt(key,m),natalLon)*sgn<0) a=m; else b=m;
+      }
+      var t=(a+b)/2;
+      if(t>skip) out.push(t);
+    }
+    prev=cur;
   }
-});
-function pad2(n){return n<10?'0'+n:''+n;}
+  /* a retrograde loop crosses the same degree up to three times - one event */
+  var groups=[];
+  for(var k=0;k<out.length;k++){
+    if(groups.length&&out[k]-groups[groups.length-1].to<760){
+      groups[groups.length-1].to=out[k]; groups[groups.length-1].n++;
+    } else groups.push({from:out[k],to:out[k],n:1});
+  }
+  return groups;
+}
+
+function renderReturns(){
+  var natal=CHART, bJD=CHART._jd, now=todayJD(), h='';
+  var list=[['Saturn','#5f9ee3','Śani — the ~29½-year lap'],
+            ['Jupiter','#ffd98a','Guru — the ~12-year lap'],
+            ['Rahu','#8b6fb8','the 18.6-year nodal cycle']];
+  for(var i=0;i<list.length;i++){
+    var key=list[i][0], col=list[i][1];
+    var g=findReturns(key,natal[key].sid,bJD,SPAN_Y);
+    for(var k=0;k<g.length&&k<5;k++){
+      var ev=g[k], future=(ev.to>now), age=Math.floor((ev.from-bJD)/365.2425);
+      h+='<div class="retrow'+(future&&k===0?' next':'')+'"><i style="background:'+col+'"></i>'+
+        '<span><b>'+key+' return '+(k+1)+'</b> <em style="margin-left:6px">age ~'+age+'</em></span>'+
+        '<em>'+(ev.n>1? fdate(ev.from)+' → '+fdate(ev.to) : fdate(ev.from))+
+        (ev.n>1?' · '+ev.n+' passes':'')+'</em></div>';
+    }
+  }
+  return '<div class="retblk"><div class="rethead">Planetary returns — when a graha comes back '+
+    'to the exact degree it held at your birth</div>'+h+
+    '<div class="dnote" style="border:none;padding-top:9px">Saturn takes 29.46 years to orbit the Sun and '+
+    'Jupiter 11.86, so these dates are orbital mechanics rather than interpretation. Where a return shows '+
+    'several passes, the planet crossed, turned retrograde back over the degree, then crossed a third time '+
+    'going forward.</div></div>';
+}
+
+/* move every graha to where it stood on a given Julian Day */
+function placeAt(jd){
+  if(!root||!BIRTH) return;
+  var c=chartAtJD(jd,BIRTH.lat,BIRTH.lon), moved=Math.abs(jd-CHART._jd)>0.5;
+  for(var k in GMAP){
+    var G=GMAP[k], d=c[k]; if(!d) continue;
+    G.lon=d.sid;
+    if(k==='Lagna'){ G.lon=CHART.Lagna.sid; continue; }   /* stays at the natal degree */
+    var r=G.base.r;
+    if(G.mesh) G.mesh.position.copy(polar(r,d.sid,0));
+    if(G.glow) G.glow.position.copy(polar(r,d.sid,0));
+    if(G.label) G.label.position.copy(polar(r,d.sid,G.base.sz+3.4));
+    if(G.spoke) G.spoke.geometry.setFromPoints([polar(4,d.sid,0),polar(70,d.sid,0)]);
+    if(G.natal) G.natal.visible=moved;
+  }
+  if(SELECTED) selectGraha(SELECTED);
+  return c;
+}
+
+(function timeTravel(){
+  var range=$('scrubrange'), out=$('scrubdate'), age=$('scrubage');
+  function jdFor(v){ return CHART._jd + (v/1000)*SPAN_Y*365.2425; }
+  function apply(v,quiet){
+    var jd=jdFor(v), yrs=(jd-CHART._jd)/365.2425;
+    var c=placeAt(jd);
+    var atBirth=v<0.5;
+    out.innerHTML=fdate(jd)+(atBirth?' <em>your birth</em>':'');
+    var lg=c?posText(c.Lagna.sid):null;
+    age.textContent=(atBirth?'':'age '+Math.floor(yrs)+' · ')+
+      (c?'Moon in '+NAK[Math.floor(c.Moon.sid/(360/27))]:'');
+    if(!quiet){
+      $('scrub').querySelectorAll('.scrubbtns button').forEach(function(b){
+        if(b.dataset.j!=='play') b.classList.remove('on');
+      });
+    }
+  }
+  range.addEventListener('input',function(){ stopPlay(); apply(+range.value); });
+
+  function stopPlay(){
+    PLAYING=false; if(playRAF)cancelAnimationFrame(playRAF);
+    $('playbtn').textContent='▶ Play'; $('playbtn').classList.remove('on');
+  }
+  function startPlay(){
+    PLAYING=true; $('playbtn').textContent='❚❚ Pause'; $('playbtn').classList.add('on');
+    var last=performance.now();
+    (function step(now){
+      if(!PLAYING) return;
+      var dt=(now-last)/1000; last=now;
+      var v=+range.value + dt*1000/22;      /* ~22s for a full 90-year sweep */
+      if(v>=1000){ v=1000; range.value=v; apply(v,true); stopPlay(); return; }
+      range.value=v; apply(v,true);
+      playRAF=requestAnimationFrame(step);
+    })(last);
+  }
+  $('scrub').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    var j=b.dataset.j;
+    if(j==='play'){ PLAYING?stopPlay():startPlay(); return; }
+    stopPlay();
+    if(j==='birth'){ range.value=0; apply(0); b.classList.add('on'); }
+    if(j==='now'){
+      var v=Math.max(0,Math.min(1000,(todayJD()-CHART._jd)/(SPAN_Y*365.2425)*1000));
+      range.value=v; apply(v); b.classList.add('on');
+    }
+  });
+  window.__scrubInit=function(){ range.value=0; apply(0); };
+})();
 
 /* graceful degradation if WebGL/Three fails */
 if(!THREE_OK){
