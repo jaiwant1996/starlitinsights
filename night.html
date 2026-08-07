@@ -96,11 +96,13 @@ a{color:inherit;text-decoration:none}
 .ret.lock{border-color:var(--gold);box-shadow:0 0 0 4px rgba(242,200,121,.1);transform:scale(1.06)}
 
 /* readout card */
-.read{position:absolute;left:14px;right:14px;bottom:96px;max-width:400px;margin-inline:auto;
-  padding:15px 17px;border-radius:16px;border:1px solid var(--line2);
+.botstack{position:absolute;left:14px;right:14px;bottom:88px;display:flex;flex-direction:column;
+  gap:9px;align-items:stretch;max-width:400px;margin-inline:auto;pointer-events:none}
+.read{padding:15px 17px;border-radius:16px;border:1px solid var(--line2);
   background:rgba(8,13,24,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   opacity:0;transform:translateY(10px);transition:.35s var(--ease);pointer-events:none}
 .read.on{opacity:1;transform:none}
+.read:not(.on){display:none}
 .rtop{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
 .rtop i{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
 .rtop b{font-family:var(--fd);font-weight:600;font-size:1.05rem;letter-spacing:-.02em}
@@ -155,16 +157,16 @@ a{color:inherit;text-decoration:none}
 .info p:last-child{margin:0}
 .info em{font-style:normal;color:var(--gold)}
 
-.cta{position:absolute;left:14px;right:14px;bottom:96px;max-width:400px;margin-inline:auto;
-  display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 20px;border-radius:100px;
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 20px;border-radius:100px;
   font-family:var(--fd);font-weight:600;font-size:.86rem;color:#160f02;pointer-events:auto;
   background:linear-gradient(105deg,var(--gold),var(--gold2));
   box-shadow:0 10px 30px -12px rgba(242,200,121,.7);
   opacity:0;visibility:hidden;transition:.4s var(--ease)}
 .cta.on{opacity:1;visibility:visible}
+.cta:not(.on){display:none}
 
 @media(min-width:900px){
-  .read,.cta{left:auto;right:24px;margin-inline:0;width:380px}
+  .botstack{left:auto;right:24px;margin-inline:0;width:380px;max-width:380px}
   .sheet{left:auto;right:24px;width:400px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -222,9 +224,10 @@ a{color:inherit;text-decoration:none}
     telescope. Move away from metal and figure-eight the phone to recalibrate.</p>
   </div>
 
-  <div class="read" id="read"></div>
-
-  <a href="index.html#book" class="cta" id="cta">Have your chart read · ₹250</a>
+  <div class="botstack">
+    <div class="read" id="read"></div>
+    <a href="index.html#book" class="cta" id="cta">Have your chart read · ₹250</a>
+  </div>
 
   <div class="comp" id="comp">
     <canvas id="compc"></canvas>
@@ -489,7 +492,10 @@ function orthonormalize(m){
   c0=[c0[0]-d*c2[0], c0[1]-d*c2[1], c0[2]-d*c2[2]];
   var l0=Math.hypot(c0[0],c0[1],c0[2])||1; c0=[c0[0]/l0,c0[1]/l0,c0[2]/l0];
   var c1=[c2[1]*c0[2]-c2[2]*c0[1], c2[2]*c0[0]-c2[0]*c0[2], c2[0]*c0[1]-c2[1]*c0[0]];
+  /* if the two columns collapsed onto each other the result is not a rotation — bail */
+  if(l<1e-6||l0<1e-6||!isFinite(l)||!isFinite(l0)) return false;
   for(var i=0;i<3;i++){ m[i][0]=c0[i]; m[i][1]=c1[i]; m[i][2]=c2[i]; }
+  return true;
 }
 function smoothOrientation(){
   if(!MAT) return;
@@ -499,7 +505,8 @@ function smoothOrientation(){
   /* follow fast sweeps closely, but crawl when the phone is nearly still */
   var k=Math.max(0.055, Math.min(0.45, diff*3.2));
   for(i=0;i<3;i++) for(j=0;j<3;j++) SMAT[i][j]+=(MAT[i][j]-SMAT[i][j])*k;
-  orthonormalize(SMAT);
+  /* a near-180 degree compass jump can lerp through a singular matrix — snap instead */
+  if(!orthonormalize(SMAT)) SMAT=[MAT[0].slice(),MAT[1].slice(),MAT[2].slice()];
 }
 function viewMatrix(){
   if(SMAT) return SMAT;
@@ -529,10 +536,17 @@ function lookAzAlt(){
 /* ==================================================================
    RENDER
    ================================================================== */
+/* At 90 degrees off the view axis the perspective divide blows up — coordinates reach
+   millions, and a canvas path carrying those values corrupts or stalls the whole frame.
+   Reject anything past ~80 degrees and anything non-finite. */
 function project(d){
-  if(d[2]>=-0.02) return null;
-  var fov=62*D2R, f=(H/2)/Math.tan(fov/2);
-  return [W/2 + f*(d[0]/-d[2]), H/2 - f*(d[1]/-d[2])];
+  var fwd=-d[2];
+  if(!(fwd>0.17)) return null;
+  var f=(H/2)/Math.tan(31*D2R);
+  var x=W/2+f*(d[0]/fwd), y=H/2-f*(d[1]/fwd);
+  if(!isFinite(x)||!isFinite(y)) return null;
+  if(Math.abs(x-W/2)>W*4||Math.abs(y-H/2)>H*4) return null;
+  return [x,y];
 }
 function draw(){
   requestAnimationFrame(draw);
@@ -550,10 +564,19 @@ function draw(){
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   /* horizon + ground */
-  var hz=[]; for(var a=0;a<360;a+=3){ var p=project(toDevice(horVec(a,0))); if(p) hz.push(p); }
+  /* draw the horizon in runs, starting a new stroke wherever it leaves the view —
+     joining across that gap was throwing a line right across the screen */
   ctx.strokeStyle='rgba(242,200,121,.35)'; ctx.lineWidth=1;
   ctx.beginPath();
-  for(var i=0;i<hz.length;i++){ if(i===0)ctx.moveTo(hz[i][0],hz[i][1]); else ctx.lineTo(hz[i][0],hz[i][1]); }
+  var pen=false, prev=null;
+  for(var a=0;a<=360;a+=2){
+    var p=project(toDevice(horVec(a%360,0)));
+    if(!p){ pen=false; prev=null; continue; }
+    /* a jump larger than the screen means the run wrapped round behind us */
+    if(pen && prev && Math.hypot(p[0]-prev[0],p[1]-prev[1])>W*1.5){ pen=false; }
+    if(!pen){ ctx.moveTo(p[0],p[1]); pen=true; } else { ctx.lineTo(p[0],p[1]); }
+    prev=p;
+  }
   ctx.stroke();
 
   /* cardinal marks on the horizon */
@@ -598,6 +621,8 @@ function draw(){
     if(t>0.01){
       var fov=62*D2R, f=(H/2)/Math.tan(fov/2);
       var px=W/2 + f*(dv[0]/fwd), py=H/2 - f*(dv[1]/fwd);
+      if(!isFinite(px)||!isFinite(py)){ t=0; }
+      else{
       ctx.globalAlpha=t;
       var rr=G.b.r*(below?0.55:1);
       if(!below){
@@ -621,6 +646,7 @@ function draw(){
       ctx.globalAlpha=1;
       var dist=Math.hypot(px-W/2,py-H/2);
       if(t>0.9 && dist<95 && dist<bestD){ bestD=dist; LOCK=G; }
+      }
     }
 
     if(t<0.99){
