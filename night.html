@@ -476,8 +476,33 @@ function setFromDevice(a,b,g,screenA){
   }
   MAT=m; HAVE_SENSOR=true;
 }
-var MAT=null;
+var MAT=null, SMAT=null;
+
+/* Raw compass/gyro output is noisy — a few degrees of jitter even when the phone is
+   still. Smooth the whole rotation matrix rather than the angles (no 359->0 wrap
+   problems), then re-orthonormalise so it stays a valid rotation. */
+function orthonormalize(m){
+  var c2=[m[0][2],m[1][2],m[2][2]];
+  var l=Math.hypot(c2[0],c2[1],c2[2])||1; c2=[c2[0]/l,c2[1]/l,c2[2]/l];
+  var c0=[m[0][0],m[1][0],m[2][0]];
+  var d=c0[0]*c2[0]+c0[1]*c2[1]+c0[2]*c2[2];
+  c0=[c0[0]-d*c2[0], c0[1]-d*c2[1], c0[2]-d*c2[2]];
+  var l0=Math.hypot(c0[0],c0[1],c0[2])||1; c0=[c0[0]/l0,c0[1]/l0,c0[2]/l0];
+  var c1=[c2[1]*c0[2]-c2[2]*c0[1], c2[2]*c0[0]-c2[0]*c0[2], c2[0]*c0[1]-c2[1]*c0[0]];
+  for(var i=0;i<3;i++){ m[i][0]=c0[i]; m[i][1]=c1[i]; m[i][2]=c2[i]; }
+}
+function smoothOrientation(){
+  if(!MAT) return;
+  if(!SMAT){ SMAT=[MAT[0].slice(),MAT[1].slice(),MAT[2].slice()]; return; }
+  var diff=0,i,j;
+  for(i=0;i<3;i++) for(j=0;j<3;j++) diff=Math.max(diff,Math.abs(MAT[i][j]-SMAT[i][j]));
+  /* follow fast sweeps closely, but crawl when the phone is nearly still */
+  var k=Math.max(0.055, Math.min(0.45, diff*3.2));
+  for(i=0;i<3;i++) for(j=0;j<3;j++) SMAT[i][j]+=(MAT[i][j]-SMAT[i][j])*k;
+  orthonormalize(SMAT);
+}
 function viewMatrix(){
+  if(SMAT) return SMAT;
   if(MAT) return MAT;
   /* fallback: build from drag */
   var a=dragYaw, p=dragPitch;
@@ -512,7 +537,8 @@ function project(d){
 function draw(){
   requestAnimationFrame(draw);
   if(LAT===null) return;
-  if(Date.now()-lastCalc>20000) recompute();
+  smoothOrientation();
+  if(Date.now()-lastCalc>60000) recompute();   /* positions shift by arcseconds, not pixels */
 
   var look=lookAzAlt(), sun=objs[0];
 
@@ -561,38 +587,57 @@ function draw(){
   LOCK=null; var bestD=1e9;
   for(var q=0;q<objs.length;q++){
     var G=objs[q]; if(G.star) continue;
-    var dv=toDevice(G.v), pp=project(dv);
+    var dv=toDevice(G.v);
+    /* -dv[2] is the cosine of the angle off the view axis. Past ~75 deg the
+       perspective divide explodes, so cross-fade to an edge arrow instead of
+       letting the marker snap between wild coordinates. */
+    var fwd=-dv[2];
+    var t=Math.max(0,Math.min(1,(fwd-0.26)/0.22));      /* 1 = marker, 0 = arrow */
     var below=G.alt<0;
-    if(pp && pp[0]>-60 && pp[0]<W+60 && pp[1]>-60 && pp[1]<H+60){
+
+    if(t>0.01){
+      var fov=62*D2R, f=(H/2)/Math.tan(fov/2);
+      var px=W/2 + f*(dv[0]/fwd), py=H/2 - f*(dv[1]/fwd);
+      ctx.globalAlpha=t;
       var rr=G.b.r*(below?0.55:1);
       if(!below){
-        var gr=ctx.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],rr*4.5);
+        var gr=ctx.createRadialGradient(px,py,0,px,py,rr*4.5);
         gr.addColorStop(0,G.b.c+'aa'); gr.addColorStop(1,G.b.c+'00');
-        ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(pp[0],pp[1],rr*4.5,0,6.2832); ctx.fill();
+        ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(px,py,rr*4.5,0,6.2832); ctx.fill();
       }
-      ctx.beginPath(); ctx.arc(pp[0],pp[1],rr,0,6.2832);
+      ctx.beginPath(); ctx.arc(px,py,rr,0,6.2832);
       ctx.fillStyle=below?G.b.c+'55':G.b.c; ctx.fill();
-      if(below){ ctx.strokeStyle=G.b.c+'88'; ctx.setLineDash([3,3]); ctx.lineWidth=1;
-        ctx.beginPath(); ctx.arc(pp[0],pp[1],rr+5,0,6.2832); ctx.stroke(); ctx.setLineDash([]); }
-      ctx.fillStyle=below?'rgba(174,184,204,.55)':'#fff';
+      if(below){
+        ctx.strokeStyle=G.b.c+'88'; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(px,py,rr+5,0,6.2832); ctx.stroke(); ctx.setLineDash([]);
+      }
+      ctx.fillStyle=below?'rgba(174,184,204,.6)':'#fff';
       ctx.font='600 13px "Space Grotesk",sans-serif'; ctx.textAlign='center';
-      ctx.fillText(G.b.k,pp[0],pp[1]-rr-9);
-      if(below){ ctx.fillStyle='rgba(174,184,204,.4)'; ctx.font='500 9px "JetBrains Mono",monospace';
-        ctx.fillText(Math.abs(G.alt).toFixed(0)+'° below',pp[0],pp[1]+rr+15); }
-      var dist=Math.hypot(pp[0]-W/2,pp[1]-H/2);
-      if(dist<95 && dist<bestD){ bestD=dist; LOCK=G; }
-    } else {
-      /* off screen: a nudge at the edge */
-      var ang=Math.atan2(dv[0],-dv[1]);
-      if(dv[2]>0) ang=Math.atan2(-dv[0],dv[1]);
-      var ex=W/2+Math.cos(ang-Math.PI/2)*(Math.min(W,H)/2-34);
-      var ey=H/2+Math.sin(ang-Math.PI/2)*(Math.min(W,H)/2-34);
-      ctx.save(); ctx.translate(ex,ey); ctx.rotate(ang);
-      ctx.fillStyle=G.b.c+'cc'; ctx.beginPath();
-      ctx.moveTo(0,-7); ctx.lineTo(5,4); ctx.lineTo(-5,4); ctx.closePath(); ctx.fill();
+      ctx.fillText(G.b.k,px,py-rr-9);
+      if(below){
+        ctx.fillStyle='rgba(174,184,204,.45)'; ctx.font='500 9px "JetBrains Mono",monospace';
+        ctx.fillText(Math.abs(G.alt).toFixed(0)+'° below',px,py+rr+15);
+      }
+      ctx.globalAlpha=1;
+      var dist=Math.hypot(px-W/2,py-H/2);
+      if(t>0.9 && dist<95 && dist<bestD){ bestD=dist; LOCK=G; }
+    }
+
+    if(t<0.99){
+      /* direction on screen: mirror the vector when the object is behind us */
+      var sx=dv[0], sy=-dv[1];
+      if(fwd<=0){ sx=-sx; sy=-sy; }
+      var m=Math.hypot(sx,sy)||1; sx/=m; sy/=m;
+      var rad=Math.min(W,H)/2-36;
+      var ex=W/2+sx*rad, ey=H/2+sy*rad;
+      ctx.globalAlpha=1-t;
+      ctx.save(); ctx.translate(ex,ey); ctx.rotate(Math.atan2(sy,sx)+Math.PI/2);
+      ctx.fillStyle=G.b.c+'dd'; ctx.beginPath();
+      ctx.moveTo(0,-8); ctx.lineTo(5.5,4); ctx.lineTo(-5.5,4); ctx.closePath(); ctx.fill();
       ctx.restore();
-      ctx.fillStyle=G.b.c+'99'; ctx.font='500 9px "JetBrains Mono",monospace'; ctx.textAlign='center';
-      ctx.fillText(G.b.k,ex,ey+18);
+      ctx.fillStyle=G.b.c+'aa'; ctx.font='500 9.5px "JetBrains Mono",monospace'; ctx.textAlign='center';
+      ctx.fillText(G.b.k,ex-sx*15,ey-sy*15+3);
+      ctx.globalAlpha=1;
     }
   }
 
