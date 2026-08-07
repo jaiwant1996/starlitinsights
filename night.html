@@ -164,6 +164,13 @@ a{color:inherit;text-decoration:none}
   opacity:0;visibility:hidden;transition:.4s var(--ease)}
 .cta.on{opacity:1;visibility:visible}
 .cta:not(.on){display:none}
+.ctawrap{position:relative;display:flex;align-items:center;gap:8px;pointer-events:auto}
+.ctawrap:not(.on){display:none}
+.ctawrap .cta{flex:1}
+.ctax{width:34px;height:34px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line2);
+  background:rgba(8,13,24,.8);backdrop-filter:blur(12px);color:var(--ink2);font-size:17px;line-height:1;
+  transition:.25s}
+.ctax:hover{color:var(--ink);border-color:var(--ink3)}
 
 @media(min-width:900px){
   .botstack{left:auto;right:24px;margin-inline:0;width:380px;max-width:380px}
@@ -226,7 +233,10 @@ a{color:inherit;text-decoration:none}
 
   <div class="botstack">
     <div class="read" id="read"></div>
-    <a href="index.html#book" class="cta" id="cta">Have your chart read · ₹250</a>
+    <div class="ctawrap" id="ctawrap">
+      <a href="index.html#book" class="cta" id="cta">Have your chart read · ₹250</a>
+      <button class="ctax" id="ctax" aria-label="Dismiss">×</button>
+    </div>
   </div>
 
   <div class="comp" id="comp">
@@ -519,14 +529,50 @@ function setFromDevice(a,b,g,screenA,heading,absolute){
     /* only trust the compass while the top edge is meaningfully horizontal */
     if(horiz>0.34){
       var azRel=norm(Math.atan2(top[0],top[1])*R2D);
-      var d=norm(heading-azRel);
-      NORTH_OFF=(NORTH_OFF===null)?d:angLerp(NORTH_OFF,d,0.06);
+      updateNorth(norm(heading-azRel));
       NORTH_OK=true;
     }
   }
   if(NORTH_OFF===null){ NORTH_OFF=0; }
   MAT=mul3(rotZ(NORTH_OFF),m);
   HAVE_SENSOR=true;
+}
+
+/* --------------------------------------------------------------------------
+   The compass does not fail gracefully. iOS in particular can throw out a
+   heading that is 90 or 180 degrees wrong for a handful of frames — near metal,
+   during recalibration, or as it switches internal reference axis while you
+   tilt. Feeding those straight in is what threw the view from north-east to
+   west at one specific bearing.
+
+   So: trim gently while readings agree, and refuse any large correction unless
+   it holds steady and self-consistent for about half a second.
+   -------------------------------------------------------------------------- */
+var CAND=[], CAND_NEED=42, MOTION=1;
+function updateNorth(c){
+  if(NORTH_OFF===null){ NORTH_OFF=c; return; }
+  var diff=Math.abs(((c-NORTH_OFF)%360+540)%360-180);
+  if(diff<20){                       /* agrees — slow drift trim only */
+    NORTH_OFF=angLerp(NORTH_OFF,c,0.02);
+    if(CAND.length) CAND.length=0;
+    return;
+  }
+  /* A large disagreement is a spike until proven otherwise. Three conditions must
+     all hold before the offset is allowed to move: the phone is nearly still, the
+     samples are tightly clustered, and they have persisted for ~0.7s. */
+  if(MOTION>0.02){ CAND.length=0; return; }
+  CAND.push(c);
+  if(CAND.length>CAND_NEED) CAND.shift();
+  if(CAND.length<CAND_NEED) return;
+  var sx=0,sy=0;
+  for(var i=0;i<CAND.length;i++){ sx+=Math.cos(CAND[i]*D2R); sy+=Math.sin(CAND[i]*D2R); }
+  var Rlen=Math.hypot(sx,sy)/CAND.length;   /* 1 = identical, 0.995 ~ within +-10 deg */
+  if(Rlen>0.995){
+    NORTH_OFF=norm(Math.atan2(sy,sx)*R2D);
+    CAND.length=0;
+  } else {
+    CAND.shift();
+  }
 }
 var MAT=null, SMAT=null;
 
@@ -551,6 +597,7 @@ function smoothOrientation(){
   if(!SMAT){ SMAT=[MAT[0].slice(),MAT[1].slice(),MAT[2].slice()]; return; }
   var diff=0,i,j;
   for(i=0;i<3;i++) for(j=0;j<3;j++) diff=Math.max(diff,Math.abs(MAT[i][j]-SMAT[i][j]));
+  MOTION=MOTION*0.85+diff*0.15;      /* how much the phone is actually moving */
   /* follow fast sweeps closely, but crawl when the phone is nearly still */
   var k=Math.max(0.055, Math.min(0.45, diff*3.2));
   /* within ~22 degrees of the beta=90 singularity the reconstructed matrix is
@@ -785,23 +832,35 @@ function begin(lat,lon,label){
   resize(); recompute();
   $('gate').classList.add('gone');
   setTimeout(function(){ $('hud').classList.add('on'); },420);
-  setTimeout(function(){ $('cta').classList.add('on'); },14000);
+  setTimeout(function(){
+    if(!CTA_KILLED){ $('cta').classList.add('on'); $('ctawrap').classList.add('on'); }
+  },14000);
   requestAnimationFrame(draw);
 }
 
 /* --- sensors --- */
 function attachSensors(){
-  function handler(e){
+  /* Attaching BOTH streams was a real bug: on Android they both fire, one with an
+     absolute alpha and one with an arbitrary origin, so the view flipped between
+     two different headings every frame. Absolute wins; relative is the fallback. */
+  var absoluteSeen=false;
+  function read(e,isAbs){
     var a=e.alpha, b=e.beta, g=e.gamma;
     if(a===null||b===null||g===null) return;
     var sa=0;
     if(screen.orientation && typeof screen.orientation.angle==='number') sa=screen.orientation.angle;
     else if(typeof window.orientation==='number') sa=window.orientation;
-    setFromDevice(a,b,g,sa,e.webkitCompassHeading,e.absolute);
+    setFromDevice(a,b,g,sa,e.webkitCompassHeading,isAbs||e.absolute===true);
   }
-  if('ondeviceorientationabsolute' in window)
-    window.addEventListener('deviceorientationabsolute',handler,true);
-  window.addEventListener('deviceorientation',handler,true);
+  if('ondeviceorientationabsolute' in window){
+    window.addEventListener('deviceorientationabsolute',function(e){
+      absoluteSeen=true; read(e,true);
+    },true);
+  }
+  window.addEventListener('deviceorientation',function(e){
+    if(absoluteSeen) return;                 /* ignore the relative stream entirely */
+    read(e,false);
+  },true);
 }
 function askMotion(){
   return new Promise(function(res){
@@ -885,6 +944,11 @@ $('listBtn').addEventListener('click',function(){
   $('sheet').classList.toggle('on',on); $('info').classList.remove('on');
   $('listBtn').classList.toggle('on',on); $('infoBtn').classList.remove('on');
   if(on) fillSheet();
+});
+var CTA_KILLED=false;
+$('ctax').addEventListener('click',function(e){
+  e.preventDefault(); CTA_KILLED=true;
+  $('ctawrap').classList.remove('on'); $('cta').classList.remove('on');
 });
 $('sx').addEventListener('click',function(){
   $('sheet').classList.remove('on'); $('listBtn').classList.remove('on');

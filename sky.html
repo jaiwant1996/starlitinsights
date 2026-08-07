@@ -336,6 +336,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .backlink{position:fixed;left:22px;top:22px;z-index:12;font-size:.82rem;color:var(--ink2);
   transition:.3s;pointer-events:auto}
 .backlink:hover{color:var(--gold)}
+.blink2{left:auto;right:22px}
+@media(max-width:560px){.blink2{display:none}}
 
 /* ---- stacked layout: phones, tablets and narrow desktop windows ---- */
 @media(max-width:1100px){
@@ -375,7 +377,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <canvas id="warpc"></canvas>
 
 <a href="index.html" class="backlink" id="backlink">← Starlit Insights</a>
-<a href="night.html" class="backlink" style="left:auto;right:22px">Find them in the real sky →</a>
+<a href="night.html" class="backlink blink2">Real sky →</a>
 
 <!-- ============ STAGE 1 · FORM ============ -->
 <section class="stage veil on" id="s1">
