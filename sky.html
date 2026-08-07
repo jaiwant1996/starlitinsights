@@ -396,7 +396,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <h1>Where were the stars<br><em>when you arrived?</em></h1>
     <p class="lead" style="margin-bottom:26px">
       Give me the moment you were born and I'll rebuild that sky around you — all nine grahas at their
-      true sidereal positions, ringed by the 27 nakṣatras. Then travel forward through your life and
+      true sidereal positions, ringed by the 27 nakshatras. Then travel forward through your life and
       watch them move. Your details are remembered on this device only, and never sent anywhere.
       <br><br><span style="font-size:.82rem;color:var(--ink3)">
       <b style="color:var(--cyan);font-weight:500">Geocentric view.</b> Earth sits at the centre, because
@@ -444,8 +444,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <div class="errmsg" id="err"></div>
     <p class="hint">
       Can't find your town? <a href="#" id="manual" style="color:var(--cyan);border-bottom:1px solid rgba(95,227,216,.4)">Enter coordinates manually</a>.
-      Positions are computed from JPL orbital elements with the Lahiri ayanāṁśa — accurate to a few
-      arcminutes, which is close enough to place every graha in its correct sign and nakṣatra.
+      Positions are computed from JPL orbital elements with the Lahiri ayanamsha — accurate to a few
+      arcminutes, which is close enough to place every graha in its correct sign and nakshatra.
     </p>
   </div>
 </section>
@@ -512,8 +512,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <p>Earth sits at the centre, because that is where you were standing. Each graha is drawn at the
     longitude it <em>appeared</em> at. Orbit spacing is for legibility, not to scale.</p>
     <div class="iplegend">
-      <span><i style="background:#5fe3d8"></i>inner ring — 27 nakṣatras</span>
-      <span><i style="background:#f2c879"></i>outer ring — 12 rāśis</span>
+      <span><i style="background:#5fe3d8"></i>inner ring — 27 nakshatras</span>
+      <span><i style="background:#f2c879"></i>outer ring — 12 rashis</span>
       <span><i style="background:#f2c879;opacity:.5"></i>gold beam — your lagna</span>
     </div>
     <div class="iprow">
@@ -522,7 +522,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <button type="button" data-lab="signs">Signs</button>
       <button type="button" data-lab="min">Minimal</button>
     </div>
-    <p class="iptip">Drag to orbit · scroll or pinch to zoom · tap a graha to light up its rāśi and nakṣatra</p>
+    <p class="iptip">Drag to orbit · scroll or pinch to zoom · tap a graha to light up its rashi and nakshatra</p>
   </div>
   <div class="hicap" id="hicap"></div>
 
@@ -549,7 +549,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="hudbot">
     <div class="tip">Drag to orbit · scroll to zoom</div>
     <button class="ghost" id="again">Another birth moment</button>
-    <a href="index.html#book" class="cta">Have this chart read · ₹250</a>
+    <a href="book.html" class="cta">Have this chart read · ₹500</a>
   </div>
 </div>
 
@@ -655,22 +655,22 @@ function ascendant(jd,lat,lon){
   return norm(Math.atan2(Math.cos(th),-(Math.sin(th)*Math.cos(e)+Math.tan(ph)*Math.sin(e)))*R2D);
 }
 var SIGN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-var SANS=['Meṣa','Vṛṣabha','Mithuna','Karka','Siṃha','Kanyā','Tulā','Vṛścika','Dhanu','Makara','Kumbha','Mīna'];
+var SANS=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Mina'];
 var GLYPH=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
-var NAK=['Aśvinī','Bharaṇī','Kṛttikā','Rohiṇī','Mṛgaśīrṣa','Ārdrā','Punarvasu','Puṣya','Āśleṣā','Maghā',
-'Pūrva Phalgunī','Uttara Phalgunī','Hasta','Citrā','Svātī','Viśākhā','Anurādhā','Jyeṣṭhā','Mūla',
-'Pūrva Āṣāḍhā','Uttara Āṣāḍhā','Śravaṇa','Dhaniṣṭhā','Śatabhiṣā','Pūrva Bhādrapadā','Uttara Bhādrapadā','Revatī'];
+var NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashirsha','Ardra','Punarvasu','Pushya','Ashlesha','Magha',
+'Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula',
+'Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
 
 var BODIES=[
  {k:'Lagna',  s:'Lagna',  c:0xf2c879, r:9,  sz:0.0},
- {k:'Moon',   s:'Candra', c:0xdfe7f5, r:13, sz:1.5},
+ {k:'Moon',   s:'Chandra', c:0xdfe7f5, r:13, sz:1.5},
  {k:'Mercury',s:'Budha',  c:0x5fe3d8, r:17, sz:1.2},
- {k:'Venus',  s:'Śukra',  c:0xf2c879, r:21, sz:1.5},
- {k:'Sun',    s:'Sūrya',  c:0xffb056, r:25, sz:2.4},
- {k:'Mars',   s:'Maṅgala',c:0xff7a7a, r:29, sz:1.3},
+ {k:'Venus',  s:'Shukra',  c:0xf2c879, r:21, sz:1.5},
+ {k:'Sun',    s:'Surya',  c:0xffb056, r:25, sz:2.4},
+ {k:'Mars',   s:'Mangala',c:0xff7a7a, r:29, sz:1.3},
  {k:'Jupiter',s:'Guru',   c:0xffd98a, r:34, sz:2.1},
- {k:'Saturn', s:'Śani',   c:0x5f9ee3, r:39, sz:1.9},
- {k:'Rahu',   s:'Rāhu',   c:0x8b6fb8, r:44, sz:1.3},
+ {k:'Saturn', s:'Shani',   c:0x5f9ee3, r:39, sz:1.9},
+ {k:'Rahu',   s:'Rahu',   c:0x8b6fb8, r:44, sz:1.3},
  {k:'Ketu',   s:'Ketu',   c:0x7d6be0, r:44, sz:1.3}
 ];
 
@@ -871,13 +871,13 @@ function showConfirm(){
   var days=Math.round((Date.now()-new Date(b.y,b.mo-1,b.d).getTime())/86400000);
   var yrs=(days/365.2425);
   var tzl='UTC'+(b.tz<0?'−':'+')+pad(Math.floor(Math.abs(b.tz)))+':'+(Math.abs(b.tz)%1?'30':'00');
-  $('confLead').innerHTML='The sky is rebuilt for that exact minute — nine grahas, twenty-seven nakṣatras, '
+  $('confLead').innerHTML='The sky is rebuilt for that exact minute — nine grahas, twenty-seven nakshatras, '
     +'and the degree that was rising on your eastern horizon.';
   $('confTick').innerHTML=
     '<div class="tickrow"><span>Moment</span><b>'+when+' <em>'+tzl+'</em></b></div>'+
     '<div class="tickrow"><span>Place</span><b>'+b.label+' <em>'+b.lat.toFixed(3)+'°, '+b.lon.toFixed(3)+'°</em></b></div>'+
     '<div class="tickrow"><span>Distance back</span><b>'+days.toLocaleString()+' days <em>≈ '+yrs.toFixed(1)+' years</em></b></div>'+
-    '<div class="tickrow"><span>Ayanāṁśa then</span><b>'+dms(CHART._ay)+' <em>Lahiri</em></b></div>';
+    '<div class="tickrow"><span>Ayanamsha then</span><b>'+dms(CHART._ay)+' <em>Lahiri</em></b></div>';
   stage('s2');
 }
 $('edit').addEventListener('click',function(){ stage('s1'); });
@@ -1346,7 +1346,7 @@ function revealScene(){
     })(t0);
   }
   var b=BIRTH, when=b.d+' '+MON[b.mo-1]+' '+b.y+' · '+pad(b.h)+':'+pad(b.mi);
-  $('hudmeta').innerHTML='<b>'+when+'</b><br>'+b.label+'<br>Ayanāṁśa '+dms(CHART._ay)+' · Lahiri';
+  $('hudmeta').innerHTML='<b>'+when+'</b><br>'+b.label+'<br>Ayanamsha '+dms(CHART._ay)+' · Lahiri';
 
   var html='';
   for(var i=0;i<BODIES.length;i++){
@@ -1428,7 +1428,7 @@ var OWN={Sun:[4],Moon:[3],Mars:[0,7],Mercury:[2,5],Jupiter:[8,11],Venus:[1,6],Sa
 var SIGNIF={
  Lagna:'The body, temperament and physical frame — and the reference point every other placement is read against. The rising degree fixes all twelve houses.',
  Sun:'Authority, vitality, the father, self-definition and public standing. Where you are visible, and by what right.',
- Moon:'Mind, mother, emotional weather and receptivity. In Jyotiṣa the Moon carries far more weight than the Sun.',
+ Moon:'Mind, mother, emotional weather and receptivity. In Jyotisha the Moon carries far more weight than the Sun.',
  Mars:'Energy, courage, initiative, property and siblings. Where force gets applied — usefully or otherwise.',
  Mercury:'Intellect, speech, commerce, analysis and skill. The faculty that names things and negotiates.',
  Jupiter:'Knowledge, teachers, children, expansion and dharma. Traditionally the most protective of the nine.',
@@ -1474,14 +1474,14 @@ function renderDasha(){
        '<b>'+cur.lord+(curAd?' — '+curAd.lord:'')+'</b>'+
        '<em>'+(curAd?fdate(curAd.from)+' → '+fdate(curAd.to):fdate(cur.from)+' → '+fdate(cur.to))+'</em>'+
        '<div class="dbarmini"><i style="width:'+pct.toFixed(1)+'%"></i></div>'+
-       '<em style="display:block;margin-top:7px;font-size:.64rem">'+cur.lord+' mahādaśā · '+
+       '<em style="display:block;margin-top:7px;font-size:.64rem">'+cur.lord+' mahadasha · '+
        pct.toFixed(0)+'% elapsed of '+cur.years+' years</em></div>';
   } else {
     h+='<div class="dnow"><span>Note</span><b>Outside the 120-year cycle</b>'+
        '<em>This birth date falls before or beyond the mapped sequence.</em></div>';
   }
   h+='<div style="font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;'+
-     'color:var(--ink3);margin:14px 0 6px">Full mahādaśā sequence</div>';
+     'color:var(--ink3);margin:14px 0 6px">Full mahadasha sequence</div>';
   for(var k=0;k<DASHA.md.length;k++){
     var m2=DASHA.md[k], cls=(m2===cur)?' cur':(m2.to<now?' past':'');
     h+='<div class="drow'+cls+'"><i style="background:'+m2.c+'"></i>'+
@@ -1522,9 +1522,9 @@ function renderDetail(key){
     '<b>'+(key==='Lagna'?'Lagna':key)+'</b><em>'+B.s+'</em></div>'+
     '<div class="dt-pos">'+t.glyph+' '+t.sign+' '+t.deg+' · '+t.sans+'</div>'+
     '<div class="dt-g">'+
-      '<div class="dt-c"><span>Nakṣatra</span><b>'+NAK[nakIdx]+'</b></div>'+
-      '<div class="dt-c"><span>Pāda</span><b>'+pada+' of 4</b></div>'+
-      '<div class="dt-c"><span>Nakṣatra lord</span><b>'+nl+'</b></div>'+
+      '<div class="dt-c"><span>Nakshatra</span><b>'+NAK[nakIdx]+'</b></div>'+
+      '<div class="dt-c"><span>Pada</span><b>'+pada+' of 4</b></div>'+
+      '<div class="dt-c"><span>Nakshatra lord</span><b>'+nl+'</b></div>'+
       (key==='Lagna'
         ? '<div class="dt-c"><span>Role</span><b class="ok">Sets all 12 houses</b></div>'
         : '<div class="dt-c"><span>House</span><b>'+ORD[hs-1]+' — '+HOUSEOF[hs-1]+'</b></div>')+
@@ -1556,7 +1556,7 @@ $('ptabs').addEventListener('click',function(e){
   ['pSky','pTra','pDas'].forEach(function(id){ $(id).classList.toggle('on',id===b.dataset.pane); });
   var pnl=$('panel');
   if(pnl.classList.contains('min')){ pnl.classList.remove('min'); $('pmin').textContent='–'; }
-  $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimśottarī daśā'
+  $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimshottari dasha'
                           : b.dataset.pane==='pTra' ? 'Transits (gochara)'
                           : 'Your sky, that moment';
   /* opening Transits while parked at birth isn't useful - jump to now */
@@ -1608,7 +1608,7 @@ function findReturns(key,natalLon,birthJD,years){
 
 function renderReturns(){
   var natal=CHART, bJD=CHART._jd, now=todayJD(), h='';
-  var list=[['Saturn','#5f9ee3','Śani — the ~29½-year lap'],
+  var list=[['Saturn','#5f9ee3','Shani — the ~29½-year lap'],
             ['Jupiter','#ffd98a','Guru — the ~12-year lap'],
             ['Rahu','#8b6fb8','the 18.6-year nodal cycle']];
   for(var i=0;i<list.length;i++){
@@ -1765,7 +1765,7 @@ function renderTransit(jd){
 
   var h='<div class="trhead"><b>'+(isToday?'Where the grahas are today':fdate(jd))+'</b>'+
         '<em>Counted from your natal Moon in <b style="color:var(--cyan)">'+moonSign+'</b> — the reference '+
-        'Jyotiṣa uses for transits (gochara). House from your lagna is shown too.</em></div>';
+        'Jyotisha uses for transits (gochara). House from your lagna is shown too.</em></div>';
 
   /* --- headline conditions --- */
   var satH=houseFrom(moonSid,c.Saturn.sid), jupH=houseFrom(moonSid,c.Jupiter.sid);
@@ -1773,20 +1773,20 @@ function renderTransit(jd){
     var phase=satH===12?'first phase — the approach':(satH===1?'peak phase':'final phase — the release');
     h+='<div class="trflag"><b>Sade Sati is running · '+phase+'</b><span>Saturn is passing through the '+
        satH+(satH===1?'st':(satH===2?'nd':'th'))+' from your natal Moon, the roughly seven-and-a-half-year '+
-       'stretch Jyotiṣa calls Sade Sati. Classically a period of consolidation and honest accounting rather '+
+       'stretch Jyotisha calls Sade Sati. Classically a period of consolidation and honest accounting rather '+
        'than the catastrophe it is often sold as — its actual weight depends on Saturn\'s strength in your '+
        'birth chart.</span></div>';
   } else if(satH===4){
-    h+='<div class="trflag"><b>Kaṇṭaka Śani</b><span>Saturn transits the 4th from your Moon — classically '+
+    h+='<div class="trflag"><b>Kantaka Shani</b><span>Saturn transits the 4th from your Moon — classically '+
        'associated with pressure on home, property and peace of mind, and with slow work that pays off later.</span></div>';
   } else if(satH===8){
-    h+='<div class="trflag"><b>Aṣṭama Śani</b><span>Saturn transits the 8th from your Moon — traditionally a '+
+    h+='<div class="trflag"><b>Ashtama Shani</b><span>Saturn transits the 8th from your Moon — traditionally a '+
        'period of upheaval and reorganisation. Read alongside Saturn\'s dignity in the birth chart before '+
        'drawing conclusions.</span></div>';
   }
   if([2,5,7,9,11].indexOf(jupH)>=0){
     h+='<div class="trflag" style="border-color:rgba(255,217,138,.32);background:rgba(255,217,138,.07)">'+
-       '<b>Jupiter is well placed</b><span>Bṛhaspati transits the '+jupH+'th from your Moon, one of the five '+
+       '<b>Jupiter is well placed</b><span>Brihaspati transits the '+jupH+'th from your Moon, one of the five '+
        'positions classical texts count as supportive. Traditionally the most protective transit there is.</span></div>';
   }
   /* anything sitting on its own birth degree right now */

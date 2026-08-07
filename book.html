@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Starlit Insights — Jyotisha (Vedic Astrology), Computed to the Arcsecond</title>
-<meta name="description" content="Starlit Insights offers one product: a 15-minute one-to-one Jyotisha (Vedic astrology) reading for Rs. 500, delivered online. Sidereal charts computed with Swiss Ephemeris and the Lahiri ayanamsha.">
+<title>Book a Jyotisha Reading · ₹500 | Starlit Insights</title>
+<meta name="description" content="Book a 15-minute one-to-one Vedic astrology (Jyotisha) reading for Rs. 500. Pay securely, choose your slot, and have your chart computed before the call.">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Starlit Insights — Jyotisha (Vedic Astrology), Computed to the Arcsecond">
-<meta property="og:description" content="Your horoscope has been off by 24 degrees. Here's the math that fixes it.">
-<meta property="og:url" content="https://starlitinsights.com">
+<meta property="og:title" content="Book a Jyotisha Reading · ₹500 | Starlit Insights">
+<meta property="og:description" content="Book a 15-minute one-to-one Vedic astrology (Jyotisha) reading for Rs. 500. Pay securely, choose your slot, and have your chart computed before the call.">
+<meta property="og:url" content="https://starlitinsights.com/book.html">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://starlitinsights.com">
+<link rel="canonical" href="https://starlitinsights.com/book.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -238,25 +238,9 @@ header.stuck .navprog{opacity:.9}
   animation:pulse 2.1s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
 .hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin-top:34px}
-/* NOTE: the label rule must be a CHILD selector. As a descendant selector it also
-   caught the .cnt span inside <b> and rendered the number as 10px grey mono. */
-.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;
-  padding-top:28px;border-top:1px solid var(--line)}
-.stat{padding:0 20px;border-left:1px solid var(--line)}
-.stat:first-child{padding-left:0;border-left:none}
-.stat b{display:flex;align-items:baseline;gap:2px;font-family:var(--f-disp);font-weight:600;
-  font-size:clamp(1.7rem,3.1vw,2.35rem);letter-spacing:-.04em;line-height:1;margin-bottom:9px;
-  background:linear-gradient(140deg,var(--gold) 12%,#fff2d4 48%,var(--cyan));
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.stat b em{font-style:normal;font-size:.46em;letter-spacing:-.01em;
-  -webkit-text-fill-color:var(--gold);opacity:.85}
-.stat>span{display:block;font-family:var(--f-body);font-size:.79rem;line-height:1.45;
-  letter-spacing:0;text-transform:none;color:var(--ink-2)}
-@media(max-width:860px){
-  .hero-stats{grid-template-columns:1fr 1fr;gap:22px 0}
-  .stat{padding:0 14px}
-  .stat:nth-child(odd){padding-left:0;border-left:none}
-}
+.hero-stats{display:flex;gap:34px;margin-top:46px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line)}
+.stat b{display:block;font-family:var(--f-disp);font-size:1.65rem;font-weight:500;color:var(--ink);letter-spacing:-.03em}
+.stat span{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
 
 /* Zodiac wheel */
 .wheel-wrap{position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:520px;margin-inline:auto;width:100%}
@@ -393,62 +377,6 @@ header.stuck .navprog{opacity:.9}
   color:var(--gold);letter-spacing:-.015em;margin-bottom:4px}
 .glosgrid span{font-size:.82rem;line-height:1.6;color:var(--ink-2)}
 @media(max-width:600px){.glosscard{padding:24px 18px}.glosgrid>div{padding:12px 14px}}
-.toolshell{position:relative;border-radius:30px;padding:2px;isolation:isolate}
-.toolglow{position:absolute;inset:-2px;border-radius:32px;z-index:-1;
-  background:linear-gradient(120deg,var(--cyan),var(--gold) 55%,var(--violet));
-  filter:blur(12px);opacity:.34;animation:toolbreathe 5s ease-in-out infinite}
-@keyframes toolbreathe{0%,100%{opacity:.22;filter:blur(10px)}50%{opacity:.56;filter:blur(16px)}}
-.toolinner{border-radius:28px;padding:clamp(30px,4vw,46px) clamp(22px,3.4vw,40px);overflow:hidden;
-  background:linear-gradient(155deg,#0b1120,#070b15 58%,#0a0f1c);position:relative}
-.toolinner::before{content:'';position:absolute;top:-45%;left:-8%;width:55%;height:180%;
-  background:radial-gradient(ellipse,rgba(95,227,216,.12),transparent 66%);pointer-events:none}
-
-.toolhead{position:relative;max-width:640px;margin-bottom:30px}
-.toolbadge{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:100px;
-  border:1px solid rgba(95,227,216,.36);background:rgba(95,227,216,.1);
-  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:18px}
-.toolbadge i{width:6px;height:6px;border-radius:50%;background:var(--cyan);
-  box-shadow:0 0 10px var(--cyan);animation:pulse 2s ease-in-out infinite;flex:0 0 auto}
-.toolhead h2{font-size:clamp(1.8rem,4.2vw,2.9rem);line-height:1.05;margin-bottom:14px}
-.toolhead p{font-size:clamp(.94rem,1.5vw,1.04rem);line-height:1.68;color:var(--ink-2);max-width:58ch;margin:0}
-
-.toolgrid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px}
-.toolcard{position:relative;display:flex;flex-direction:column;text-decoration:none;
-  padding:26px 24px 24px;border-radius:20px;border:1px solid var(--line);
-  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.014));
-  transition:transform .45s var(--ease),border-color .45s,background .45s,box-shadow .45s}
-.toolcard:hover{transform:translateY(-6px);border-color:rgba(95,227,216,.45);
-  background:linear-gradient(160deg,rgba(95,227,216,.09),rgba(255,255,255,.02));
-  box-shadow:0 26px 54px -26px rgba(0,0,0,.95)}
-.ticon{width:46px;height:46px;color:var(--cyan);margin-bottom:16px;transition:color .4s,transform .5s var(--ease)}
-.toolcard:hover .ticon{color:var(--gold);transform:scale(1.06) rotate(-4deg)}
-.ticon svg{width:100%;height:100%}
-.tnum{position:absolute;top:22px;right:22px;font-family:var(--f-mono);font-size:10px;
-  letter-spacing:.18em;color:var(--ink-3);opacity:.55}
-.toolcard h3{font-size:1.06rem;line-height:1.25;margin-bottom:10px;color:var(--ink);letter-spacing:-.02em}
-.toolcard p{font-size:.86rem;line-height:1.64;flex:1;margin-bottom:20px;color:var(--ink-2)}
-.toolcard p em{font-style:italic;color:var(--ink)}
-.tgo{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-disp);font-weight:600;
-  font-size:.88rem;color:var(--cyan);transition:color .35s}
-.tgo b{font-weight:600;transition:transform .35s var(--ease)}
-.toolcard:hover .tgo{color:var(--gold)}
-.toolcard:hover .tgo b{transform:translateX(5px)}
-@media(max-width:700px){
-  .toolshell{border-radius:24px}.toolinner{border-radius:22px;padding:26px 20px}
-  .toolcard{padding:22px 19px}
-}
-@media(prefers-reduced-motion:reduce){.toolglow{animation:none}}
-.learnbar{display:flex;align-items:center;justify-content:space-between;gap:26px;
-  padding:30px 32px;text-decoration:none;flex-wrap:wrap}
-.learnbar:hover{border-color:rgba(242,200,121,.4)}
-.learnbar h3{margin-bottom:9px;font-size:1.2rem}
-.learnbar p{font-size:.88rem;line-height:1.65;max-width:62ch;margin:0}
-.learngo{flex:0 0 auto;padding:13px 26px;border-radius:100px;white-space:nowrap;
-  border:1px solid var(--line-2);background:rgba(255,255,255,.04);
-  font-family:var(--f-disp);font-weight:500;font-size:.9rem;color:var(--ink);transition:.3s var(--ease)}
-.learnbar:hover .learngo{background:linear-gradient(105deg,var(--gold),var(--gold-2));color:#160f02;border-color:transparent}
-@media(max-width:700px){.learnbar{padding:24px 20px}.learngo{width:100%;text-align:center}}
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:20px}
 .icard{padding:30px 26px}
 .icard .n{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--gold);
@@ -593,6 +521,37 @@ header.stuck .navprog{opacity:.9}
 /* ============================================================
    SERVICES
    ============================================================ */
+.bookgrid{display:grid;grid-template-columns:.92fr 1.08fr;gap:22px;align-items:start}
+.bookcard{padding:30px 28px}
+.paycard,.calcard{padding:28px 26px;margin-bottom:18px;position:relative}
+.calcard{margin-bottom:0}
+.paynum{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;margin-bottom:14px;
+  border:1px solid rgba(242,200,121,.35);background:rgba(242,200,121,.1);
+  font-family:var(--f-mono);font-size:11px;color:var(--gold)}
+.paycard h3,.calcard h3{margin-bottom:8px}
+.paycard p,.calcard p{font-size:.87rem;line-height:1.6}
+.paybtn{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:20px;
+  padding:17px 26px;border-radius:100px;text-decoration:none;position:relative;overflow:hidden;
+  font-family:var(--f-disp);font-weight:600;font-size:1.02rem;color:#160f02;
+  background:linear-gradient(105deg,var(--gold),#ffe4ab 45%,var(--gold-2));
+  box-shadow:0 12px 36px -12px rgba(242,200,121,.75);
+  transition:transform .3s var(--ease),box-shadow .3s}
+.paybtn:hover{transform:translateY(-2px);box-shadow:0 18px 46px -12px rgba(242,200,121,.9)}
+.paybtn b{font-weight:600;transition:transform .3s var(--ease)}
+.paybtn:hover b{transform:translateX(5px)}
+.paybtn span{position:relative;z-index:2}
+.paybtn::before{content:'';position:absolute;inset:0;transform:translateX(-130%);
+  transition:transform .8s var(--ease);
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.7),transparent)}
+.paybtn:hover::before{transform:translateX(130%)}
+.paymeta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:14px;font-family:var(--f-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+.paylock{display:inline-flex;align-items:center;gap:7px;color:var(--cyan)}
+.paylock svg{width:13px;height:13px;flex:0 0 auto}
+.payafterlink{font-size:.78rem!important;line-height:1.6!important;color:var(--ink-3)!important;
+  margin-top:14px!important;padding-top:13px;border-top:1px solid var(--line)}
+@media(max-width:900px){.bookgrid{grid-template-columns:1fr}}
 .svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px}
 .svc-solo{max-width:620px;margin-inline:auto}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
@@ -603,9 +562,15 @@ header.stuck .navprog{opacity:.9}
 .step::after{content:'';position:absolute;top:32px;right:-19px;width:20px;height:1px;
   background:linear-gradient(90deg,var(--gold),transparent);opacity:.5}
 .step:last-child::after{display:none}
+.colhead{display:flex;align-items:center;gap:12px;margin:26px 0 0}
+.colhead:first-child{margin-top:0;margin-bottom:16px}
+.colhead span{flex:0 0 auto;font-family:var(--f-mono);font-size:9px;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--ink-3)}
+.colhead::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line-2),transparent)}
 .stepn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
   border-radius:50%;border:1px solid rgba(242,200,121,.32);background:rgba(242,200,121,.09);
-  font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-bottom:14px}
+  font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.04em;
+  color:var(--gold);margin-bottom:14px}
 .step h4{font-size:1.02rem;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px}
 .step p{font-size:.83rem;line-height:1.62}
 .scard{padding:34px 30px;display:flex;flex-direction:column}
@@ -625,11 +590,12 @@ header.stuck .navprog{opacity:.9}
 .slist li b{color:var(--ink);font-weight:500;font-family:var(--f-disp);letter-spacing:-.01em}
 .prodspec{display:flex;flex-direction:column;gap:1px;margin:6px 0 18px;border-radius:var(--r-md);
   overflow:hidden;border:1px solid var(--line)}
-.prow{display:flex;gap:14px;padding:11px 14px;background:rgba(255,255,255,.028);flex-wrap:wrap}
-.prow span{flex:0 0 108px;font-family:var(--f-mono);font-size:9px;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--ink-3);padding-top:3px}
-.prow b{font-size:.83rem;color:var(--ink);font-weight:500;min-width:0;line-height:1.45}
-@media(max-width:600px){.prow span{flex:0 0 100%}}
+.prow{display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;align-items:start;
+  padding:12px 15px;background:rgba(255,255,255,.028)}
+.prow span{font-family:var(--f-mono);font-size:9px;letter-spacing:.15em;line-height:1.5;
+  text-transform:uppercase;color:var(--ink-3);padding-top:2px;text-align:left}
+.prow b{font-size:.83rem;color:var(--ink);font-weight:500;min-width:0;line-height:1.5;text-align:left}
+@media(max-width:600px){.prow{grid-template-columns:1fr;gap:5px;padding:11px 14px}}
 .payafter{display:flex;align-items:center;gap:14px;margin:4px 0 20px;padding:14px 16px;
   border-radius:var(--r-md);border:1px solid rgba(95,227,216,.28);
   background:linear-gradient(120deg,rgba(95,227,216,.09),rgba(242,200,121,.05))}
@@ -808,327 +774,125 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
   <a href="book.html" class="btn btn-p" style="width:auto;padding:14px 32px"><span>Book a reading</span></a>
 </div>
 
-<!-- ==================== HERO ==================== -->
-<section class="hero" id="top">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="badge rv"><i class="dot"></i> Jyotisha · Vedic astrology · real planetary positions</div>
-      <h1 class="rv" data-d="1">The sky was never<br><em class="shimmer">vague.</em></h1>
-      <p class="lead rv" data-d="2">
-        Most of what passes for astrology online is a personality quiz wearing a costume.
-        This is the other thing: a <span class="hl">Jyotisha reading</span> — Vedic astrology, the Indian
-        tradition — built from where the planets actually were at the minute you were born, read through
-        <span class="hl">classical Parashari method</span> (the oldest and most widely used school of it),
-        and explained in plain English so you can argue with any part of it.
-      </p>
-      <div class="hero-cta rv" data-d="3">
-        <a href="book.html" class="btn btn-p"><span>Book a reading · ₹500</span></a>
-        <a href="#drift" class="btn btn-g">Find my real sign →</a>
-      </div>
-      <div class="hero-stats rv" data-d="4">
-        <div class="stat"><b><span class="cnt" data-to="24">0</span><em>°</em></b><span>Your sign has drifted this far since the Greeks named it</span></div>
-        <div class="stat"><b><span class="cnt" data-to="4">0</span><em>min</em></b><span>Born four minutes later? A measurably different chart</span></div>
-        <div class="stat"><b><span class="cnt" data-to="27">0</span></b><span>Moon-houses hiding behind the twelve signs</span></div>
-        <div class="stat"><b><span class="cnt" data-to="120">0</span><em>yrs</em></b><span>Your life, timed in nine planetary chapters</span></div>
-      </div>
-    </div>
-
-    <div class="wheel-wrap rv" data-d="2">
-      <svg class="wheel" viewBox="0 0 500 500" aria-hidden="true">
-        <defs>
-          <linearGradient id="gA" x1="0" y1="0" x2="1" y2="1">
-            <stop stop-color="#f2c879" stop-opacity=".85"/><stop offset="1" stop-color="#5fe3d8" stop-opacity=".2"/>
-          </linearGradient>
-          <linearGradient id="gB" x1="1" y1="0" x2="0" y2="1">
-            <stop stop-color="#5fe3d8" stop-opacity=".6"/><stop offset="1" stop-color="#9b8cff" stop-opacity=".15"/>
-          </linearGradient>
-          <radialGradient id="gC"><stop stop-color="#f2c879" stop-opacity=".14"/><stop offset="1" stop-color="transparent"/></radialGradient>
-        </defs>
-        <circle cx="250" cy="250" r="230" fill="url(#gC)"/>
-        <g class="ring-slow">
-          <circle cx="250" cy="250" r="228" fill="none" stroke="url(#gA)" stroke-width="1"/>
-          <circle cx="250" cy="250" r="228" fill="none" stroke="#f2c879" stroke-width="1"
-                  stroke-dasharray="1 13.9" opacity=".55"/>
-          <g id="zsigns"></g>
-        </g>
-        <g class="ring-mid">
-          <circle cx="250" cy="250" r="182" fill="none" stroke="url(#gB)" stroke-width="1"/>
-          <g id="znaks"></g>
-        </g>
-        <g class="ring-fast">
-          <circle cx="250" cy="250" r="134" fill="none" stroke="#ffffff" stroke-opacity=".1" stroke-width="1"
-                  stroke-dasharray="4 7"/>
-          <g id="zorbs"></g>
-        </g>
-        <circle cx="250" cy="250" r="88" fill="none" stroke="#ffffff" stroke-opacity=".07"/>
-      </svg>
-      <div class="wheel-core"><b id="ayanNow">24°13′</b><span>Ayanamsha · now</span></div>
-    </div>
-  </div>
-  <div class="scrollcue"><span>Scroll</span><i></i></div>
-</section>
-
-
-
-<!-- ==================== THE 24 DEGREE PROBLEM ==================== -->
-<section id="drift">
+<section id="booktop">
   <div class="wrap">
-    <div style="max-width:780px;margin-bottom:46px">
-      <div class="eyebrow rv">Start here</div>
-      <h2 class="rv" data-d="1">Your horoscope has been<br>wrong by <span class="hl">24 degrees</span>.</h2>
-      <p class="lead rv" data-d="2" style="margin-top:22px">
-        Earth wobbles. Its axis traces a slow cone once every <span class="mono hl-c">25,772 years</span> —
-        a drift of about 50.3 arcseconds a year. The Greeks fixed their zodiac to the March equinox
-        around 2,000 years ago and never re-pegged it. The stars kept moving. The labels didn't.
-      </p>
-      <p class="lead rv" data-d="3" style="margin-top:16px">
-        So the "Leo" in your Instagram bio marks a <em>season</em>, not a place in the sky. That's the
-        <b>tropical</b> zodiac. Jyotisha never made that trade — it uses the <b>sidereal</b> zodiac, meaning
-        it keeps measuring against the actual stars, and corrects for the gap with a number called the
-        <span class="hl">ayanamsha</span>. Today that correction is just over 24 degrees, wide enough to
-        move most people one whole sign back.
+    <div style="max-width:720px;margin:0 auto 40px;text-align:center">
+      <div class="eyebrow rv" style="justify-content:center">Book a session</div>
+      <h1 class="rv" data-d="1" style="font-size:clamp(2rem,5.2vw,3.2rem);margin-bottom:16px">
+        Fifteen minutes<br><span class="hl">inside your chart.</span></h1>
+      <p class="lead rv" data-d="2" style="margin:0 auto">
+        One session, one price. Your chart is computed and cross-checked before we meet, around the
+        question you write when booking — so none of the fifteen minutes goes on setup.
       </p>
     </div>
 
-    <div class="calc">
-      <div class="card calc-form rv">
-        <div class="eyebrow" style="margin-bottom:16px">Live computation</div>
-        <h3 style="margin-bottom:8px">So what sign are you actually?</h3>
-        <p style="font-size:.86rem;margin-bottom:24px">Enter your birth date and find out. This runs entirely on your own device — nothing is stored or sent anywhere.</p>
-
-        <div class="field">
-          <label for="bday">Date of birth</label>
-          <div class="trio">
-            <select id="bday" aria-label="Day"></select>
-            <select id="bmon" aria-label="Month"></select>
-            <select id="byear" aria-label="Year"></select>
-          </div>
-        </div>
-        <div class="field">
-          <label for="bhour">Time of birth <span style="text-transform:none;letter-spacing:0">(optional — improves cusp accuracy)</span></label>
-          <div class="duo">
-            <select id="bhour" aria-label="Hour"></select>
-            <select id="bmin" aria-label="Minute"></select>
-          </div>
-          <div class="errmsg" id="calcErr"></div>
-        </div>
-        <div id="siSaved"></div>
-        <button class="btn btn-p" id="calcBtn" style="width:100%;margin-top:6px"><span>Compute →</span></button>
-        <p class="hint">
-          This works out where the Sun really was on your birthday, then subtracts the 24° correction.
-          Accurate to a hundredth of a degree — plenty to settle the sign question. A full reading
-          resolves every planet, not just the Sun.
-        </p>
-      </div>
-
-      <div class="card result" id="result">
-        <div class="res-empty" id="resEmpty">
-          <svg width="52" height="52" viewBox="0 0 100 100" fill="none" stroke="#f2c879" stroke-width="1.6">
-            <circle cx="50" cy="50" r="34"/><circle cx="50" cy="50" r="20" stroke-dasharray="3 5"/>
-            <circle cx="50" cy="16" r="4" fill="#f2c879" stroke="none"/>
-          </svg>
-          <p style="font-size:.9rem">Enter your birth date to see the gap between the sign<br>you were always told, and the one the sky was actually holding.</p>
-        </div>
-        <div id="resBody" style="display:none"></div>
-      </div>
-    </div>
-  </div>
-
-</section>
-
-
-
-<!-- ==================== TOOLS ==================== -->
-<section id="tools">
-  <div class="wrap">
-    <div class="toolshell rv">
-      <div class="toolglow" aria-hidden="true"></div>
-      <div class="toolinner">
-
-        <div class="toolhead">
-          <div class="toolbadge"><i></i>Free · No sign-up · Nothing stored</div>
-          <h2>Try it before you trust<br><span class="hl">a word of it.</span></h2>
-          <p>Three tools, running on the same maths as the reading. They work entirely on your own
-          device — no account, no email, nothing sent anywhere.</p>
-        </div>
-
-        <div class="toolgrid">
-
-          <a href="sky.html" class="toolcard">
-            <div class="ticon">
-              <svg viewBox="0 0 48 48" fill="none">
-                <ellipse cx="24" cy="24" rx="21" ry="8" stroke="currentColor" stroke-width="1.4" opacity=".45"/>
-                <ellipse cx="24" cy="24" rx="14" ry="5.5" stroke="currentColor" stroke-width="1.4" opacity=".7"/>
-                <circle cx="24" cy="24" r="4.5" fill="currentColor"/>
-                <circle cx="45" cy="24" r="2.6" fill="currentColor"/>
-                <circle cx="12" cy="21" r="2" fill="currentColor" opacity=".8"/>
-              </svg>
-            </div>
-            <div class="tnum">01</div>
-            <h3>Rewind the sky to your birth minute</h3>
-            <p>All nine grahas exactly where they stood. Spin it, zoom in, then scrub forward through
-            your whole life and watch what moved when.</p>
-            <span class="tgo">Enter your birth details <b>→</b></span>
-          </a>
-
-          <a href="sky-helio.html" class="toolcard">
-            <div class="ticon">
-              <svg viewBox="0 0 48 48" fill="none">
-                <circle cx="24" cy="24" r="5.5" fill="currentColor"/>
-                <circle cx="24" cy="24" r="10" stroke="currentColor" stroke-width="1.4" opacity=".55"/>
-                <circle cx="24" cy="24" r="17.5" stroke="currentColor" stroke-width="1.4" opacity=".35"/>
-                <circle cx="34" cy="24" r="2.4" fill="currentColor"/>
-                <circle cx="24" cy="6.5" r="2.8" fill="currentColor" opacity=".85"/>
-                <path d="M24 6.5 L44 30" stroke="currentColor" stroke-width="1.1" opacity=".5" stroke-dasharray="2 3"/>
-              </svg>
-            </div>
-            <div class="tnum">02</div>
-            <h3>Watch a planet go retrograde</h3>
-            <p>The real solar system, Sun at the centre. See Earth overtake Mars on the inside track —
-            that <em>is</em> retrograde motion, no explanation needed.</p>
-            <span class="tgo">See how it works <b>→</b></span>
-          </a>
-
-          <a href="night.html" class="toolcard">
-            <div class="ticon">
-              <svg viewBox="0 0 48 48" fill="none">
-                <rect x="14" y="6" width="20" height="34" rx="4" stroke="currentColor" stroke-width="1.5" opacity=".7"/>
-                <path d="M21 10.5h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
-                <path d="M24 27l1.7 5.2 5.3 1.7-5.3 1.7L24 41l-1.7-5.4-5.3-1.7 5.3-1.7z" fill="currentColor" opacity=".9"/>
-                <circle cx="20" cy="17" r="1.4" fill="currentColor" opacity=".8"/>
-                <circle cx="29" cy="21" r="1.1" fill="currentColor" opacity=".6"/>
-              </svg>
-            </div>
-            <div class="tnum">03</div>
-            <h3>Find Saturn from your balcony</h3>
-            <p>Hold your phone up and sweep it across the sky. Your compass points you at every graha
-            that is above you right now.</p>
-            <span class="tgo">Open on your phone <b>→</b></span>
-          </a>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== THE READING ==================== -->
-<section id="reading">
-  <div class="wrap">
-    <div style="max-width:700px;margin:0 auto 36px;text-align:center">
-      <div class="eyebrow rv" style="justify-content:center">The reading</div>
-      <h2 class="rv" data-d="1">One session.<br><span class="hl">₹500.</span></h2>
-      <p class="lead rv" data-d="2" style="margin:18px auto 0">
-        No packages, no tiers, nothing else sold to you. Fifteen focused minutes on your real chart,
-        built around the thing you're actually carrying.
-      </p>
-    </div>
-
-    <div class="svc-solo">
-      <article class="card scard feat rv">
-        <span class="stag">The only thing on offer</span>
-        <h3>15-Minute Jyotisha Reading</h3>
-        <div class="price">₹500<small> / 15 min · one-to-one, online</small></div>
-        <ul class="slist">
-          <li><b>Your chart is ready before you arrive.</b> Computed from Swiss Ephemeris positions and cross-checked against the note you write when booking.</li>
-          <li><b>A clear read, not a horoscope.</b> What your chart genuinely supports — and, just as usefully, what it doesn't.</li>
-          <li><b>Every claim is sourced as it's made</b>, so you can verify any of it yourself afterwards.</li>
-        </ul>
-        <a href="book.html" class="btn btn-p" style="width:100%"><span>Book a session →</span></a>
-        <p class="hint" style="text-align:center;margin-top:12px">
-          Free cancellation and a full refund up to 24 hours before your slot.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== METHOD ==================== -->
-<section id="method">
-  <div class="wrap">
-    <div style="max-width:700px;margin-bottom:34px">
-      <div class="eyebrow rv">How this works</div>
-      <h2 class="rv" data-d="1">Verifiable, or it doesn't<br>go in the reading.</h2>
-      <p class="lead rv" data-d="2" style="margin-top:18px">
-        Astrology's credibility problem is mostly a <em>method</em> problem. Here is the standard this
-        practice holds itself to, stated up front so you can hold it there.
-      </p>
-    </div>
-
-    <div class="method">
-      <div class="card rv" style="padding:28px 26px">
-        <div class="eyebrow" style="color:var(--cyan)">Always</div>
-        <ul class="mlist do">
-          <li><i class="tick">✓</i><div><strong>Swiss Ephemeris, Lahiri ayanamsha</strong>
-            <p>Positions computed from JPL-derived data, not scraped off a chart image. Every degree is reproducible.</p></div></li>
-          <li><i class="tick">✓</i><div><strong>Classical sources, named</strong>
-            <p>Brihat Parashara Hora Shastra, Jaimini Sutras, Prashna Marga. Cite a yoga, cite its text.</p></div></li>
-          <li><i class="tick">✓</i><div><strong>Cross-checked across vargas</strong>
-            <p>A claim surviving in only one divisional chart is flagged weak. Convergence earns confidence.</p></div></li>
-          <li><i class="tick">✓</i><div><strong>Confidence stated openly</strong>
-            <p>Where a birth time is uncertain, you're told — along with what becomes provisional.</p></div></li>
-        </ul>
-      </div>
-
-      <div class="card rv" data-d="1" style="padding:28px 26px">
-        <div class="eyebrow" style="color:var(--rose)">Never</div>
-        <ul class="mlist dont">
-          <li><i class="tick">✕</i><div><strong>Pressure selling</strong>
-            <p>No manufactured problems, no urgent add-ons, nothing sold beyond the reading itself.</p></div></li>
-          <li><i class="tick">✕</i><div><strong>Questions outside the scope</strong>
-            <p>Anything touching health outcomes or lifespan is permanently declined. Serious matters need a qualified professional.</p></div></li>
-          <li><i class="tick">✕</i><div><strong>Treating a chart as fixed destiny</strong>
-            <p>A chart describes temperament and timing. It is a description, never a verdict.</p></div></li>
-          <li><i class="tick">✕</i><div><strong>Vagueness dressed as depth</strong>
-            <p>If a statement would be true of anyone, it isn't insight.</p></div></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== LEARN TEASER ==================== -->
-<section id="learnteaser" style="padding-top:0">
-  <div class="wrap">
-    <a href="learn.html" class="card rv learnbar">
+    <div class="bookgrid">
+      <!-- LEFT: what it is, and how it works (A/B/C) -->
       <div>
-        <div class="eyebrow">No background needed</div>
-        <h3>Want to know how any of this actually works?</h3>
-        <p>Eight facts that reframe the subject, all 27 nakshatras, the 120-year dasha clock, and the ten
-        Sanskrit words that make the rest legible. Astronomy, history and arithmetic — no belief required.</p>
-      </div>
-      <span class="learngo">Learn the system →</span>
-    </a>
-  </div>
-</section>
+        <div class="card rv bookcard">
+          <span class="stag">One product</span>
+          <h3 style="margin-bottom:4px">15-Minute Jyotisha Reading</h3>
+          <div class="price">₹500<small> / 15 min · paid to confirm</small></div>
+          <div class="prodspec" style="margin-top:16px">
+            <div class="prow"><span>Format</span><b>One-to-one online call, audio or video</b></div>
+            <div class="prow"><span>Prepared</span><b>Chart computed from Swiss Ephemeris positions before we meet</b></div>
+            <div class="prow"><span>You bring</span><b>Birth date, exact time, city — and one thing you want read</b></div>
+            <div class="prow"><span>Payment</span><b>₹500 by UPI, card, net banking or wallet</b></div>
+          </div>
+        </div>
 
-<!-- ==================== FAQ ==================== -->
-<section id="faq">
-  <div class="wrap">
-    <div style="max-width:660px;margin-bottom:36px">
-      <div class="eyebrow rv">Questions</div>
-      <h2 class="rv" data-d="1">The ones worth asking.</h2>
+        <div class="colhead rv" data-d="1"><span>How it works</span></div>
+        <div class="steps rv" data-d="1" style="grid-template-columns:1fr;margin-top:12px">
+          <div class="step">
+            <span class="stepn">A</span>
+            <h4>Pay to confirm</h4>
+            <p>₹500 through our secure payment page. This is what reserves the slot and starts the
+            chart preparation.</p>
+          </div>
+          <div class="step">
+            <span class="stepn">B</span>
+            <h4>Choose your time</h4>
+            <p>Pick a slot from the live calendar. The form takes your birth date, exact time and city,
+            plus a short note on what you'd like the reading to cover.</p>
+          </div>
+          <div class="step">
+            <span class="stepn">C</span>
+            <h4>We talk</h4>
+            <p>Fifteen focused minutes on a chart that has already been computed and cross-checked
+            against your note. Sources named as we go.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: pay, then schedule -->
+      <div>
+        <div class="colhead rv"><span>Book it — two steps</span></div>
+        <!-- ============================================================
+             RAZORPAY — payment link. To change it, edit the href on
+             .paybtn below and nothing else.
+             ============================================================ -->
+        <div class="card rv paycard" id="razorpay-slot">
+          <div class="paynum">1</div>
+          <h3>Pay ₹500</h3>
+          <p>This confirms your slot and starts the chart preparation. Card, UPI, net banking and
+          wallets, all handled by Razorpay — we never see or store your payment details.</p>
+
+          <a class="paybtn" href="https://rzp.io/rzp/KBT7ihe" target="_blank" rel="noopener">
+            <span>Pay ₹500 securely</span>
+            <b>→</b>
+          </a>
+
+          <div class="paymeta">
+            <span class="paylock">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8.5 10.5V7.75a3.5 3.5 0 017 0v2.75" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+              Secured by Razorpay
+            </span>
+            <span>UPI · Card · Net banking · Wallets</span>
+          </div>
+
+          <p class="payafterlink">Opens in a new tab. Once payment is done, come back here and pick
+          your slot below — use the same name and email so I can match them up.</p>
+        </div>
+
+        <div class="card rv calcard" data-d="1">
+          <div class="paynum">2</div>
+          <h3>Choose your slot</h3>
+          <p style="margin-bottom:16px">Live availability. Have your birth date, exact time and city
+          ready — and one question you actually want answered.</p>
+          <div class="embed-shell">
+            <div class="embed-bar"><i></i><i></i><i></i><span>Scheduling · 15-Minute Reading</span></div>
+      <!-- Cal inline embed code begins -->
+      <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-15-minute-reading"></div>
+      <script type="text/javascript">
+        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+      Cal("init", "15-minute-reading", {origin:"https://app.cal.com"});
+      Cal.config = Cal.config || {};
+      Cal.config.forwardQueryParams = true;
+        Cal.ns["15-minute-reading"]("inline", {
+          elementOrSelector:"#my-cal-inline-15-minute-reading",
+          config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true"},
+          calLink: "starlit-insights/15-minute-reading",
+        });
+        Cal.ns["15-minute-reading"]("ui", {"hideEventTypeDetails":false,"layout":"month_view","theme":"dark"});
+        </script>
+        <!-- Cal inline embed code ends -->
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="faq rv" id="faqList">
-      <button class="q" type="button" aria-expanded="false">Do I have to believe in astrology for this to be worth it?</button>
-      <div class="a"><div>No. Plenty of people come in as sceptics and treat a reading as a structured mirror — a framework for thinking about timing, temperament and recurring patterns, which they can accept or reject line by line. The method here is stated openly precisely so you can push back on it. Disagreement is useful; it usually sharpens the reading.</div></div>
-      <button class="q" type="button" aria-expanded="false">Why is my birth time such a big deal?</button>
-      <div class="a"><div>Because the ascendant moves a full degree every four minutes. It changes sign roughly every two hours, and the navamsha sub-division shifts every 13 minutes 20 seconds. A vague birth time doesn’t make a reading slightly less accurate — it makes entire layers of it unusable. If your time is uncertain, say so upfront and it gets handled with rectification techniques rather than quietly guessed.</div></div>
-      <button class="q" type="button" aria-expanded="false">What if I don’t know my birth time at all?</button>
-      <div class="a"><div>A reading is still possible, but limited to what doesn’t depend on the ascendant — planetary sign positions, some dasha structure, broad temperament. You’ll be told exactly which conclusions are solid and which are off the table. What won’t happen is a confident-sounding reading built on a made-up time.</div></div>
-      <button class="q" type="button" aria-expanded="false">Will I be asked to buy anything else?</button>
-      <div class="a"><div>No. One session, one price, and nothing else is sold to you. Where classical remedial measures exist in the tradition, they can be explained as context — never as a purchase you must make, and never as protection you’ll go without. Pressure selling is the oldest problem in this field, and this practice doesn’t participate in it.</div></div>
-      <button class="q" type="button" aria-expanded="false">What should I bring to the session?</button>
-      <div class="a"><div>Your date of birth, as exact a time as you can find — a birth certificate or hospital record beats family memory — and your place of birth. The booking form also has a box for a short query: a few lines on what you’d like the reading to cover. You don’t need a single neat question; a theme is enough, and the more specific it is, the more the fifteen minutes can do.</div></div>
-      <button class="q" type="button" aria-expanded="false">What happens if I need to cancel?</button>
-      <div class="a"><div>Cancel or reschedule at least 24 hours before your slot and you get a full refund, no questions asked and no cancellation fee. Rescheduling is free at any notice — I would much rather move a session than lose it. If I have to cancel, or if a technical failure stops the session happening, you are refunded in full regardless of notice. The full policy is on the <a href="refunds.html" style="color:var(--cyan)">Cancellation &amp; Refunds</a> page.</div></div>
-      <button class="q" type="button" aria-expanded="false">Only one thing on offer? No packages or deeper readings?</button>
-      <div class="a"><div>One session, one price. Longer analyses do exist as a discipline — divisional charts, yoga audits, full dasha mapping — but selling tiers to someone who hasn’t yet decided whether they trust the method is how this field lost its credibility. If a fifteen-minute reading is useful to you, the rest can be discussed then, as a conversation rather than a checkout.</div></div>
+
+    <div class="card rv" style="margin-top:22px;padding:26px 28px">
+      <div class="eyebrow" style="margin-bottom:12px">Before you book</div>
+      <ul class="slist" style="margin:0">
+        <li><b>Birth time matters more than you'd think.</b> The rising sign moves a full degree every four minutes. A birth certificate or hospital record beats family memory.</li>
+        <li><b>Don't know your birth time?</b> Book anyway and say so — you'll be told exactly which conclusions hold and which are off the table, rather than given a confident reading built on a guess.</li>
+        <li><b>Bring one real question.</b> A decision you're stuck on, a pattern that repeats, a timing question. Open-ended "tell me about myself" is the least useful version of this.</li>
+        <li><b>Free cancellation and a full refund</b> up to 24 hours before your slot. Details in <a href="refunds.html" style="color:var(--cyan)">Cancellation &amp; Refunds</a>.</li>
+      </ul>
     </div>
-    <p class="hint rv" style="margin-top:26px">
-      Questions about Jyotisha itself — what it is, why the Sanskrit stays — are on the
-      <a href="learn.html#faq" style="color:var(--cyan)">Learn</a> page.
-    </p>
   </div>
 </section>
 
@@ -1410,7 +1174,7 @@ function dms(deg){
   if(el1) el1.textContent = s;
   if(el2) el2.textContent = s;
   var hs = document.querySelector('.cnt[data-to="24"]');
-  if(hs) hs.dataset.to = Math.round(a);      /* whole degrees — it is a headline, not a readout */
+  if(hs) hs.dataset.to = a.toFixed(2);
 })();
 
 /* ============================================================

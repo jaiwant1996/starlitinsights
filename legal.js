@@ -53,7 +53,7 @@
     // Optional full postal address. Leave "" to hide the row.
     address:  "",
 
-    price:    "₹250",
+    price:    "₹500",
     duration: "15 minutes",
     hours:    "Monday to Saturday, 10:00–19:00 IST",
     reply:    "within 2 business days",
@@ -83,7 +83,7 @@
         'and accepted these terms. If you do not accept them, please do not book.</p>' +
 
         '<h3>2. What the Service is</h3>' +
-        '<p>The Service is a ' + C.duration + ' one-to-one Vedic astrology (Jyotiṣa) consultation, ' +
+        '<p>The Service is a ' + C.duration + ' one-to-one Vedic astrology (Jyotisha) consultation, ' +
         'delivered remotely by audio or video call at a time you select. The reading is prepared ' +
         'from the birth details and query you supply at the time of booking.</p>' +
         '<p>Consultations are offered for reflection, self-understanding and perspective on timing. ' +
