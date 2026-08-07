@@ -795,6 +795,7 @@ function clearFail(){
 
 /* ---- remembered birth details ---------------------------------------- */
 function readSaved(){
+  if(!(window.siConsent && window.siConsent.allowOptional())) return null;
   var raw; try{ raw=localStorage.getItem('si_birth'); }catch(e){ return null; }
   if(!raw) return null;
   try{ var v=JSON.parse(raw); return (v&&v.y&&v.mo&&v.d)?v:null; }catch(e){ return null; }
@@ -844,7 +845,9 @@ $('go').addEventListener('click',function(){
   if(lon<-180||lon>180) return fail('Longitude must be between −180 and 180.',['blon']);
   clearFail();
   BIRTH={y:y,mo:mo,d:d,h:h,mi:mi,tz:tz,lat:lat,lon:lon,label:label};
-  try{ localStorage.setItem('si_birth',JSON.stringify(BIRTH)); }catch(e){}
+  if(window.siConsent && window.siConsent.allowOptional()){
+    try{ localStorage.setItem('si_birth',JSON.stringify(BIRTH)); }catch(e){}
+  }
   showSaved();
   CHART=computeChart(y,mo,d,h,mi,tz,lat,lon);
   showConfirm();

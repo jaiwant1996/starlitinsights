@@ -121,6 +121,17 @@ the saved details, by declining on the storage notice shown on your first visit,
 data in your browser.</p>
 <p>The embedded booking calendar sets its own cookies when you interact with it, which are necessary for
 it to function and are governed by that provider&rsquo;s privacy policy.</p>
+<p>A notice on your first visit asks whether you consent to the optional items. Strictly necessary
+storage is used either way; nothing optional is written unless you accept, and refusing costs you no
+functionality. You may withdraw or change that consent at any time:</p>
+<p><button type="button" id="siReopen" style="padding:11px 22px;border-radius:100px;cursor:pointer;
+border:1px solid rgba(242,200,121,.4);background:rgba(242,200,121,.1);color:#f2c879;
+font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:.88rem">Review my storage choices</button></p>
+<script>
+document.getElementById('siReopen').addEventListener('click',function(){
+  if(window.siConsent && window.siConsent.reopen) window.siConsent.reopen();
+});
+</script>
 
 <h2>6. Retention</h2>
 <p>Birth details and consultation notes are kept only as long as needed to serve you and answer

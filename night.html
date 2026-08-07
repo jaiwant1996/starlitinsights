@@ -833,7 +833,9 @@ function fail(msg){ $('gerr').textContent=msg; $('gerr').classList.add('on'); }
 
 function begin(lat,lon,label){
   LAT=lat; LON=lon; PLACE=label;
-  try{ localStorage.setItem('si_place',JSON.stringify({lat:lat,lon:lon,label:label})); }catch(e){}
+  if(window.siConsent && window.siConsent.allowOptional()){
+    try{ localStorage.setItem('si_place',JSON.stringify({lat:lat,lon:lon,label:label})); }catch(e){}
+  }
   resize(); recompute();
   $('gate').classList.add('gone');
   setTimeout(function(){ $('hud').classList.add('on'); },420);
@@ -914,6 +916,7 @@ $('manual').addEventListener('click',function(){ askMotion(); showPicker(''); })
 
 /* offer the place used last time */
 (function recall(){
+  if(!(window.siConsent && window.siConsent.allowOptional())) return;
   var raw; try{ raw=localStorage.getItem('si_place'); }catch(e){}
   if(!raw) return;
   var v; try{ v=JSON.parse(raw); }catch(e){ return; }
