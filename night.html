@@ -178,6 +178,8 @@ a{color:inherit;text-decoration:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="consent.js"></script>
+<script src="profile.js"></script>
 </head>
 <body>
 
@@ -914,18 +916,27 @@ function showPicker(msg){
 }
 $('manual').addEventListener('click',function(){ askMotion(); showPicker(''); });
 
-/* offer the place used last time */
+/* offer somewhere already known: last place used, or the saved birth place */
 (function recall(){
-  if(!(window.siConsent && window.siConsent.allowOptional())) return;
-  var raw; try{ raw=localStorage.getItem('si_place'); }catch(e){}
-  if(!raw) return;
-  var v; try{ v=JSON.parse(raw); }catch(e){ return; }
-  if(!v||typeof v.lat!=='number') return;
-  var b=document.createElement('button');
-  b.className='gsub'; b.style.cssText='display:block;margin:10px auto 0';
-  b.textContent='Use '+v.label+' again';
-  b.addEventListener('click',function(){ askMotion().then(function(){ begin(v.lat,v.lon,v.label); }); });
-  $('manual').parentNode.insertBefore(b,$('gerr'));
+  var opts=[];
+  var lastRaw; try{ lastRaw=localStorage.getItem('si_place'); }catch(e){}
+  if(lastRaw && window.siConsent && window.siConsent.allowOptional()){
+    try{ var l=JSON.parse(lastRaw);
+      if(l&&typeof l.lat==='number') opts.push({lat:l.lat,lon:l.lon,label:l.label,why:'last used'});
+    }catch(e){}
+  }
+  var prof=window.siProfile ? siProfile.get() : null;
+  if(prof && typeof prof.lat==='number' && prof.place){
+    var dup=opts.some(function(o){ return Math.abs(o.lat-prof.lat)<0.05; });
+    if(!dup) opts.push({lat:prof.lat,lon:prof.lon,label:prof.place,why:'your birth place'});
+  }
+  opts.forEach(function(v){
+    var b=document.createElement('button');
+    b.className='gsub'; b.style.cssText='display:block;margin:10px auto 0';
+    b.textContent='Use '+v.label+' ('+v.why+')';
+    b.addEventListener('click',function(){ askMotion().then(function(){ begin(v.lat,v.lon,v.label); }); });
+    $('manual').parentNode.insertBefore(b,$('gerr'));
+  });
 })();
 
 /* city search */
@@ -1000,6 +1011,5 @@ resize();
 })();
 
 </script>
-<script src="consent.js" defer></script>
 </body>
 </html>

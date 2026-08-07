@@ -676,6 +676,8 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
   .rv{opacity:1;transform:none}
 }
 </style>
+<script src="consent.js"></script>
+<script src="profile.js"></script>
 </head>
 <body>
 
@@ -895,6 +897,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
           </div>
           <div class="errmsg" id="calcErr"></div>
         </div>
+        <div id="siSaved"></div>
         <button class="btn btn-p" id="calcBtn" style="width:100%;margin-top:6px"><span>Compute →</span></button>
         <p class="hint">
           This works out where the Sun really was on your birthday, then subtracts the 24° correction.
@@ -2018,6 +2021,20 @@ var NAKDATA = [
   fill('bhour',0,23,null,'Hour');
   fill('bmin',0,59,null,'Min');
 
+  /* reuse the birth details saved anywhere else on the site */
+  function applyProfile(v){
+    if(!v) return;
+    if(v.d)  document.getElementById('bday').value=v.d;
+    if(v.mo) document.getElementById('bmon').value=v.mo;
+    if(v.y)  document.getElementById('byear').value=v.y;
+    if(v.h!==undefined&&v.h!=='')  document.getElementById('bhour').value=v.h;
+    if(v.mi!==undefined&&v.mi!=='') document.getElementById('bmin').value=v.mi;
+  }
+  if(window.siProfile){
+    siProfile.mount(document.getElementById('siSaved'), applyProfile);
+    applyProfile(siProfile.get());
+  }
+
   var errBox=document.getElementById('calcErr');
   function fail(msg, ids){
     errBox.textContent=msg; errBox.classList.add('on');
@@ -2053,6 +2070,7 @@ var NAKDATA = [
       return;
     }
     clearErr();
+    if(window.siProfile) siProfile.set({d:dd,mo:mm,y:yy,h:hh,mi:mi});
 
     var trop=sunLongitude(dt);
     var ay=ayanamsa(dt);
@@ -2151,6 +2169,5 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 })();
 </script>
 
-<script src="consent.js" defer></script>
 </body>
 </html>

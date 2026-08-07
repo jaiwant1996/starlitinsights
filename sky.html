@@ -370,6 +370,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   *{animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
 </style>
+<script src="consent.js"></script>
+<script src="profile.js"></script>
 </head>
 <body>
 
@@ -793,39 +795,24 @@ function clearFail(){
   $(i).addEventListener('change',clearFail); $(i).addEventListener('input',clearFail);
 });
 
-/* ---- remembered birth details ---------------------------------------- */
-function readSaved(){
-  if(!(window.siConsent && window.siConsent.allowOptional())) return null;
-  var raw; try{ raw=localStorage.getItem('si_birth'); }catch(e){ return null; }
-  if(!raw) return null;
-  try{ var v=JSON.parse(raw); return (v&&v.y&&v.mo&&v.d)?v:null; }catch(e){ return null; }
-}
+/* ---- remembered birth details, shared with the rest of the site ------- */
 function applySaved(v){
-  $('bday').value=v.d; $('bmon').value=v.mo; $('byear').value=v.y;
-  $('bhour').value=v.h; $('bmin').value=v.mi;
-  $('bplace').value=v.label||''; $('btz').value=String(v.tz);
-  $('blat').value=v.lat; $('blon').value=v.lon;
-  place={n:v.label||'',r:'',lat:v.lat,lon:v.lon,tz:v.tz};
+  if(v.d)  $('bday').value=v.d;
+  if(v.mo) $('bmon').value=v.mo;
+  if(v.y)  $('byear').value=v.y;
+  if(v.h!==undefined&&v.h!=='')  $('bhour').value=v.h;
+  if(v.mi!==undefined&&v.mi!=='') $('bmin').value=v.mi;
+  if(v.place) $('bplace').value=v.place;
+  if(v.tz!==undefined) $('btz').value=String(v.tz);
+  if(typeof v.lat==='number'){ $('blat').value=v.lat; $('blon').value=v.lon;
+    place={n:v.place||'',r:'',lat:v.lat,lon:v.lon,tz:v.tz}; }
   clearFail();
 }
-function showSaved(){
-  var el=$('savedbar'); if(!el) return;
-  var v=readSaved();
-  if(!v){ el.classList.remove('on'); return; }
-  el.innerHTML='<span>Saved on this device</span><b>'+v.d+' '+MON[v.mo-1]+' '+v.y+
-    ' · '+String(v.h).padStart(2,'0')+':'+String(v.mi).padStart(2,'0')+
-    (v.label?' · '+v.label:'')+'</b><button type="button" id="forget">Forget</button>';
-  el.classList.add('on');
-  $('forget').addEventListener('click',function(){
-    try{ localStorage.removeItem('si_birth'); }catch(e){}
-    el.classList.remove('on');
-    ['bday','bmon','byear','bhour','bmin'].forEach(function(i){ $(i).value=''; });
-    $('bplace').value=''; $('blat').value=''; $('blon').value=''; place=null;
-  });
+if(window.siProfile){
+  siProfile.mount($('savedbar'), function(v){ applySaved(v); });
+  var _p=siProfile.get();
+  if(_p) applySaved(_p);
 }
-(function initSaved(){
-  var v=readSaved(); if(v){ applySaved(v); showSaved(); }
-})();
 
 $('go').addEventListener('click',function(){
   var d=$('bday').value,mo=$('bmon').value,y=$('byear').value,h=$('bhour').value,mi=$('bmin').value;
@@ -845,10 +832,7 @@ $('go').addEventListener('click',function(){
   if(lon<-180||lon>180) return fail('Longitude must be between −180 and 180.',['blon']);
   clearFail();
   BIRTH={y:y,mo:mo,d:d,h:h,mi:mi,tz:tz,lat:lat,lon:lon,label:label};
-  if(window.siConsent && window.siConsent.allowOptional()){
-    try{ localStorage.setItem('si_birth',JSON.stringify(BIRTH)); }catch(e){}
-  }
-  showSaved();
+  if(window.siProfile) siProfile.set({d:d,mo:mo,y:y,h:h,mi:mi,tz:tz,lat:lat,lon:lon,place:label});
   CHART=computeChart(y,mo,d,h,mi,tz,lat,lon);
   showConfirm();
 });
@@ -1822,6 +1806,5 @@ if(!THREE_OK){
 }
 })();
 </script>
-<script src="consent.js" defer></script>
 </body>
 </html>
