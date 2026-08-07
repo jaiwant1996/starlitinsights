@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Find the Grahas — Point Your Phone at the Sky | Starlit Insights</title>
+<meta name="description" content="Hold your phone up and find the nine grahas in the real sky above you. Live positions computed in your browser, matched to your compass. Nothing is stored or sent anywhere.">
+<meta name="theme-color" content="#04060c">
+<meta property="og:title" content="Find the Grahas — Point Your Phone at the Sky">
+<meta property="og:description" content="Hold your phone up and find Saturn, Jupiter and the Moon in the real sky above you.">
+<meta property="og:url" content="https://starlitinsights.com/night.html">
+<link rel="canonical" href="https://starlitinsights.com/night.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4l10 32 32 10-32 10-10 32-10-32-32-10 32-10z' fill='%23f5c86b'/%3E%3C/svg%3E">
+<style>
+:root{
+  --void:#04060c; --gold:#f2c879; --gold2:#c9973f; --cyan:#5fe3d8;
+  --ink:#eef2fa; --ink2:#aeb8cc; --ink3:#6f7c96;
+  --line:rgba(255,255,255,.1); --line2:rgba(255,255,255,.2);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --fd:'Space Grotesk',system-ui,sans-serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--void);color:var(--ink);font-family:var(--fb);
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* ---------- intro ---------- */
+.gate{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:radial-gradient(ellipse at 50% 35%,#0a1020,#04060c 70%);
+  transition:opacity .6s var(--ease),visibility .6s}
+.gate.gone{opacity:0;visibility:hidden}
+.gcard{width:min(430px,100%);text-align:center}
+.mark{width:44px;height:44px;margin:0 auto 22px;animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gcard h1{font-family:var(--fd);font-weight:500;font-size:clamp(1.7rem,6vw,2.4rem);
+  letter-spacing:-.035em;line-height:1.08;margin-bottom:14px}
+.gcard h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold),var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.gcard p{color:var(--ink2);font-size:.95rem;line-height:1.68;margin-bottom:12px}
+.gcard .fine{font-size:.8rem;color:var(--ink3);line-height:1.6}
+.gbtn{display:block;width:100%;margin:26px 0 14px;padding:16px 26px;border:none;border-radius:100px;
+  font-family:var(--fd);font-weight:600;font-size:1rem;color:#160f02;
+  background:linear-gradient(105deg,var(--gold),#ffe4ab 45%,var(--gold2));
+  box-shadow:0 12px 36px -12px rgba(242,200,121,.7);transition:transform .3s var(--ease)}
+.gbtn:active{transform:scale(.98)}
+.gsub{background:none;border:none;color:var(--ink3);font-size:.83rem;text-decoration:underline;
+  text-underline-offset:3px}
+.gsub:hover{color:var(--gold)}
+.gerr{margin-top:14px;font-size:.83rem;color:#ff9db2;line-height:1.55;display:none}
+.gerr.on{display:block}
+
+/* city fallback */
+.pick{margin-top:20px;display:none;text-align:left}
+.pick.on{display:block}
+.pick label{display:block;font-family:var(--fm);font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.pick input{width:100%;padding:13px 14px;border-radius:11px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);color:var(--ink);font-family:var(--fm);font-size:16px}
+.pick input:focus{outline:none;border-color:var(--gold)}
+.plist{margin-top:8px;max-height:190px;overflow-y:auto;border-radius:11px;border:1px solid var(--line);
+  display:none}
+.plist.on{display:block}
+.pitem{padding:11px 14px;font-size:.85rem;color:var(--ink2);border-bottom:1px solid rgba(255,255,255,.05)}
+.pitem:last-child{border:none}
+.pitem:hover{background:rgba(242,200,121,.1);color:var(--gold)}
+.pitem span{float:right;font-family:var(--fm);font-size:10px;color:var(--ink3)}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity .8s .2s}
+.hud.on{opacity:1}
+.bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;gap:12px}
+.bk{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:600;font-size:.9rem;
+  pointer-events:auto;color:var(--ink)}
+.bk svg{width:18px;height:18px}
+.barR{display:flex;gap:7px;pointer-events:auto}
+.ic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);
+  background:rgba(8,13,24,.6);backdrop-filter:blur(12px);color:var(--ink2);
+  font-family:var(--fd);font-size:13px;line-height:1;transition:.25s}
+.ic:hover,.ic.on{color:var(--gold);border-color:var(--gold)}
+
+/* centre reticle */
+.ret{position:absolute;left:50%;top:50%;width:78px;height:78px;margin:-39px 0 0 -39px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.16);transition:.35s var(--ease)}
+.ret::before,.ret::after{content:'';position:absolute;background:rgba(255,255,255,.22)}
+.ret::before{left:50%;top:-9px;width:1px;height:14px}
+.ret::after{left:-9px;top:50%;height:1px;width:14px}
+.ret.lock{border-color:var(--gold);box-shadow:0 0 0 4px rgba(242,200,121,.1);transform:scale(1.06)}
+
+/* readout card */
+.read{position:absolute;left:14px;right:14px;bottom:96px;max-width:400px;margin-inline:auto;
+  padding:15px 17px;border-radius:16px;border:1px solid var(--line2);
+  background:rgba(8,13,24,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  opacity:0;transform:translateY(10px);transition:.35s var(--ease);pointer-events:none}
+.read.on{opacity:1;transform:none}
+.rtop{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+.rtop i{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+.rtop b{font-family:var(--fd);font-weight:600;font-size:1.05rem;letter-spacing:-.02em}
+.rtop u{text-decoration:none;font-family:var(--fm);font-size:.68rem;color:var(--ink3)}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.rc{padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.04)}
+.rc span{display:block;font-family:var(--fm);font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:3px}
+.rc b{font-family:var(--fd);font-weight:500;font-size:.82rem;display:block;line-height:1.25}
+.rnote{font-size:.76rem;line-height:1.55;color:var(--ink2);margin-top:10px}
+
+/* compass strip */
+.comp{position:absolute;left:0;right:0;bottom:0;height:76px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.compv{position:absolute;left:50%;top:19px;width:1px;height:16px;background:var(--gold);
+  box-shadow:0 0 8px var(--gold)}
+.chead{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:var(--fm);
+  font-size:10px;letter-spacing:.2em;color:var(--ink3)}
+.chead b{color:var(--gold);font-weight:400}
+
+/* list sheet */
+.sheet{position:absolute;left:12px;right:12px;bottom:12px;max-width:440px;margin-inline:auto;
+  border-radius:18px;border:1px solid var(--line2);background:rgba(8,13,24,.93);
+  backdrop-filter:blur(20px);pointer-events:auto;overflow:hidden;
+  transform:translateY(115%);transition:transform .45s var(--ease)}
+.sheet.on{transform:none}
+.shead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
+  border-bottom:1px solid var(--line)}
+.shead b{font-family:var(--fd);font-weight:500;font-size:.95rem}
+.sx{width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);background:none;
+  color:var(--ink2);font-size:15px;line-height:1}
+.sbody{max-height:46vh;overflow-y:auto;padding:8px 10px 12px}
+.srow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:9px 8px;border-radius:10px}
+.srow i{width:9px;height:9px;border-radius:50%}
+.srow b{font-family:var(--fd);font-weight:500;font-size:.86rem;display:block}
+.srow small{font-family:var(--fm);font-size:.66rem;color:var(--ink3)}
+.srow em{font-style:normal;font-family:var(--fm);font-size:.7rem;text-align:right;white-space:nowrap}
+.srow em.up{color:#8fe8ae}.srow em.dn{color:var(--ink3)}
+.snote{padding:12px 14px;margin:6px 8px 0;border-radius:10px;background:rgba(255,255,255,.03);
+  font-size:.74rem;line-height:1.58;color:var(--ink3)}
+
+/* info popover */
+.info{position:absolute;left:14px;right:14px;top:60px;max-width:360px;margin-inline:auto;
+  padding:17px 18px;border-radius:16px;border:1px solid var(--line2);
+  background:rgba(8,13,24,.94);backdrop-filter:blur(20px);pointer-events:auto;
+  opacity:0;visibility:hidden;transform:translateY(-8px);transition:.35s var(--ease)}
+.info.on{opacity:1;visibility:visible;transform:none}
+.info b{display:block;font-family:var(--fd);font-weight:500;font-size:.95rem;color:var(--cyan);margin-bottom:7px}
+.info p{font-size:.8rem;line-height:1.62;color:var(--ink2);margin-bottom:10px}
+.info p:last-child{margin:0}
+.info em{font-style:normal;color:var(--gold)}
+
+.cta{position:absolute;left:14px;right:14px;bottom:96px;max-width:400px;margin-inline:auto;
+  display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 20px;border-radius:100px;
+  font-family:var(--fd);font-weight:600;font-size:.86rem;color:#160f02;pointer-events:auto;
+  background:linear-gradient(105deg,var(--gold),var(--gold2));
+  box-shadow:0 10px 30px -12px rgba(242,200,121,.7);
+  opacity:0;visibility:hidden;transition:.4s var(--ease)}
+.cta.on{opacity:1;visibility:visible}
+
+@media(min-width:900px){
+  .read,.cta{left:auto;right:24px;margin-inline:0;width:380px}
+  .sheet{left:auto;right:24px;width:400px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<canvas id="sky"></canvas>
+
+<!-- ============ GATE ============ -->
+<div class="gate" id="gate">
+  <div class="gcard">
+    <svg class="mark" viewBox="0 0 100 100" fill="none">
+      <path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="url(#g)"/>
+      <defs><linearGradient id="g" x1="0" y1="0" x2="100" y2="100">
+        <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8"/></linearGradient></defs>
+    </svg>
+    <h1>Hold your phone up.<br><em>Find the grahas.</em></h1>
+    <p>The nine grahas are above you right now. This uses your compass and tilt to show you exactly where —
+    point the phone at the sky and sweep it around.</p>
+    <p class="fine">Needs your location and motion sensors. Both are read on your device and never leave it.
+    Works best outdoors, away from magnets and metal.</p>
+    <button class="gbtn" id="start">Let me look</button>
+    <button class="gsub" id="manual">Choose my city instead</button>
+    <div class="gerr" id="gerr"></div>
+    <div class="pick" id="pick">
+      <label for="cityin">Where are you?</label>
+      <input id="cityin" type="text" autocomplete="off" placeholder="Start typing a city…">
+      <div class="plist" id="plist"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HUD ============ -->
+<div class="hud" id="hud">
+  <div class="bar">
+    <a href="index.html" class="bk">
+      <svg viewBox="0 0 100 100" fill="none"><path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="#f2c879"/></svg>
+      Starlit Insights
+    </a>
+    <div class="barR">
+      <button class="ic" id="infoBtn" aria-label="How this works">i</button>
+      <button class="ic" id="listBtn" aria-label="What's up now">☰</button>
+    </div>
+  </div>
+
+  <div class="ret" id="ret"></div>
+
+  <div class="info" id="info">
+    <b>What you're looking at</b>
+    <p>Each marker is a graha at its <em>true position right now</em>, computed from planetary orbits and
+    matched to your compass heading and tilt.</p>
+    <p>Signs and nakṣatras shown are <em>sidereal</em> — the Jyotiṣa zodiac, fixed to the actual stars.</p>
+    <p>A phone compass is typically a few degrees off, so treat this as a guide rather than a
+    telescope. Move away from metal and figure-eight the phone to recalibrate.</p>
+  </div>
+
+  <div class="read" id="read"></div>
+
+  <a href="index.html#book" class="cta" id="cta">Have your chart read · ₹250</a>
+
+  <div class="comp" id="comp">
+    <canvas id="compc"></canvas>
+    <div class="compv"></div>
+    <div class="chead" id="chead"></div>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="shead"><b>Above you right now</b><button class="sx" id="sx">×</button></div>
+    <div class="sbody" id="sbody"></div>
+  </div>
+</div>
+
+<script>
+var CITY_BLOB = "Mumbai|Maharashtra|19.0760|72.8777|5.5\nDelhi|Delhi|28.6139|77.2090|5.5\nBengaluru|Karnataka|12.9716|77.5946|5.5\nHyderabad|Telangana|17.3850|78.4867|5.5\nChennai|Tamil Nadu|13.0827|80.2707|5.5\nKolkata|West Bengal|22.5726|88.3639|5.5\nPune|Maharashtra|18.5204|73.8567|5.5\nAhmedabad|Gujarat|23.0225|72.5714|5.5\nJaipur|Rajasthan|26.9124|75.7873|5.5\nSurat|Gujarat|21.1702|72.8311|5.5\nLucknow|Uttar Pradesh|26.8467|80.9462|5.5\nKanpur|Uttar Pradesh|26.4499|80.3319|5.5\nNagpur|Maharashtra|21.1458|79.0882|5.5\nIndore|Madhya Pradesh|22.7196|75.8577|5.5\nBhopal|Madhya Pradesh|23.2599|77.4126|5.5\nVisakhapatnam|Andhra Pradesh|17.6868|83.2185|5.5\nPatna|Bihar|25.5941|85.1376|5.5\nVadodara|Gujarat|22.3072|73.1812|5.5\nGhaziabad|Uttar Pradesh|28.6692|77.4538|5.5\nLudhiana|Punjab|30.9010|75.8573|5.5\nAgra|Uttar Pradesh|27.1767|78.0081|5.5\nNashik|Maharashtra|19.9975|73.7898|5.5\nFaridabad|Haryana|28.4089|77.3178|5.5\nMeerut|Uttar Pradesh|28.9845|77.7064|5.5\nRajkot|Gujarat|22.3039|70.8022|5.5\nVaranasi|Uttar Pradesh|25.3176|82.9739|5.5\nSrinagar|Jammu & Kashmir|34.0837|74.7973|5.5\nAurangabad|Maharashtra|19.8762|75.3433|5.5\nDhanbad|Jharkhand|23.7957|86.4304|5.5\nAmritsar|Punjab|31.6340|74.8723|5.5\nNavi Mumbai|Maharashtra|19.0330|73.0297|5.5\nPrayagraj (Allahabad)|Uttar Pradesh|25.4358|81.8463|5.5\nRanchi|Jharkhand|23.3441|85.3096|5.5\nHowrah|West Bengal|22.5958|88.2636|5.5\nCoimbatore|Tamil Nadu|11.0168|76.9558|5.5\nJabalpur|Madhya Pradesh|23.1815|79.9864|5.5\nGwalior|Madhya Pradesh|26.2183|78.1828|5.5\nVijayawada|Andhra Pradesh|16.5062|80.6480|5.5\nJodhpur|Rajasthan|26.2389|73.0243|5.5\nMadurai|Tamil Nadu|9.9252|78.1198|5.5\nRaipur|Chhattisgarh|21.2514|81.6296|5.5\nKota|Rajasthan|25.2138|75.8648|5.5\nChandigarh|Chandigarh|30.7333|76.7794|5.5\nGuwahati|Assam|26.1445|91.7362|5.5\nSolapur|Maharashtra|17.6599|75.9064|5.5\nHubli|Karnataka|15.3647|75.1240|5.5\nMysuru|Karnataka|12.2958|76.6394|5.5\nTiruchirappalli|Tamil Nadu|10.7905|78.7047|5.5\nBareilly|Uttar Pradesh|28.3670|79.4304|5.5\nAligarh|Uttar Pradesh|27.8974|78.0880|5.5\nMoradabad|Uttar Pradesh|28.8386|78.7733|5.5\nGurugram|Haryana|28.4595|77.0266|5.5\nNoida|Uttar Pradesh|28.5355|77.3910|5.5\nJalandhar|Punjab|31.3260|75.5762|5.5\nBhubaneswar|Odisha|20.2961|85.8245|5.5\nSalem|Tamil Nadu|11.6643|78.1460|5.5\nWarangal|Telangana|17.9689|79.5941|5.5\nGuntur|Andhra Pradesh|16.3067|80.4365|5.5\nSaharanpur|Uttar Pradesh|29.9680|77.5552|5.5\nGorakhpur|Uttar Pradesh|26.7606|83.3732|5.5\nBikaner|Rajasthan|28.0229|73.3119|5.5\nAmravati|Maharashtra|20.9374|77.7796|5.5\nJamshedpur|Jharkhand|22.8046|86.2029|5.5\nBhilai|Chhattisgarh|21.1938|81.3509|5.5\nCuttack|Odisha|20.4625|85.8830|5.5\nFirozabad|Uttar Pradesh|27.1592|78.3957|5.5\nKochi|Kerala|9.9312|76.2673|5.5\nNellore|Andhra Pradesh|14.4426|79.9865|5.5\nBhavnagar|Gujarat|21.7645|72.1519|5.5\nDehradun|Uttarakhand|30.3165|78.0322|5.5\nDurgapur|West Bengal|23.5204|87.3119|5.5\nAsansol|West Bengal|23.6739|86.9524|5.5\nRourkela|Odisha|22.2604|84.8536|5.5\nNanded|Maharashtra|19.1383|77.3210|5.5\nKolhapur|Maharashtra|16.7050|74.2433|5.5\nAjmer|Rajasthan|26.4499|74.6399|5.5\nAkola|Maharashtra|20.7002|77.0082|5.5\nKalaburagi (Gulbarga)|Karnataka|17.3297|76.8343|5.5\nJamnagar|Gujarat|22.4707|70.0577|5.5\nUjjain|Madhya Pradesh|23.1765|75.7885|5.5\nSiliguri|West Bengal|26.7271|88.3953|5.5\nJhansi|Uttar Pradesh|25.4484|78.5685|5.5\nJammu|Jammu & Kashmir|32.7266|74.8570|5.5\nSangli|Maharashtra|16.8524|74.5815|5.5\nBelagavi (Belgaum)|Karnataka|15.8497|74.4977|5.5\nMangaluru|Karnataka|12.9141|74.8560|5.5\nTirunelveli|Tamil Nadu|8.7139|77.7567|5.5\nGaya|Bihar|24.7914|85.0002|5.5\nJalgaon|Maharashtra|21.0077|75.5626|5.5\nUdaipur|Rajasthan|24.5854|73.7125|5.5\nTiruppur|Tamil Nadu|11.1085|77.3411|5.5\nKozhikode|Kerala|11.2588|75.7804|5.5\nKurnool|Andhra Pradesh|15.8281|78.0373|5.5\nBokaro|Jharkhand|23.6693|86.1511|5.5\nBallari (Bellary)|Karnataka|15.1394|76.9214|5.5\nPatiala|Punjab|30.3398|76.3869|5.5\nAgartala|Tripura|23.8315|91.2868|5.5\nBhagalpur|Bihar|25.2425|86.9842|5.5\nMuzaffarnagar|Uttar Pradesh|29.4727|77.7085|5.5\nLatur|Maharashtra|18.4088|76.5604|5.5\nDhule|Maharashtra|20.9042|74.7749|5.5\nRohtak|Haryana|28.8955|76.6066|5.5\nKorba|Chhattisgarh|22.3595|82.7501|5.5\nBhilwara|Rajasthan|25.3407|74.6313|5.5\nBrahmapur|Odisha|19.3150|84.7941|5.5\nMuzaffarpur|Bihar|26.1197|85.3910|5.5\nAhmednagar|Maharashtra|19.0948|74.7480|5.5\nMathura|Uttar Pradesh|27.4924|77.6737|5.5\nKollam|Kerala|8.8932|76.6141|5.5\nKadapa|Andhra Pradesh|14.4674|78.8241|5.5\nBilaspur|Chhattisgarh|22.0797|82.1391|5.5\nShahjahanpur|Uttar Pradesh|27.8815|79.9099|5.5\nSatara|Maharashtra|17.6805|74.0183|5.5\nVijayapura (Bijapur)|Karnataka|16.8302|75.7100|5.5\nRampur|Uttar Pradesh|28.8152|79.0250|5.5\nShivamogga|Karnataka|13.9299|75.5681|5.5\nChandrapur|Maharashtra|19.9615|79.2961|5.5\nJunagadh|Gujarat|21.5222|70.4579|5.5\nThrissur|Kerala|10.5276|76.2144|5.5\nAlwar|Rajasthan|27.5530|76.6346|5.5\nKakinada|Andhra Pradesh|16.9891|82.2475|5.5\nNizamabad|Telangana|18.6725|78.0941|5.5\nParbhani|Maharashtra|19.2608|76.7748|5.5\nTumakuru|Karnataka|13.3392|77.1140|5.5\nKhammam|Telangana|17.2473|80.1514|5.5\nPanipat|Haryana|29.3909|76.9635|5.5\nDarbhanga|Bihar|26.1542|85.8918|5.5\nAizawl|Mizoram|23.7271|92.7176|5.5\nDewas|Madhya Pradesh|22.9676|76.0534|5.5\nKarnal|Haryana|29.6857|76.9905|5.5\nBathinda|Punjab|30.2110|74.9455|5.5\nEluru|Andhra Pradesh|16.7107|81.0952|5.5\nPurnia|Bihar|25.7771|87.4753|5.5\nSatna|Madhya Pradesh|24.5670|80.8322|5.5\nSonipat|Haryana|28.9931|77.0151|5.5\nSagar|Madhya Pradesh|23.8388|78.7378|5.5\nDurg|Chhattisgarh|21.1904|81.2849|5.5\nImphal|Manipur|24.8170|93.9368|5.5\nRatlam|Madhya Pradesh|23.3315|75.0367|5.5\nAra (Arrah)|Bihar|25.5541|84.6635|5.5\nAnantapur|Andhra Pradesh|14.6819|77.6006|5.5\nKarimnagar|Telangana|18.4386|79.1288|5.5\nEtawah|Uttar Pradesh|26.7855|79.0150|5.5\nBharatpur|Rajasthan|27.2152|77.5030|5.5\nBegusarai|Bihar|25.4182|86.1272|5.5\nGandhidham|Gujarat|23.0753|70.1337|5.5\nPuducherry|Puducherry|11.9416|79.8083|5.5\nSikar|Rajasthan|27.6094|75.1399|5.5\nThoothukudi|Tamil Nadu|8.7642|78.1348|5.5\nRewa|Madhya Pradesh|24.5362|81.3037|5.5\nMirzapur|Uttar Pradesh|25.1337|82.5644|5.5\nRaichur|Karnataka|16.2076|77.3463|5.5\nPali|Rajasthan|25.7711|73.3234|5.5\nHaridwar|Uttarakhand|29.9457|78.1642|5.5\nKatihar|Bihar|25.5541|87.5719|5.5\nNagercoil|Tamil Nadu|8.1833|77.4119|5.5\nSri Ganganagar|Rajasthan|29.9038|73.8772|5.5\nThanjavur|Tamil Nadu|10.7870|79.1378|5.5\nBulandshahr|Uttar Pradesh|28.4038|77.8583|5.5\nNadiad|Gujarat|22.6939|72.8616|5.5\nSecunderabad|Telangana|17.4399|78.4983|5.5\nYamunanagar|Haryana|30.1290|77.2674|5.5\nBidar|Karnataka|17.9104|77.5199|5.5\nMunger|Bihar|25.3746|86.4737|5.5\nPanchkula|Haryana|30.6942|76.8606|5.5\nKharagpur|West Bengal|22.3460|87.2320|5.5\nDindigul|Tamil Nadu|10.3673|77.9803|5.5\nGandhinagar|Gujarat|23.2156|72.6369|5.5\nOngole|Andhra Pradesh|15.5057|80.0499|5.5\nDeoghar|Jharkhand|24.4823|86.6969|5.5\nChhapra|Bihar|25.7815|84.7273|5.5\nHaldia|West Bengal|22.0667|88.0698|5.5\nKhandwa|Madhya Pradesh|21.8245|76.3529|5.5\nNandyal|Andhra Pradesh|15.4777|78.4873|5.5\nMorena|Madhya Pradesh|26.4934|78.0009|5.5\nAmroha|Uttar Pradesh|28.9044|78.4675|5.5\nAnand|Gujarat|22.5645|72.9289|5.5\nBhind|Madhya Pradesh|26.5645|78.7873|5.5\nBhiwani|Haryana|28.7975|76.1322|5.5\nAmbala|Haryana|30.3782|76.7767|5.5\nMorbi|Gujarat|22.8173|70.8377|5.5\nRaebareli|Uttar Pradesh|26.2309|81.2338|5.5\nBhusawal|Maharashtra|21.0435|75.7851|5.5\nOrai|Uttar Pradesh|25.9900|79.4500|5.5\nBahraich|Uttar Pradesh|27.5743|81.5941|5.5\nVellore|Tamil Nadu|12.9165|79.1325|5.5\nMehsana|Gujarat|23.5880|72.3693|5.5\nSirsa|Haryana|29.5349|75.0280|5.5\nGuna|Madhya Pradesh|24.6469|77.3113|5.5\nJaunpur|Uttar Pradesh|25.7478|82.6837|5.5\nPanvel|Maharashtra|18.9894|73.1175|5.5\nShivpuri|Madhya Pradesh|25.4358|77.6584|5.5\nSurendranagar|Gujarat|22.7196|71.6369|5.5\nUnnao|Uttar Pradesh|26.5393|80.4878|5.5\nAlappuzha|Kerala|9.4981|76.3388|5.5\nKottayam|Kerala|9.5916|76.5222|5.5\nMachilipatnam|Andhra Pradesh|16.1875|81.1389|5.5\nShimla|Himachal Pradesh|31.1048|77.1734|5.5\nUdupi|Karnataka|13.3409|74.7421|5.5\nKatni|Madhya Pradesh|23.8343|80.3894|5.5\nMahbubnagar|Telangana|16.7488|77.9853|5.5\nSaharsa|Bihar|25.8800|86.6000|5.5\nDibrugarh|Assam|27.4728|94.9120|5.5\nJorhat|Assam|26.7509|94.2037|5.5\nHazaribagh|Jharkhand|23.9925|85.3637|5.5\nNagaon|Assam|26.3505|92.6842|5.5\nSilchar|Assam|24.8333|92.7789|5.5\nTiruvannamalai|Tamil Nadu|12.2253|79.0747|5.5\nKumbakonam|Tamil Nadu|10.9601|79.3788|5.5\nGangtok|Sikkim|27.3389|88.6065|5.5\nPanaji|Goa|15.4909|73.8278|5.5\nShillong|Meghalaya|25.5788|91.8933|5.5\nKohima|Nagaland|25.6751|94.1086|5.5\nItanagar|Arunachal Pradesh|27.0844|93.6053|5.5\nPort Blair|Andaman & Nicobar|11.6234|92.7265|5.5\nLeh|Ladakh|34.1526|77.5771|5.5\nRishikesh|Uttarakhand|30.0869|78.2676|5.5\nHaldwani|Uttarakhand|29.2183|79.5130|5.5\nNainital|Uttarakhand|29.3919|79.4542|5.5\nManali|Himachal Pradesh|32.2432|77.1892|5.5\nDharamshala|Himachal Pradesh|32.2190|76.3234|5.5\nSolan|Himachal Pradesh|30.9045|77.0967|5.5\nMandi|Himachal Pradesh|31.7080|76.9318|5.5\nTirupati|Andhra Pradesh|13.6288|79.4192|5.5\nRajahmundry|Andhra Pradesh|17.0005|81.8040|5.5\nChittoor|Andhra Pradesh|13.2172|79.1003|5.5\nHosur|Tamil Nadu|12.7409|77.8253|5.5\nErode|Tamil Nadu|11.3410|77.7172|5.5\nKarur|Tamil Nadu|10.9601|78.0766|5.5\nCuddalore|Tamil Nadu|11.7480|79.7714|5.5\nKanchipuram|Tamil Nadu|12.8342|79.7036|5.5\nSambalpur|Odisha|21.4669|83.9812|5.5\nPuri|Odisha|19.8135|85.8312|5.5\nBhadrak|Odisha|21.0574|86.4963|5.5\nBalasore|Odisha|21.4934|86.9335|5.5\nTinsukia|Assam|27.4900|95.3600|5.5\nBardhaman|West Bengal|23.2324|87.8615|5.5\nMalda|West Bengal|25.0000|88.1400|5.5\nKrishnanagar|West Bengal|23.4058|88.5017|5.5\nBarrackpore|West Bengal|22.7600|88.3700|5.5\nBankura|West Bengal|23.2324|87.0753|5.5\nMedinipur|West Bengal|22.4257|87.3199|5.5\nCooch Behar|West Bengal|26.3200|89.4500|5.5\nJalpaiguri|West Bengal|26.5215|88.7264|5.5\nRatnagiri|Maharashtra|16.9902|73.3120|5.5\nNagapattinam|Tamil Nadu|10.7660|79.8420|5.5\nNew York|USA|40.7128|-74.0060|-5\nLos Angeles|USA|34.0522|-118.2437|-8\nChicago|USA|41.8781|-87.6298|-6\nHouston|USA|29.7604|-95.3698|-6\nSan Francisco|USA|37.7749|-122.4194|-8\nSeattle|USA|47.6062|-122.3321|-8\nBoston|USA|42.3601|-71.0589|-5\nWashington DC|USA|38.9072|-77.0369|-5\nAtlanta|USA|33.7490|-84.3880|-5\nDallas|USA|32.7767|-96.7970|-6\nToronto|Canada|43.6532|-79.3832|-5\nVancouver|Canada|49.2827|-123.1207|-8\nMontreal|Canada|45.5017|-73.5673|-5\nLondon|UK|51.5074|-0.1278|0\nManchester|UK|53.4808|-2.2426|0\nBirmingham|UK|52.4862|-1.8904|0\nDublin|Ireland|53.3498|-6.2603|0\nParis|France|48.8566|2.3522|1\nBerlin|Germany|52.5200|13.4050|1\nFrankfurt|Germany|50.1109|8.6821|1\nMunich|Germany|48.1351|11.5820|1\nAmsterdam|Netherlands|52.3676|4.9041|1\nBrussels|Belgium|50.8503|4.3517|1\nZurich|Switzerland|47.3769|8.5417|1\nMadrid|Spain|40.4168|-3.7038|1\nBarcelona|Spain|41.3851|2.1734|1\nRome|Italy|41.9028|12.4964|1\nMilan|Italy|45.4642|9.1900|1\nLisbon|Portugal|38.7223|-9.1393|0\nVienna|Austria|48.2082|16.3738|1\nStockholm|Sweden|59.3293|18.0686|1\nOslo|Norway|59.9139|10.7522|1\nCopenhagen|Denmark|55.6761|12.5683|1\nHelsinki|Finland|60.1699|24.9384|2\nWarsaw|Poland|52.2297|21.0122|1\nPrague|Czechia|50.0755|14.4378|1\nBudapest|Hungary|47.4979|19.0402|1\nMoscow|Russia|55.7558|37.6173|3\nIstanbul|Turkey|41.0082|28.9784|3\nAthens|Greece|37.9838|23.7275|2\nDubai|UAE|25.2048|55.2708|4\nAbu Dhabi|UAE|24.4539|54.3773|4\nDoha|Qatar|25.2854|51.5310|3\nRiyadh|Saudi Arabia|24.7136|46.6753|3\nJeddah|Saudi Arabia|21.4858|39.1925|3\nMuscat|Oman|23.5880|58.3829|4\nKuwait City|Kuwait|29.3759|47.9774|3\nManama|Bahrain|26.2285|50.5860|3\nTel Aviv|Israel|32.0853|34.7818|2\nCairo|Egypt|30.0444|31.2357|2\nNairobi|Kenya|-1.2921|36.8219|3\nLagos|Nigeria|6.5244|3.3792|1\nJohannesburg|South Africa|-26.2041|28.0473|2\nCape Town|South Africa|-33.9249|18.4241|2\nKarachi|Pakistan|24.8607|67.0011|5\nLahore|Pakistan|31.5204|74.3587|5\nIslamabad|Pakistan|33.6844|73.0479|5\nDhaka|Bangladesh|23.8103|90.4125|6\nChittagong|Bangladesh|22.3569|91.7832|6\nKathmandu|Nepal|27.7172|85.3240|5.75\nColombo|Sri Lanka|6.9271|79.8612|5.5\nMale|Maldives|4.1755|73.5093|5\nThimphu|Bhutan|27.4728|89.6390|6\nYangon|Myanmar|16.8661|96.1951|6.5\nBangkok|Thailand|13.7563|100.5018|7\nSingapore|Singapore|1.3521|103.8198|8\nKuala Lumpur|Malaysia|3.1390|101.6869|8\nJakarta|Indonesia|-6.2088|106.8456|7\nManila|Philippines|14.5995|120.9842|8\nHanoi|Vietnam|21.0285|105.8542|7\nHo Chi Minh City|Vietnam|10.8231|106.6297|7\nHong Kong|Hong Kong|22.3193|114.1694|8\nBeijing|China|39.9042|116.4074|8\nShanghai|China|31.2304|121.4737|8\nShenzhen|China|22.5431|114.0579|8\nTaipei|Taiwan|25.0330|121.5654|8\nSeoul|South Korea|37.5665|126.9780|9\nTokyo|Japan|35.6762|139.6503|9\nOsaka|Japan|34.6937|135.5023|9\nSydney|Australia|-33.8688|151.2093|10\nMelbourne|Australia|-37.8136|144.9631|10\nBrisbane|Australia|-27.4698|153.0251|10\nPerth|Australia|-31.9505|115.8605|8\nAuckland|New Zealand|-36.8485|174.7633|12\nWellington|New Zealand|-41.2865|174.7762|12\nSao Paulo|Brazil|-23.5505|-46.6333|-3\nRio de Janeiro|Brazil|-22.9068|-43.1729|-3\nBuenos Aires|Argentina|-34.6037|-58.3816|-3\nSantiago|Chile|-33.4489|-70.6693|-4\nLima|Peru|-12.0464|-77.0428|-5\nBogota|Colombia|4.7110|-74.0721|-5\nMexico City|Mexico|19.4326|-99.1332|-6\nKabul|Afghanistan|34.5553|69.2075|4.5\nTashkent|Uzbekistan|41.2995|69.2401|5\nAlmaty|Kazakhstan|43.2220|76.8512|6\nTehran|Iran|35.6892|51.3890|3.5\nBaghdad|Iraq|33.3152|44.3661|3";
+</script>
+
+<script>
+(function(){
+"use strict";
+var D2R=Math.PI/180, R2D=180/Math.PI;
+var norm=function(d){return ((d%360)+360)%360;};
+var $=function(i){return document.getElementById(i);};
+
+function jdFromUTC(y,mo,d,h,mi){
+  if(mo<=2){y-=1;mo+=12;}
+  var A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+  return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(mo+1))+d+B-1524.5+(h+mi/60)/24;
+}
+function T_of(jd){return (jd-2451545.0)/36525;}
+function ayanamsa(jd){return 23.85319+((jd-2451545.0)/365.25)*(50.29/3600);}
+function obliquity(T){return 23.439291-0.0130042*T-1.64e-7*T*T+5.04e-7*T*T*T;}
+
+function sunLon(T){
+  var L0=norm(280.46646+36000.76983*T+0.0003032*T*T);
+  var M=norm(357.52911+35999.05029*T-0.0001537*T*T)*D2R;
+  var C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)
+      +(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  return norm(L0+C);
+}
+var MT=[[6.288774,0,0,1,0],[1.274027,2,0,-1,0],[0.658314,2,0,0,0],[0.213618,0,0,2,0],
+[-0.185116,0,1,0,0],[-0.114332,0,0,0,2],[0.058793,2,0,-2,0],[0.057066,2,-1,-1,0],
+[0.053322,2,0,1,0],[0.045758,2,-1,0,0],[-0.040923,0,1,-1,0],[-0.034720,1,0,0,0],
+[-0.030383,0,1,1,0],[0.015327,2,0,0,-2],[-0.012528,0,0,1,2],[0.010980,0,0,1,-2],
+[0.010675,4,0,-1,0],[0.010034,0,0,3,0],[0.008548,4,0,-2,0],[-0.007888,2,1,-1,0],
+[-0.006766,2,1,0,0],[-0.005163,1,0,-1,0],[0.004987,1,1,0,0],[0.004036,2,-1,1,0],
+[0.003994,2,0,2,0],[0.003861,4,0,0,0],[0.003665,2,0,-3,0],[-0.002689,0,1,-2,0],
+[-0.002602,2,0,-1,2],[0.002390,2,-1,-2,0],[-0.002348,1,0,1,0],[0.002236,2,-2,0,0],
+[-0.002120,0,1,2,0],[-0.002069,0,2,0,0],[0.002048,2,-2,-1,0],[-0.001773,2,0,1,-2],
+[-0.001595,2,0,0,2],[0.001215,4,-1,-1,0],[-0.001110,0,0,2,2],[-0.000892,3,0,-1,0]];
+function moonLon(T){
+  var Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841-T*T*T*T/65194000);
+  var D=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868-T*T*T*T/113065000)*D2R;
+  var M=norm(357.5291092+35999.0502909*T-0.0001536*T*T+T*T*T/24490000)*D2R;
+  var Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699-T*T*T*T/14712000)*D2R;
+  var F=norm(93.2720950+483202.0175233*T-0.0036539*T*T-T*T*T/3526000+T*T*T*T/863310000)*D2R;
+  var E=1-0.002516*T-0.0000074*T*T,sum=0;
+  for(var i=0;i<MT.length;i++){
+    var t=MT[i],a=t[0]*Math.sin(t[1]*D-t[2]*M+t[3]*Mp+t[4]*F);
+    if(Math.abs(t[2])===1)a*=E; else if(Math.abs(t[2])===2)a*=E*E;
+    sum+=a;
+  }
+  return norm(Lp+sum);
+}
+function rahuLon(T){
+  return norm(125.0445479-1934.1362891*T+0.0020754*T*T+T*T*T/467441-T*T*T*T/60616000);
+}
+var EL={
+ mercury:[0.38709927,0.00000037,0.20563593,0.00001906,7.00497902,-0.00594749,252.25032350,149472.67411175,77.45779628,0.16047689,48.33076593,-0.12534081],
+ venus:[0.72333566,0.00000390,0.00677672,-0.00004107,3.39467605,-0.00078890,181.97909950,58517.81538729,131.60246718,0.00268329,76.67984255,-0.27769418],
+ earth:[1.00000261,0.00000562,0.01671123,-0.00004392,-0.00001531,-0.01294668,100.46457166,35999.37244981,102.93768193,0.32327364,0,0],
+ mars:[1.52371034,0.00001847,0.09339410,0.00007882,1.84969142,-0.00813131,-4.55343205,19140.30268499,-23.94362959,0.44441088,49.55953891,-0.29257343],
+ jupiter:[5.20288700,-0.00011607,0.04838624,-0.00013253,1.30439695,-0.00183714,34.39644051,3034.74612775,14.72847983,0.21252668,100.47390909,0.20469106],
+ saturn:[9.53667594,-0.00125060,0.05386179,-0.00050991,2.48599187,0.00193609,49.95424423,1222.49362201,92.59887831,-0.41897216,113.66242448,-0.28867794]};
+function helio(name,T){
+  var e0=EL[name];
+  var a=e0[0]+e0[1]*T,e=e0[2]+e0[3]*T,I=(e0[4]+e0[5]*T)*D2R;
+  var L=e0[6]+e0[7]*T,wb=e0[8]+e0[9]*T,om=(e0[10]+e0[11]*T)*D2R,w=wb*D2R-om;
+  var M=norm(L-wb); if(M>180)M-=360; M*=D2R;
+  var E=M+e*Math.sin(M);
+  for(var i=0;i<12;i++){var dE=(M-(E-e*Math.sin(E)))/(1-e*Math.cos(E));E+=dE;if(Math.abs(dE)<1e-12)break;}
+  var xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E);
+  var cw=Math.cos(w),sw=Math.sin(w),co=Math.cos(om),so=Math.sin(om),ci=Math.cos(I),si=Math.sin(I);
+  return [(cw*co-sw*so*ci)*xp+(-sw*co-cw*so*ci)*yp,
+          (cw*so+sw*co*ci)*xp+(-sw*so+cw*co*ci)*yp,
+          (sw*si)*xp+(cw*si)*yp];
+}
+function planetLon(name,T){
+  var p=helio(name,T),e=helio('earth',T);
+  return norm(Math.atan2(p[1]-e[1],p[0]-e[0])*R2D);
+}
+function gmst(jd){
+  var T=T_of(jd);
+  return norm(280.46061837+360.98564736629*(jd-2451545.0)+0.000387933*T*T-T*T*T/38710000);
+}
+function ascendant(jd,lat,lon){
+  var T=T_of(jd),th=norm(gmst(jd)+lon)*D2R,e=obliquity(T)*D2R,ph=lat*D2R;
+  return norm(Math.atan2(Math.cos(th),-(Math.sin(th)*Math.cos(e)+Math.tan(ph)*Math.sin(e)))*R2D);
+}
+var SIGN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+var SANS=['Meṣa','Vṛṣabha','Mithuna','Karka','Siṃha','Kanyā','Tulā','Vṛścika','Dhanu','Makara','Kumbha','Mīna'];
+var GLYPH=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+var NAK=['Aśvinī','Bharaṇī','Kṛttikā','Rohiṇī','Mṛgaśīrṣa','Ārdrā','Punarvasu','Puṣya','Āśleṣā','Maghā',
+'Pūrva Phalgunī','Uttara Phalgunī','Hasta','Citrā','Svātī','Viśākhā','Anurādhā','Jyeṣṭhā','Mūla',
+'Pūrva Āṣāḍhā','Uttara Āṣāḍhā','Śravaṇa','Dhaniṣṭhā','Śatabhiṣā','Pūrva Bhādrapadā','Uttara Bhādrapadā','Revatī'];
+
+var BODIES=[
+ {k:'Lagna',  s:'Lagna',  c:0xf2c879, r:9,  sz:0.0},
+ {k:'Moon',   s:'Candra', c:0xdfe7f5, r:13, sz:1.5},
+ {k:'Mercury',s:'Budha',  c:0x5fe3d8, r:17, sz:1.2},
+ {k:'Venus',  s:'Śukra',  c:0xf2c879, r:21, sz:1.5},
+ {k:'Sun',    s:'Sūrya',  c:0xffb056, r:25, sz:2.4},
+ {k:'Mars',   s:'Maṅgala',c:0xff7a7a, r:29, sz:1.3},
+ {k:'Jupiter',s:'Guru',   c:0xffd98a, r:34, sz:2.1},
+ {k:'Saturn', s:'Śani',   c:0x5f9ee3, r:39, sz:1.9},
+ {k:'Rahu',   s:'Rāhu',   c:0x8b6fb8, r:44, sz:1.3},
+ {k:'Ketu',   s:'Ketu',   c:0x7d6be0, r:44, sz:1.3}
+];
+
+
+
+/* ---- ecliptic latitude, which the 2D chart never needed ---- */
+var MLAT=[[5.128122,0,0,0,1],[0.280602,0,0,1,1],[0.277693,0,0,1,-1],[0.173237,2,0,0,-1],
+[0.055413,2,0,-1,1],[0.046271,2,0,-1,-1],[0.032573,2,0,0,1],[0.017198,0,0,2,1],
+[0.009266,2,0,1,-1],[0.008822,0,0,2,-1],[0.008216,2,-1,0,-1],[0.004324,2,0,-2,-1],
+[0.004200,2,0,1,1],[-0.003359,2,1,0,-1],[0.002463,2,-1,-1,1],[0.002211,2,-1,0,1],
+[0.002065,2,-1,-1,-1],[-0.001870,0,1,-1,-1],[0.001828,4,0,-1,-1],[-0.001794,0,1,0,1]];
+function moonLat(T){
+  var D=norm(297.8501921+445267.1114034*T-0.0018819*T*T)*D2R;
+  var M=norm(357.5291092+35999.0502909*T-0.0001536*T*T)*D2R;
+  var Mp=norm(134.9633964+477198.8675055*T+0.0087414*T*T)*D2R;
+  var F=norm(93.2720950+483202.0175233*T-0.0036539*T*T)*D2R;
+  var E=1-0.002516*T, sum=0;
+  for(var i=0;i<MLAT.length;i++){
+    var t=MLAT[i], v=t[0]*Math.sin(t[1]*D+t[2]*M+t[3]*Mp+t[4]*F);
+    if(Math.abs(t[2])===1) v*=E;
+    sum+=v;
+  }
+  return sum;
+}
+function planetEcl(name,T){
+  var p=helio(name,T), e=helio('earth',T);
+  var x=p[0]-e[0], y=p[1]-e[1], z=p[2]-e[2];
+  return {lon:norm(Math.atan2(y,x)*R2D), lat:Math.atan2(z,Math.sqrt(x*x+y*y))*R2D};
+}
+
+/* ---- ecliptic -> equatorial -> horizon ---- */
+function eclToEq(lam,bet,eps){
+  lam*=D2R; bet*=D2R; eps*=D2R;
+  var dec=Math.asin(Math.sin(bet)*Math.cos(eps)+Math.cos(bet)*Math.sin(eps)*Math.sin(lam));
+  var ra=Math.atan2(Math.sin(lam)*Math.cos(eps)-Math.tan(bet)*Math.sin(eps),Math.cos(lam));
+  return {ra:norm(ra*R2D),dec:dec*R2D};
+}
+function eqToHor(ra,dec,lst,lat){
+  var H=(lst-ra)*D2R, d=dec*D2R, p=lat*D2R;
+  var alt=Math.asin(Math.sin(d)*Math.sin(p)+Math.cos(d)*Math.cos(p)*Math.cos(H));
+  var A=Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(p)-Math.tan(d)*Math.cos(p));
+  return {az:norm(A*R2D+180),alt:alt*R2D};
+}
+function horVec(az,alt){
+  var a=az*D2R,h=alt*D2R;
+  return [Math.cos(h)*Math.sin(a), Math.cos(h)*Math.cos(a), Math.sin(h)]; /* E, N, Up */
+}
+
+var SIGN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+var NAK=['Aśvinī','Bharaṇī','Kṛttikā','Rohiṇī','Mṛgaśīrṣa','Ārdrā','Punarvasu','Puṣya','Āśleṣā','Maghā',
+'Pūrva Phalgunī','Uttara Phalgunī','Hasta','Citrā','Svātī','Viśākhā','Anurādhā','Jyeṣṭhā','Mūla',
+'Pūrva Āṣāḍhā','Uttara Āṣāḍhā','Śravaṇa','Dhaniṣṭhā','Śatabhiṣā','Pūrva Bhādrapadā','Uttara Bhādrapadā','Revatī'];
+var BODIES=[
+ {k:'Sun',s:'Sūrya',c:'#ffb056',r:13},{k:'Moon',s:'Candra',c:'#dfe7f5',r:12},
+ {k:'Mars',s:'Maṅgala',c:'#ff7a7a',r:8},{k:'Mercury',s:'Budha',c:'#5fe3d8',r:7},
+ {k:'Jupiter',s:'Guru',c:'#ffd98a',r:10},{k:'Venus',s:'Śukra',c:'#f2c879',r:10},
+ {k:'Saturn',s:'Śani',c:'#5f9ee3',r:9},
+ {k:'Rahu',s:'Rāhu',c:'#8b6fb8',r:7},{k:'Ketu',s:'Ketu',c:'#7d6be0',r:7}];
+
+/* a handful of real stars, so you can check the compass against the actual sky */
+var STARS=[['Sirius',6.752,-16.716,-1.46],['Canopus',6.399,-52.696,-0.72],['Arcturus',14.261,19.182,-0.05],
+['Vega',18.615,38.784,0.03],['Capella',5.278,45.998,0.08],['Rigel',5.242,-8.202,0.12],
+['Procyon',7.655,5.225,0.34],['Betelgeuse',5.919,7.407,0.5],['Achernar',1.629,-57.237,0.46],
+['Altair',19.846,8.868,0.77],['Aldebaran',4.599,16.509,0.85],['Antares',16.49,-26.432,1.09],
+['Chitrā (Spica)',13.42,-11.161,0.98],['Pollux',7.755,28.026,1.14],['Fomalhaut',22.961,-29.622,1.16],
+['Deneb',20.69,45.28,1.25],['Regulus',10.14,11.967,1.35],['Castor',7.577,31.888,1.58],
+['Bellatrix',5.418,6.35,1.64],['Polaris',2.53,89.264,1.98],['Alnilam',5.604,-1.202,1.69],
+['Mizar',13.399,54.925,2.23],['Alphard',9.46,-8.659,1.98],['Hamal',2.119,23.462,2.0]];
+
+/* ==================================================================
+   STATE
+   ================================================================== */
+var LAT=null, LON=null, PLACE='', HAVE_SENSOR=false;
+var yaw=0, pitch=0, roll=0;              /* radians, view direction */
+var dragYaw=0, dragPitch=25*D2R;         /* desktop / no-sensor fallback */
+var objs=[], lastCalc=0, LOCK=null;
+var cv=$('sky'), ctx=cv.getContext('2d'), W=0,H=0,DPR=1;
+var cc=$('compc'), cctx=cc.getContext('2d');
+
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+  cc.width=W*DPR; cc.height=76*DPR; cc.style.width=W+'px'; cc.style.height='76px';
+  cctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener('resize',resize);
+
+/* ==================================================================
+   POSITIONS
+   ================================================================== */
+function recompute(){
+  var jd=Date.now()/86400000+2440587.5;
+  var T=T_of(jd), ay=ayanamsa(jd), eps=obliquity(T);
+  var lst=norm(gmst(jd)+LON);
+  objs=[];
+  for(var i=0;i<BODIES.length;i++){
+    var B=BODIES[i], lon, lat=0;
+    if(B.k==='Sun'){ lon=sunLon(T); }
+    else if(B.k==='Moon'){ lon=moonLon(T); lat=moonLat(T); }
+    else if(B.k==='Rahu'){ lon=rahuLon(T); }
+    else if(B.k==='Ketu'){ lon=norm(rahuLon(T)+180); }
+    else { var pe=planetEcl(B.k.toLowerCase(),T); lon=pe.lon; lat=pe.lat; }
+    var eq=eclToEq(lon,lat,eps);
+    var hz=eqToHor(eq.ra,eq.dec,lst,LAT);
+    var sid=norm(lon-ay), si=Math.floor(sid/30);
+    objs.push({b:B,az:hz.az,alt:hz.alt,v:horVec(hz.az,hz.alt),
+      sign:SIGN[si],deg:sid-si*30,nak:NAK[Math.floor(sid/(360/27))]});
+  }
+  /* stars */
+  for(var j=0;j<STARS.length;j++){
+    var S=STARS[j], hz2=eqToHor(S[1]*15,S[2],lst,LAT);
+    objs.push({star:true,name:S[0],mag:S[3],az:hz2.az,alt:hz2.alt,v:horVec(hz2.az,hz2.alt)});
+  }
+  lastCalc=Date.now();
+}
+
+/* ==================================================================
+   ORIENTATION
+   ================================================================== */
+function setFromDevice(a,b,g,screenA){
+  var _a=a*D2R,_b=b*D2R,_g=g*D2R;
+  var cA=Math.cos(_a),sA=Math.sin(_a),cB=Math.cos(_b),sB=Math.sin(_b),cG=Math.cos(_g),sG=Math.sin(_g);
+  /* R = Rz(a)Rx(b)Ry(g) : device -> world (x East, y North, z Up) */
+  var m=[[cA*cG-sA*sB*sG, -cB*sA, cA*sG+cG*sA*sB],
+         [cG*sA+cA*sB*sG,  cA*cB, sA*sG-cA*cG*sB],
+         [-cB*sG,          sB,    cB*cG]];
+  if(screenA){                                   /* landscape correction */
+    var t=-screenA*D2R, ct=Math.cos(t), st=Math.sin(t);
+    var rz=[[ct,-st,0],[st,ct,0],[0,0,1]], o=[[0,0,0],[0,0,0],[0,0,0]];
+    for(var i=0;i<3;i++)for(var j=0;j<3;j++)for(var k=0;k<3;k++) o[i][j]+=m[i][k]*rz[k][j];
+    m=o;
+  }
+  MAT=m; HAVE_SENSOR=true;
+}
+var MAT=null;
+function viewMatrix(){
+  if(MAT) return MAT;
+  /* fallback: build from drag */
+  var a=dragYaw, p=dragPitch;
+  var f=[Math.sin(a)*Math.cos(p), Math.cos(a)*Math.cos(p), Math.sin(p)];   /* forward */
+  var up=[0,0,1];
+  var r=[f[1]*up[2]-f[2]*up[1], f[2]*up[0]-f[0]*up[2], f[0]*up[1]-f[1]*up[0]];
+  var rl=Math.hypot(r[0],r[1],r[2]); r=[r[0]/rl,r[1]/rl,r[2]/rl];
+  var u=[r[1]*f[2]-r[2]*f[1], r[2]*f[0]-r[0]*f[2], r[0]*f[1]-r[1]*f[0]];
+  /* columns: device x=right, y=up, z=back(-forward) */
+  return [[r[0],u[0],-f[0]],[r[1],u[1],-f[1]],[r[2],u[2],-f[2]]];
+}
+function toDevice(v){
+  var m=viewMatrix();
+  return [m[0][0]*v[0]+m[1][0]*v[1]+m[2][0]*v[2],
+          m[0][1]*v[0]+m[1][1]*v[1]+m[2][1]*v[2],
+          m[0][2]*v[0]+m[1][2]*v[1]+m[2][2]*v[2]];
+}
+function lookAzAlt(){
+  var m=viewMatrix();
+  var f=[-m[0][2],-m[1][2],-m[2][2]];
+  return {az:norm(Math.atan2(f[0],f[1])*R2D), alt:Math.asin(Math.max(-1,Math.min(1,f[2])))*R2D};
+}
+
+/* ==================================================================
+   RENDER
+   ================================================================== */
+function project(d){
+  if(d[2]>=-0.02) return null;
+  var fov=62*D2R, f=(H/2)/Math.tan(fov/2);
+  return [W/2 + f*(d[0]/-d[2]), H/2 - f*(d[1]/-d[2])];
+}
+function draw(){
+  requestAnimationFrame(draw);
+  if(LAT===null) return;
+  if(Date.now()-lastCalc>20000) recompute();
+
+  var look=lookAzAlt(), sun=objs[0];
+
+  /* sky wash, keyed to how far the Sun is below the horizon */
+  var k=Math.max(0,Math.min(1,(sun.alt+18)/24));
+  var g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgb('+Math.round(4+k*30)+','+Math.round(6+k*54)+','+Math.round(12+k*96)+')');
+  g.addColorStop(1,'rgb('+Math.round(6+k*72)+','+Math.round(9+k*66)+','+Math.round(18+k*70)+')');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  /* horizon + ground */
+  var hz=[]; for(var a=0;a<360;a+=3){ var p=project(toDevice(horVec(a,0))); if(p) hz.push(p); }
+  ctx.strokeStyle='rgba(242,200,121,.35)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  for(var i=0;i<hz.length;i++){ if(i===0)ctx.moveTo(hz[i][0],hz[i][1]); else ctx.lineTo(hz[i][0],hz[i][1]); }
+  ctx.stroke();
+
+  /* cardinal marks on the horizon */
+  var CARD=[[0,'N'],[45,'NE'],[90,'E'],[135,'SE'],[180,'S'],[225,'SW'],[270,'W'],[315,'NW']];
+  ctx.textAlign='center';
+  for(var c=0;c<CARD.length;c++){
+    var pc=project(toDevice(horVec(CARD[c][0],0))); if(!pc) continue;
+    var main=CARD[c][1].length===1;
+    ctx.fillStyle=main?'rgba(242,200,121,.9)':'rgba(174,184,204,.5)';
+    ctx.font=(main?'600 15px ':'500 11px ')+'"Space Grotesk",sans-serif';
+    ctx.fillText(CARD[c][1],pc[0],pc[1]+22);
+    ctx.fillRect(pc[0]-0.5,pc[1]-6,1,12);
+  }
+
+  /* stars */
+  for(var s=0;s<objs.length;s++){
+    var o=objs[s]; if(!o.star||o.alt<-2) continue;
+    var d=toDevice(o.v), p2=project(d); if(!p2) continue;
+    var rad=Math.max(1,2.6-o.mag*0.55);
+    ctx.beginPath(); ctx.arc(p2[0],p2[1],rad,0,6.2832);
+    ctx.fillStyle='rgba(255,255,255,'+(0.85-o.mag*0.12).toFixed(2)+')'; ctx.fill();
+    if(o.mag<1.1){
+      ctx.fillStyle='rgba(255,255,255,.42)';
+      ctx.font='500 10px "JetBrains Mono",monospace'; ctx.textAlign='left';
+      ctx.fillText(o.name,p2[0]+8,p2[1]+3);
+      ctx.textAlign='center';
+    }
+  }
+
+  /* grahas */
+  LOCK=null; var bestD=1e9;
+  for(var q=0;q<objs.length;q++){
+    var G=objs[q]; if(G.star) continue;
+    var dv=toDevice(G.v), pp=project(dv);
+    var below=G.alt<0;
+    if(pp && pp[0]>-60 && pp[0]<W+60 && pp[1]>-60 && pp[1]<H+60){
+      var rr=G.b.r*(below?0.55:1);
+      if(!below){
+        var gr=ctx.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],rr*4.5);
+        gr.addColorStop(0,G.b.c+'aa'); gr.addColorStop(1,G.b.c+'00');
+        ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(pp[0],pp[1],rr*4.5,0,6.2832); ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(pp[0],pp[1],rr,0,6.2832);
+      ctx.fillStyle=below?G.b.c+'55':G.b.c; ctx.fill();
+      if(below){ ctx.strokeStyle=G.b.c+'88'; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.arc(pp[0],pp[1],rr+5,0,6.2832); ctx.stroke(); ctx.setLineDash([]); }
+      ctx.fillStyle=below?'rgba(174,184,204,.55)':'#fff';
+      ctx.font='600 13px "Space Grotesk",sans-serif'; ctx.textAlign='center';
+      ctx.fillText(G.b.k,pp[0],pp[1]-rr-9);
+      if(below){ ctx.fillStyle='rgba(174,184,204,.4)'; ctx.font='500 9px "JetBrains Mono",monospace';
+        ctx.fillText(Math.abs(G.alt).toFixed(0)+'° below',pp[0],pp[1]+rr+15); }
+      var dist=Math.hypot(pp[0]-W/2,pp[1]-H/2);
+      if(dist<95 && dist<bestD){ bestD=dist; LOCK=G; }
+    } else {
+      /* off screen: a nudge at the edge */
+      var ang=Math.atan2(dv[0],-dv[1]);
+      if(dv[2]>0) ang=Math.atan2(-dv[0],dv[1]);
+      var ex=W/2+Math.cos(ang-Math.PI/2)*(Math.min(W,H)/2-34);
+      var ey=H/2+Math.sin(ang-Math.PI/2)*(Math.min(W,H)/2-34);
+      ctx.save(); ctx.translate(ex,ey); ctx.rotate(ang);
+      ctx.fillStyle=G.b.c+'cc'; ctx.beginPath();
+      ctx.moveTo(0,-7); ctx.lineTo(5,4); ctx.lineTo(-5,4); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle=G.b.c+'99'; ctx.font='500 9px "JetBrains Mono",monospace'; ctx.textAlign='center';
+      ctx.fillText(G.b.k,ex,ey+18);
+    }
+  }
+
+  /* reticle + readout */
+  $('ret').classList.toggle('lock',!!LOCK);
+  if(LOCK){
+    if($('read').dataset.k!==LOCK.b.k){
+      $('read').dataset.k=LOCK.b.k;
+      $('read').innerHTML=
+        '<div class="rtop"><i style="background:'+LOCK.b.c+'"></i><b>'+LOCK.b.k+'</b>'+
+        '<u>'+LOCK.b.s+'</u></div>'+
+        '<div class="rgrid">'+
+          '<div class="rc"><span>Sign</span><b>'+LOCK.sign+'</b></div>'+
+          '<div class="rc"><span>Nakṣatra</span><b>'+LOCK.nak+'</b></div>'+
+          '<div class="rc"><span>Altitude</span><b>'+LOCK.alt.toFixed(0)+'°</b></div>'+
+        '</div>'+
+        '<p class="rnote">'+(LOCK.alt<0
+          ? 'Currently below your horizon — on the other side of the Earth from you.'
+          : 'Bearing '+LOCK.az.toFixed(0)+'° · '+LOCK.alt.toFixed(0)+'° above the horizon.')+'</p>';
+    }
+    $('read').classList.add('on');
+  } else { $('read').classList.remove('on'); $('read').dataset.k=''; }
+
+  drawCompass(look.az);
+  $('chead').innerHTML='<b>'+look.az.toFixed(0)+'°</b> &nbsp;·&nbsp; '+
+    (look.alt>=0?'+':'')+look.alt.toFixed(0)+'° &nbsp;·&nbsp; '+PLACE;
+}
+
+function drawCompass(az){
+  cctx.clearRect(0,0,W,76);
+  var pxDeg=W/90, names={0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SW',270:'W',315:'NW'};
+  /* step along real bearings so the cardinal ticks always land exactly, whatever the heading */
+  var start=Math.floor((az-48)/5)*5;
+  for(var a=start;a<=az+48;a+=5){
+    var d=((a-az+540)%360)-180;
+    if(Math.abs(d)>47) continue;
+    var x=W/2+d*pxDeg, an=Math.round(norm(a));
+    var card=(an%45===0);
+    cctx.fillStyle=card?'rgba(242,200,121,.85)':'rgba(255,255,255,.18)';
+    cctx.fillRect(x-0.5,20,1,card?13:6);
+    if(card && names[an%360]!==undefined){
+      cctx.fillStyle=(an%90===0)?'rgba(242,200,121,.95)':'rgba(174,184,204,.7)';
+      cctx.font=((an%90===0)?'600 13px ':'500 10px ')+'"Space Grotesk",sans-serif';
+      cctx.textAlign='center';
+      cctx.fillText(names[an%360],x,49);
+    }
+  }
+}
+
+/* ==================================================================
+   BOOT  —  location, sensors, fallbacks
+   ================================================================== */
+var CITIES=(function(){
+  var out=[],rows=CITY_BLOB.split("\n");
+  for(var i=0;i<rows.length;i++){
+    var q=rows[i].split("|"); if(q.length<5) continue;
+    out.push({n:q[0],r:q[1],lat:parseFloat(q[2]),lon:parseFloat(q[3])});
+  }
+  return out;
+})();
+
+function fail(msg){ $('gerr').textContent=msg; $('gerr').classList.add('on'); }
+
+function begin(lat,lon,label){
+  LAT=lat; LON=lon; PLACE=label;
+  resize(); recompute();
+  $('gate').classList.add('gone');
+  setTimeout(function(){ $('hud').classList.add('on'); },420);
+  setTimeout(function(){ $('cta').classList.add('on'); },14000);
+  requestAnimationFrame(draw);
+}
+
+/* --- sensors --- */
+function attachSensors(){
+  function handler(e){
+    var a=e.alpha, b=e.beta, g=e.gamma;
+    if(a===null||b===null||g===null) return;
+    if(typeof e.webkitCompassHeading==='number' && !isNaN(e.webkitCompassHeading)){
+      a=360-e.webkitCompassHeading;              /* iOS gives a true heading */
+    }
+    var sa=0;
+    if(screen.orientation && typeof screen.orientation.angle==='number') sa=screen.orientation.angle;
+    else if(typeof window.orientation==='number') sa=window.orientation;
+    setFromDevice(a,b,g,sa);
+  }
+  if('ondeviceorientationabsolute' in window)
+    window.addEventListener('deviceorientationabsolute',handler,true);
+  window.addEventListener('deviceorientation',handler,true);
+}
+function askMotion(){
+  return new Promise(function(res){
+    var DO=window.DeviceOrientationEvent;
+    if(DO && typeof DO.requestPermission==='function'){
+      DO.requestPermission().then(function(r){ if(r==='granted') attachSensors(); res(); })
+        .catch(function(){ res(); });
+    } else { attachSensors(); res(); }
+  });
+}
+
+/* --- drag fallback, and a nudge for anyone without a compass --- */
+(function drag(){
+  var down=false,px=0,py=0;
+  cv.addEventListener('pointerdown',function(e){ if(HAVE_SENSOR) return;
+    down=true; px=e.clientX; py=e.clientY; });
+  addEventListener('pointermove',function(e){
+    if(!down||HAVE_SENSOR) return;
+    dragYaw  -= (e.clientX-px)*0.004;
+    dragPitch += (e.clientY-py)*0.004;
+    dragPitch = Math.max(-80*D2R,Math.min(88*D2R,dragPitch));
+    px=e.clientX; py=e.clientY;
+  });
+  addEventListener('pointerup',function(){ down=false; });
+})();
+
+/* --- start --- */
+$('start').addEventListener('click',function(){
+  $('start').textContent='Finding you…';
+  askMotion().then(function(){
+    if(!navigator.geolocation){ showPicker('This browser has no location service — pick your city.'); return; }
+    navigator.geolocation.getCurrentPosition(function(pos){
+      begin(pos.coords.latitude,pos.coords.longitude,'your location');
+    },function(){
+      showPicker('Location was blocked, so pick your city instead — it only needs to be roughly right.');
+    },{enableHighAccuracy:false,timeout:9000,maximumAge:600000});
+  });
+});
+function showPicker(msg){
+  $('start').textContent='Let me look';
+  if(msg) fail(msg);
+  $('pick').classList.add('on');
+  $('cityin').focus();
+}
+$('manual').addEventListener('click',function(){ askMotion(); showPicker(''); });
+
+/* city search */
+(function picker(){
+  var inp=$('cityin'), list=$('plist'), cur=[];
+  inp.addEventListener('input',function(){
+    var q=inp.value.trim().toLowerCase();
+    if(q.length<2){ list.classList.remove('on'); return; }
+    cur=[];
+    for(var i=0;i<CITIES.length && cur.length<18;i++){
+      if(CITIES[i].n.toLowerCase().indexOf(q)===0) cur.push(CITIES[i]);
+    }
+    for(var j=0;j<CITIES.length && cur.length<18;j++){
+      var n=CITIES[j].n.toLowerCase();
+      if(n.indexOf(q)>0 && cur.indexOf(CITIES[j])<0) cur.push(CITIES[j]);
+    }
+    list.innerHTML=cur.map(function(c,i){
+      return '<div class="pitem" data-i="'+i+'">'+c.n+' <span>'+c.r+'</span></div>';
+    }).join('');
+    list.classList.toggle('on',cur.length>0);
+  });
+  list.addEventListener('click',function(e){
+    var it=e.target.closest('.pitem'); if(!it) return;
+    var c=cur[+it.dataset.i];
+    begin(c.lat,c.lon,c.n);
+  });
+})();
+
+/* --- HUD controls --- */
+$('infoBtn').addEventListener('click',function(){
+  $('info').classList.toggle('on'); $('sheet').classList.remove('on');
+  $('infoBtn').classList.toggle('on',$('info').classList.contains('on'));
+  $('listBtn').classList.remove('on');
+});
+$('listBtn').addEventListener('click',function(){
+  var on=!$('sheet').classList.contains('on');
+  $('sheet').classList.toggle('on',on); $('info').classList.remove('on');
+  $('listBtn').classList.toggle('on',on); $('infoBtn').classList.remove('on');
+  if(on) fillSheet();
+});
+$('sx').addEventListener('click',function(){
+  $('sheet').classList.remove('on'); $('listBtn').classList.remove('on');
+});
+function fillSheet(){
+  recompute();
+  var list=objs.filter(function(o){return !o.star;})
+                .sort(function(a,b){return b.alt-a.alt;});
+  var h='';
+  for(var i=0;i<list.length;i++){
+    var o=list[i], up=o.alt>0;
+    h+='<div class="srow"><i style="background:'+o.b.c+(up?'':'55')+'"></i>'+
+       '<span><b>'+o.b.k+'</b><small>'+o.sign+' · '+o.nak+'</small></span>'+
+       '<em class="'+(up?'up':'dn')+'">'+(up
+         ? o.alt.toFixed(0)+'° up · '+compassName(o.az)
+         : Math.abs(o.alt).toFixed(0)+'° below')+'</em></div>';
+  }
+  h+='<div class="snote">Altitude is degrees above your horizon; a fist at arm’s length is about 10°. '+
+     'Anything marked below is under the Earth from where you are standing. Signs shown are sidereal.</div>';
+  $('sbody').innerHTML=h;
+}
+function compassName(az){
+  var n=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return n[Math.round(norm(az)/22.5)%16];
+}
+
+resize();
+})();
+
+</script>
+</body>
+</html>

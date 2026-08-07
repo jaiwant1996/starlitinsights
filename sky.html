@@ -146,8 +146,8 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
   color:var(--ink3);line-height:1.7}
 .hudmeta b{color:var(--gold);font-weight:400}
 
-.panel{position:absolute;left:20px;bottom:20px;width:min(330px,calc(100vw - 40px));
-  max-height:min(60vh,520px);overflow-y:auto;pointer-events:auto;border-radius:18px;
+.panel{position:absolute;left:20px;bottom:20px;z-index:4;width:min(330px,calc(100vw - 40px));
+  max-height:min(58vh,470px);overflow-y:auto;pointer-events:auto;border-radius:18px;
   border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
   box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
@@ -210,8 +210,8 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
 .drow em{font-style:normal;font-family:var(--fm);font-size:.65rem;color:var(--ink3);white-space:nowrap}
 .dnote{font-size:.7rem;line-height:1.55;color:var(--ink3);margin-top:12px;padding-top:11px;
   border-top:1px solid var(--line)}
-.scrub{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;z-index:3;
-  width:min(560px,calc(100vw - 380px));pointer-events:auto;padding:14px 18px 12px;border-radius:16px;
+.scrub{position:absolute;left:370px;right:310px;bottom:22px;z-index:5;
+  max-width:620px;margin-inline:auto;pointer-events:auto;padding:14px 18px 12px;border-radius:16px;
   border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
   box-shadow:0 24px 60px -28px rgba(0,0,0,.9)}
@@ -242,11 +242,54 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .spanrow button.on{color:var(--cyan);border-color:rgba(95,227,216,.45);background:rgba(95,227,216,.1)}
 .spanrow em{font-style:normal;margin-left:auto;font-family:var(--fm);font-size:8.5px;
   letter-spacing:.1em;color:var(--ink3);white-space:nowrap}
-@media(max-width:760px){.spanrow em{display:none}}
-.viewnote{position:absolute;left:20px;top:58px;z-index:3;max-width:260px;pointer-events:none;
-  font-family:var(--fm);font-size:9px;letter-spacing:.11em;line-height:1.9;color:var(--ink3);
-  text-transform:uppercase}
-.viewnote b{color:var(--cyan);font-weight:400}
+@media(max-width:1100px){.spanrow em{display:none}}
+.hudright{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.hudicons{display:flex;gap:7px;pointer-events:auto}
+.hicon{width:30px;height:30px;border-radius:50%;cursor:pointer;border:1px solid var(--line2);
+  background:rgba(255,255,255,.05);color:var(--ink2);font-family:var(--fd);font-size:13px;
+  line-height:1;transition:.25s;backdrop-filter:blur(10px)}
+.hicon:hover{background:rgba(255,255,255,.12);color:var(--gold);border-color:var(--gold)}
+.hicon.pulse{animation:hpulse 1.6s ease-in-out 3}
+@keyframes hpulse{0%,100%{box-shadow:0 0 0 0 rgba(242,200,121,0)}50%{box-shadow:0 0 0 6px rgba(242,200,121,.22)}}
+
+.infopop{position:absolute;left:20px;top:74px;z-index:9;width:min(300px,calc(100vw - 40px));
+  pointer-events:auto;padding:18px 18px 15px;border-radius:16px;border:1px solid var(--line2);
+  background:rgba(8,13,24,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 26px 60px -28px rgba(0,0,0,.95);
+  opacity:0;visibility:hidden;transform:translateY(-8px);transition:.4s var(--ease)}
+.infopop.on{opacity:1;visibility:visible;transform:none}
+.infopop.on ~ .hicap{opacity:0!important;visibility:hidden!important}
+.ipclose{position:absolute;top:10px;right:12px;cursor:pointer;color:var(--ink3);font-size:17px;
+  line-height:1;transition:.2s}
+.ipclose:hover{color:var(--ink)}
+.infopop>b{display:block;font-family:var(--fd);font-weight:500;font-size:.95rem;color:var(--cyan);
+  margin-bottom:7px}
+.infopop p{font-size:.79rem;line-height:1.62;color:var(--ink2);margin-bottom:13px}
+.infopop p em{font-style:italic;color:var(--ink)}
+.iplegend{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding-bottom:13px;
+  border-bottom:1px solid var(--line)}
+.iplegend span{display:flex;align-items:center;gap:9px;font-family:var(--fm);font-size:9.5px;
+  letter-spacing:.09em;color:var(--ink3)}
+.iplegend i{width:14px;height:3px;border-radius:3px;flex:0 0 auto}
+.iprow{display:flex;align-items:center;gap:5px;margin-bottom:12px}
+.iprow>span{font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);margin-right:3px}
+.iprow button{flex:1;padding:6px 4px;border-radius:8px;border:1px solid var(--line);cursor:pointer;
+  background:none;color:var(--ink3);font-family:var(--fm);font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;transition:.25s}
+.iprow button:hover{color:var(--ink2)}
+.iprow button.on{color:var(--cyan);border-color:rgba(95,227,216,.45);background:rgba(95,227,216,.1)}
+.iptip{font-size:.72rem!important;color:var(--ink3)!important;margin:0!important;line-height:1.6!important}
+.hicap{position:absolute;left:20px;top:74px;z-index:6;max-width:250px;pointer-events:none;
+  display:flex;align-items:flex-start;gap:9px;padding:11px 13px;border-radius:12px;
+  border:1px solid var(--line2);background:rgba(8,13,24,.72);backdrop-filter:blur(14px);
+  opacity:0;transform:translateY(-6px);transition:.4s var(--ease)}
+.hicap.on{opacity:1;transform:none}
+.hicap i{width:9px;height:9px;border-radius:50%;flex:0 0 auto;margin-top:4px}
+.hicap span{font-size:.79rem;line-height:1.6;color:var(--ink2)}
+.hicap b{font-family:var(--fd);font-weight:500;color:var(--ink)}
+.hicap u{text-decoration:none;font-weight:500}
+@media(max-width:1100px){.hicap{display:none}}
 .trhead{padding:11px 12px;border-radius:11px;margin-bottom:12px;
   border:1px solid rgba(95,227,216,.28);background:linear-gradient(140deg,rgba(95,227,216,.1),rgba(242,200,121,.04))}
 .trhead b{display:block;font-family:var(--fd);font-weight:500;font-size:.95rem;margin-bottom:3px}
@@ -276,10 +319,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .retrow i{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
 .retrow b{font-family:var(--fd);font-weight:500;font-size:.79rem}
 .retrow em{font-style:normal;font-family:var(--fm);font-size:.66rem;color:var(--ink3)}
-@media(max-width:760px){
-  .scrub{width:calc(100vw - 24px);left:12px;right:12px;transform:none;bottom:auto;top:112px;padding:11px 13px 10px}
-  .viewnote{display:none}
-}
 .hudbot{position:absolute;right:20px;bottom:20px;display:flex;flex-direction:column;
   align-items:flex-end;gap:10px;pointer-events:auto}
 .cta{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:100px;
@@ -298,19 +337,31 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   transition:.3s;pointer-events:auto}
 .backlink:hover{color:var(--gold)}
 
-@media(max-width:760px){
+/* ---- stacked layout: phones, tablets and narrow desktop windows ---- */
+@media(max-width:1100px){
   .card{padding:26px 20px;border-radius:20px}
   .grid2,.trio,.duo{grid-template-columns:1fr 1fr}
   .trio{grid-template-columns:.8fr 1.3fr .95fr;gap:6px}
   .ctl{font-size:16px;padding:11px}
   .tickrow span{flex:0 0 100%}
-  .panel{left:12px;right:12px;bottom:12px;width:auto;max-height:42vh}
-  .hudbot{left:12px;right:12px;bottom:auto;top:64px;align-items:stretch;flex-direction:row}
-  .cta{flex:1;justify-content:center;font-size:.8rem;padding:11px 14px}
-  .ghost{font-size:.76rem;padding:10px 13px}
+  /* --- mobile stack, bottom up: scrubber, then a collapsible sheet, then sky --- */
+  .scrub{position:absolute;left:10px;right:10px;bottom:10px;top:auto;width:auto;transform:none;
+    padding:10px 12px 9px;border-radius:14px}
+  .panel{left:10px;right:10px;width:auto;bottom:auto;top:auto;max-height:none;
+    position:absolute;bottom:calc(10px + var(--scrubh,150px) + 8px);overflow:visible}
+  .pbody{max-height:38vh;overflow-y:auto}
+  .panel.min .pbody,.panel.min .ptabs{display:none}
+  .hudbot{position:absolute;left:auto;right:10px;top:calc(10px + 44px);bottom:auto;
+    flex-direction:column;align-items:flex-end;gap:7px;z-index:4}
+  .cta{font-size:.74rem;padding:9px 14px;box-shadow:0 8px 24px -10px rgba(242,200,121,.7)}
+  .ghost{display:none}
   .tip{display:none}
-  .hudtop{padding:14px}
-  .hudmeta{font-size:9px}
+  .hudtop{padding:10px 12px}
+  .hudmeta{font-size:8.5px;line-height:1.6;max-width:150px}
+  .hudright{gap:7px}
+  .hicon{width:32px;height:32px}
+  .infopop{left:10px;right:10px;top:60px;width:auto;max-width:none}
+  .brand{font-size:.88rem}.brand svg{width:18px;height:18px}
   .cbtns .btn{flex:1 1 100%}
 }
 @media(prefers-reduced-motion:reduce){
@@ -324,6 +375,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <canvas id="warpc"></canvas>
 
 <a href="index.html" class="backlink" id="backlink">← Starlit Insights</a>
+<a href="night.html" class="backlink" style="left:auto;right:22px">Find them in the real sky →</a>
 
 <!-- ============ STAGE 1 · FORM ============ -->
 <section class="stage veil on" id="s1">
@@ -414,7 +466,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <svg viewBox="0 0 100 100" fill="none"><path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="#f2c879"/></svg>
       Starlit Insights
     </a>
-    <div class="hudmeta" id="hudmeta"></div>
+    <div class="hudright">
+      <div class="hudmeta" id="hudmeta"></div>
+      <div class="hudicons">
+        <button class="hicon" id="infobtn" title="What am I looking at?" aria-label="Info">i</button>
+        <button class="hicon" id="againTop" title="Another birth moment" aria-label="Restart">↺</button>
+      </div>
+    </div>
   </div>
 
   <div class="panel" id="panel">
@@ -434,7 +492,25 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     </div>
   </div>
 
-  <div class="viewnote" id="viewnote"></div>
+  <div class="infopop" id="infopop">
+    <div class="ipclose" id="ipclose" title="Close">×</div>
+    <b>Geocentric view</b>
+    <p>Earth sits at the centre, because that is where you were standing. Each graha is drawn at the
+    longitude it <em>appeared</em> at. Orbit spacing is for legibility, not to scale.</p>
+    <div class="iplegend">
+      <span><i style="background:#5fe3d8"></i>inner ring — 27 nakṣatras</span>
+      <span><i style="background:#f2c879"></i>outer ring — 12 rāśis</span>
+      <span><i style="background:#f2c879;opacity:.5"></i>gold beam — your lagna</span>
+    </div>
+    <div class="iprow">
+      <span>Labels</span>
+      <button type="button" data-lab="all" class="on">All</button>
+      <button type="button" data-lab="signs">Signs</button>
+      <button type="button" data-lab="min">Minimal</button>
+    </div>
+    <p class="iptip">Drag to orbit · scroll or pinch to zoom · tap a graha to light up its rāśi and nakṣatra</p>
+  </div>
+  <div class="hicap" id="hicap"></div>
 
   <div class="scrub" id="scrub">
     <div class="scrubhead">
@@ -823,7 +899,7 @@ function runWarp(){
    ================================================================== */
 var THREE_OK = (typeof THREE!=='undefined');
 var renderer,scene,cam,root,rafId,grahaMeshes=[],labelSprites=[],ctrl;
-var GMAP={},hiNak=null,hiRas=null,SELECTED=null,SCRUB=null;
+var GMAP={},hiNak=null,hiRas=null,hiLbl=null,SELECTED=null,SCRUB=null,LABELMODE='all';
 
 var GLOWTEX=null;
 function glowTexture(){
@@ -847,7 +923,7 @@ function makeGlow(color,size){
   return sp;
 }
 /* px = the on-screen height in CSS pixels this label should always occupy */
-function makeLabel(text,color,px){
+function makeLabel(text,color,px,kind){
   var pr=2, pad=10, fs=40;
   var cv=document.createElement('canvas'), cx=cv.getContext('2d');
   cx.font='600 '+fs+'px "Space Grotesk", sans-serif';
@@ -862,12 +938,15 @@ function makeLabel(text,color,px){
   var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
   sp.userData.px=(px||14)*(cv.height/pr)/fs;   /* scale target up for the padding band */
   sp.userData.aspect=cv.width/cv.height;
+  sp.userData.kind=kind||'other';
   labelSprites.push(sp);
   return sp;
 }
 /* arc segment on the ecliptic plane, used to highlight a rasi / nakshatra */
 function arcMesh(rIn,rOut,startDeg,spanDeg,color,op){
-  var g=new THREE.RingGeometry(rIn,rOut,64,1,(-startDeg-spanDeg)*D2R,spanDeg*D2R);
+  /* after rotation.x=-90deg a ring vertex at theta lands exactly where polar(r,theta)
+     puts a graha, so thetaStart IS the longitude - negating it mirrored the arc. */
+  var g=new THREE.RingGeometry(rIn,rOut,64,1,startDeg*D2R,spanDeg*D2R);
   var m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:op,
     side:THREE.DoubleSide,depthWrite:false}));
   m.rotation.x=-Math.PI/2;
@@ -918,7 +997,7 @@ function buildScene(){
     new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.16,side:THREE.BackSide})));
   root.add(new THREE.Mesh(new THREE.SphereGeometry(5.6,32,24),
     new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.05,side:THREE.BackSide})));
-  var el=makeLabel('EARTH','rgba(174,184,204,.9)',11); el.position.set(0,-5.4,0); root.add(el);
+  var el=makeLabel('EARTH','rgba(174,184,204,.9)',11,'graha'); el.position.set(0,-5.4,0); root.add(el);
 
   /* --- ecliptic disc --- */
   var disc=new THREE.Mesh(new THREE.RingGeometry(6,50,128),
@@ -933,7 +1012,7 @@ function buildScene(){
     var lon=k*(360/27), a=lon*D2R;
     tp.push(new THREE.Vector3(52*Math.cos(a),0,-52*Math.sin(a)));
     tp.push(new THREE.Vector3(56*Math.cos(a),0,-56*Math.sin(a)));
-    var lb=makeLabel(NAK[k],'rgba(120,240,230,1)',13);
+    var lb=makeLabel(NAK[k],'rgba(120,240,230,1)',13,'nak');
     lb.position.copy(polar(59.5,lon+(360/54),0)); root.add(lb);
   }
   var tg=new THREE.BufferGeometry().setFromPoints(tp);
@@ -946,7 +1025,7 @@ function buildScene(){
     var lz=z*30, az=lz*D2R;
     rp.push(new THREE.Vector3(64*Math.cos(az),0,-64*Math.sin(az)));
     rp.push(new THREE.Vector3(70*Math.cos(az),0,-70*Math.sin(az)));
-    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(248,214,145,1)',17);
+    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(248,214,145,1)',17,'rasi');
     gl.position.copy(polar(74,lz+15,0)); root.add(gl);
   }
   var rg=new THREE.BufferGeometry().setFromPoints(rp);
@@ -966,7 +1045,7 @@ function buildScene(){
       var lline=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
         new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.9}));
       root.add(lline);
-      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',15);
+      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',15,'graha');
       llb.position.copy(polar(76,data.sid,2.5)); root.add(llb);
       GMAP.Lagna={line:lline,label:llb,key:'Lagna',lon:data.sid};
       grahaMeshes.push(GMAP.Lagna);
@@ -984,7 +1063,7 @@ function buildScene(){
       new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.16}));
     root.add(spoke);
 
-    var lb2=makeLabel(B.k,hex,16);
+    var lb2=makeLabel(B.k,hex,16,'graha');
     lb2.position.copy(polar(B.r,data.sid,B.sz+3.4)); root.add(lb2);
 
     GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,
@@ -1010,11 +1089,22 @@ function loop(){
     /* hold every label at a constant on-screen pixel height, whatever the zoom */
     var vh=renderer?renderer.domElement.clientHeight:800;
     var f=2*Math.tan(cam.fov*D2R/2)/Math.max(320,vh);
+    var camD=cam.position.length();
     for(var li=0;li<labelSprites.length;li++){
-      var sp=labelSprites[li];
+      var sp=labelSprites[li], kind=sp.userData.kind||'other';
+      /* density mode */
+      var show = LABELMODE==='all' ? true
+               : LABELMODE==='signs' ? (kind!=='nak')
+               : (kind==='graha'||kind==='hi');
+      sp.visible=show;
+      if(!show) continue;
       var dist=cam.position.distanceTo(sp.position);
       var hh=sp.userData.px*f*dist;
       sp.scale.set(hh*sp.userData.aspect,hh,1);
+      /* fade whatever is round the far side - halves the visual noise, loses nothing */
+      var far=(dist-camD)/60;
+      var op=far>0 ? Math.max(kind==='graha'?0.5:0.2, 1-far*0.9) : 1;
+      sp.material.opacity=op;
     }
     if(SELECTED&&GMAP[SELECTED]&&GMAP[SELECTED].glow){
       var t=performance.now()*0.0032;
@@ -1043,15 +1133,51 @@ function selectGraha(key){
     if(G.mesh)  G.mesh.material.opacity  = 1;
     if(G.line)  G.line.material.opacity  = on?1:(any?0.25:0.9);
   }
-  if(!key){ if(hiNak)hiNak.visible=false; if(hiRas)hiRas.visible=false; return; }
-  var lon=GMAP[key]?GMAP[key].lon:0;
+  function clearLbl(){
+    if(!hiLbl) return;
+    root.remove(hiLbl);
+    var ix=labelSprites.indexOf(hiLbl); if(ix>=0) labelSprites.splice(ix,1);
+    if(hiLbl.material.map) hiLbl.material.map.dispose();
+    hiLbl.material.dispose(); hiLbl=null;
+  }
+  if(!key){
+    if(hiNak)hiNak.visible=false; if(hiRas)hiRas.visible=false;
+    clearLbl(); setHiCaption(null); return;
+  }
+  var G=GMAP[key], lon=G?G.lon:0, col=G&&G.base?G.base.c:0xf2c879;
+  var hex='#'+('000000'+col.toString(16)).slice(-6);
   var nStart=Math.floor(lon/(360/27))*(360/27), rStart=Math.floor(lon/30)*30;
+  var nIdx=Math.floor(lon/(360/27)), rIdx=Math.floor(lon/30);
+
   if(hiNak){ hiNak.geometry.dispose();
-    hiNak.geometry=new THREE.RingGeometry(52,56,64,1,(-nStart-(360/27))*D2R,(360/27)*D2R);
-    hiNak.visible=true; }
+    hiNak.geometry=new THREE.RingGeometry(52,56,64,1,nStart*D2R,(360/27)*D2R);
+    hiNak.material.color.setHex(col); hiNak.material.opacity=.42; hiNak.visible=true; }
   if(hiRas){ hiRas.geometry.dispose();
-    hiRas.geometry=new THREE.RingGeometry(64,70,64,1,(-rStart-30)*D2R,30*D2R);
-    hiRas.visible=true; }
+    hiRas.geometry=new THREE.RingGeometry(64,70,64,1,rStart*D2R,30*D2R);
+    hiRas.material.color.setHex(col); hiRas.material.opacity=.3; hiRas.visible=true; }
+
+  /* a label out past the rings, on the same spoke, naming what is lit up.
+     The lagna is skipped - it never moves and already carries a permanent label. */
+  clearLbl();
+  if(key!=='Lagna'){
+    hiLbl=makeLabel('▲ '+key.toUpperCase()+'  is here',hex,15,'hi');
+    hiLbl.position.copy(polar(80,lon,3));
+    root.add(hiLbl);
+  }
+
+  setHiCaption(key,SIGN[rIdx],NAK[nIdx],hex);
+}
+
+/* the same thing in words, top-left, so nothing has to be guessed */
+function setHiCaption(key,sign,nak,hex){
+  var el=document.getElementById('hicap'); if(!el) return;
+  if(!key){ el.classList.remove('on'); el.innerHTML=''; return; }
+  el.innerHTML='<i style="background:'+hex+'"></i>'+
+    '<span>'+(key==='Lagna'
+      ? '<b>Your lagna</b> is fixed at<br>'
+      : '<b>'+key+'</b> is lighting up<br>')+
+    '<u style="color:'+hex+'">'+sign+'</u> and <u style="color:'+hex+'">'+nak+'</u> on the rings</span>';
+  el.classList.add('on');
 }
 
 /* simple spherical orbit controls (no external dependency) */
@@ -1139,8 +1265,8 @@ function revealScene(){
   });
   renderDasha();
   try{ renderTransit(todayJD()); }catch(e){}
-  $('viewnote').innerHTML='<b>Geocentric view</b> — Earth at centre,<br>each graha at its apparent<br>'+
-    'ecliptic longitude. Orbit sizes<br>are spaced to be readable,<br>not to scale.';
+  if(window.__introInfo) window.__introInfo();
+  setTimeout(fitMobile,60);
   if(window.__scrubInit) window.__scrubInit();
   setTimeout(function(){
     try{ $('pDas').insertAdjacentHTML('beforeend', renderReturns()); }catch(e){}
@@ -1148,6 +1274,13 @@ function revealScene(){
   $('hud').classList.add('on');
 }
 $('pmin').addEventListener('click',function(){
+  var p=$('panel'); p.classList.toggle('min');
+  $('pmin').textContent=p.classList.contains('min')?'+':'–';
+});
+/* on mobile the whole header is the tap target - easier than a 26px circle */
+$('panel').querySelector('.phead').addEventListener('click',function(e){
+  if(e.target.closest('#pmin')) return;
+  if(!window.matchMedia('(max-width:1100px)').matches) return;
   var p=$('panel'); p.classList.toggle('min');
   $('pmin').textContent=p.classList.contains('min')?'+':'–';
 });
@@ -1320,6 +1453,8 @@ $('ptabs').addEventListener('click',function(e){
   var b=e.target.closest('.ptab'); if(!b)return;
   $('ptabs').querySelectorAll('.ptab').forEach(function(x){x.classList.toggle('on',x===b);});
   ['pSky','pTra','pDas'].forEach(function(id){ $(id).classList.toggle('on',id===b.dataset.pane); });
+  var pnl=$('panel');
+  if(pnl.classList.contains('min')){ pnl.classList.remove('min'); $('pmin').textContent='–'; }
   $('ptitle').textContent = b.dataset.pane==='pDas' ? 'Vimśottarī daśā'
                           : b.dataset.pane==='pTra' ? 'Transits (gochara)'
                           : 'Your sky, that moment';
@@ -1458,7 +1593,9 @@ function placeAt(jd){
     catch(e){ stopPlay(); if(window.console) console.error('sky: playback halted',e); }
   }
   $('scrub').addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(!b)return;
+    /* match only the transport buttons - the speed buttons are also <button>
+       elements, and catching them here was halting playback on every change */
+    var b=e.target.closest('[data-j]'); if(!b)return;
     var j=b.dataset.j;
     if(j==='play'){ PLAYING?stopPlay():startPlay(); return; }
     stopPlay();
@@ -1583,6 +1720,53 @@ function renderTransit(jd){
      'is not computed here. Positions are exact; the interpretation is a starting point, not a verdict.</div>';
   $('pTra').innerHTML=h;
 }
+
+
+/* ==================================================================
+   13. DECLUTTER  —  info popover, label density, mobile sheet
+   ================================================================== */
+(function(){
+  var pop=$('infopop'), btn=$('infobtn');
+  function open(){ pop.classList.add('on'); }
+  function close(){ pop.classList.remove('on'); }
+  btn.addEventListener('click',function(){ pop.classList.toggle('on'); });
+  $('ipclose').addEventListener('click',close);
+  document.addEventListener('click',function(e){
+    if(pop.classList.contains('on') && !e.target.closest('#infopop') && !e.target.closest('#infobtn')) close();
+  });
+  /* show it once on arrival, then get out of the way */
+  window.__introInfo=function(){
+    setTimeout(function(){ open(); },900);
+    setTimeout(function(){ close(); btn.classList.add('pulse');
+      setTimeout(function(){ btn.classList.remove('pulse'); },5200);
+    },9000);
+  };
+
+  /* label density — nothing is deleted, just held back until wanted */
+  $('infopop').addEventListener('click',function(e){
+    var b=e.target.closest('[data-lab]'); if(!b) return;
+    LABELMODE=b.dataset.lab;
+    $('infopop').querySelectorAll('[data-lab]').forEach(function(x){
+      x.classList.toggle('on', x===b);
+    });
+  });
+
+  $('againTop').addEventListener('click',function(){ $('again').click(); });
+})();
+
+/* mobile: the panel starts collapsed so the sky is the hero */
+function fitMobile(){
+  var mob=window.matchMedia('(max-width:1100px)').matches;
+  var sc=$('scrub'), pn=$('panel');
+  if(!sc||!pn) return;
+  if(mob){
+    document.documentElement.style.setProperty('--scrubh', sc.offsetHeight+'px');
+    if(!pn.dataset.init){ pn.classList.add('min'); $('pmin').textContent='+'; pn.dataset.init='1'; }
+  } else {
+    document.documentElement.style.removeProperty('--scrubh');
+  }
+}
+window.addEventListener('resize',fitMobile);
 
 /* graceful degradation if WebGL/Three fails */
 if(!THREE_OK){
