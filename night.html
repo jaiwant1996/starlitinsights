@@ -750,10 +750,14 @@ function draw(){
     }
 
     if(t<0.99){
-      /* direction on screen: mirror the vector when the object is behind us */
+      /* Screen bearing is simply (x, -y) in device space — and it stays correct
+         whether the object is in front or behind. The old code mirrored it once
+         the object passed 90 degrees, which reversed every arrow at the crossover
+         and made them flick from side to side. */
       var sx=dv[0], sy=-dv[1];
-      if(fwd<=0){ sx=-sx; sy=-sy; }
-      var m=Math.hypot(sx,sy)||1; sx/=m; sy/=m;
+      var m=Math.hypot(sx,sy);
+      if(m<1e-4){ sx=0; sy=1; m=1; }        /* dead astern: point down, don't spin */
+      sx/=m; sy/=m;
       var rad=Math.min(W,H)/2-36;
       var ex=W/2+sx*rad, ey=H/2+sy*rad;
       ctx.globalAlpha=1-t;
@@ -829,6 +833,7 @@ function fail(msg){ $('gerr').textContent=msg; $('gerr').classList.add('on'); }
 
 function begin(lat,lon,label){
   LAT=lat; LON=lon; PLACE=label;
+  try{ localStorage.setItem('si_place',JSON.stringify({lat:lat,lon:lon,label:label})); }catch(e){}
   resize(); recompute();
   $('gate').classList.add('gone');
   setTimeout(function(){ $('hud').classList.add('on'); },420);
@@ -907,6 +912,19 @@ function showPicker(msg){
 }
 $('manual').addEventListener('click',function(){ askMotion(); showPicker(''); });
 
+/* offer the place used last time */
+(function recall(){
+  var raw; try{ raw=localStorage.getItem('si_place'); }catch(e){}
+  if(!raw) return;
+  var v; try{ v=JSON.parse(raw); }catch(e){ return; }
+  if(!v||typeof v.lat!=='number') return;
+  var b=document.createElement('button');
+  b.className='gsub'; b.style.cssText='display:block;margin:10px auto 0';
+  b.textContent='Use '+v.label+' again';
+  b.addEventListener('click',function(){ askMotion().then(function(){ begin(v.lat,v.lon,v.label); }); });
+  $('manual').parentNode.insertBefore(b,$('gerr'));
+})();
+
 /* city search */
 (function picker(){
   var inp=$('cityin'), list=$('plist'), cur=[];
@@ -979,5 +997,6 @@ resize();
 })();
 
 </script>
+<script src="consent.js" defer></script>
 </body>
 </html>

@@ -40,7 +40,7 @@ button,input,select{font:inherit;color:inherit}
 #warpc.on{opacity:1}
 
 .stage{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
-  padding:24px;opacity:0;visibility:hidden;transition:opacity .7s var(--ease),visibility .7s}
+  padding:72px 22px 26px;opacity:0;visibility:hidden;transition:opacity .7s var(--ease),visibility .7s}
 .stage.on{opacity:1;visibility:visible}
 .stage.veil{background:radial-gradient(ellipse at 50% 40%,rgba(8,13,24,.86),rgba(2,4,9,.96))}
 
@@ -56,7 +56,7 @@ h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold),#fff6e0 40
 .lead{color:var(--ink2);font-size:clamp(.92rem,1.6vw,1.04rem);line-height:1.68;max-width:56ch}
 
 /* ---------- form card ---------- */
-.card{width:min(560px,100%);max-height:92vh;overflow-y:auto;padding:34px 32px;border-radius:24px;
+.card{width:min(560px,100%);max-height:calc(100vh - 104px);overflow-y:auto;padding:34px 32px;border-radius:24px;
   border:1px solid var(--line);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
   box-shadow:0 40px 100px -40px rgba(0,0,0,.9)}
@@ -108,7 +108,7 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
 .errmsg.on{display:block}
 
 /* ---------- confirm stage ---------- */
-.confirm{width:min(620px,100%);text-align:center}
+.confirm{width:min(620px,100%);max-height:calc(100vh - 104px);overflow-y:auto;text-align:center}
 .tick{display:flex;flex-direction:column;gap:1px;margin:26px 0 30px;border-radius:16px;
   overflow:hidden;border:1px solid var(--line);text-align:left}
 .tickrow{display:flex;gap:16px;padding:13px 17px;background:rgba(255,255,255,.03);flex-wrap:wrap}
@@ -387,7 +387,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <p class="lead" style="margin-bottom:26px">
       Give me the moment you were born and I'll rebuild that sky around you — all nine grahas at their
       true sidereal positions, ringed by the 27 nakṣatras. Then travel forward through your life and
-      watch them move. Nothing is stored or sent anywhere.
+      watch them move. Your details are remembered on this device only, and never sent anywhere.
       <br><br><span style="font-size:.82rem;color:var(--ink3)">
       <b style="color:var(--cyan);font-weight:500">Geocentric view.</b> Earth sits at the centre, because
       that is where you were standing. Each graha is placed at the ecliptic longitude it <em>appeared</em>
@@ -411,6 +411,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
         <select class="ctl" id="bmin" aria-label="Minute"></select>
       </div>
     </div>
+
+    <div class="savedbar" id="savedbar"></div>
 
     <div class="field ac">
       <label for="bplace">Place of birth</label>
@@ -791,6 +793,39 @@ function clearFail(){
   $(i).addEventListener('change',clearFail); $(i).addEventListener('input',clearFail);
 });
 
+/* ---- remembered birth details ---------------------------------------- */
+function readSaved(){
+  var raw; try{ raw=localStorage.getItem('si_birth'); }catch(e){ return null; }
+  if(!raw) return null;
+  try{ var v=JSON.parse(raw); return (v&&v.y&&v.mo&&v.d)?v:null; }catch(e){ return null; }
+}
+function applySaved(v){
+  $('bday').value=v.d; $('bmon').value=v.mo; $('byear').value=v.y;
+  $('bhour').value=v.h; $('bmin').value=v.mi;
+  $('bplace').value=v.label||''; $('btz').value=String(v.tz);
+  $('blat').value=v.lat; $('blon').value=v.lon;
+  place={n:v.label||'',r:'',lat:v.lat,lon:v.lon,tz:v.tz};
+  clearFail();
+}
+function showSaved(){
+  var el=$('savedbar'); if(!el) return;
+  var v=readSaved();
+  if(!v){ el.classList.remove('on'); return; }
+  el.innerHTML='<span>Saved on this device</span><b>'+v.d+' '+MON[v.mo-1]+' '+v.y+
+    ' · '+String(v.h).padStart(2,'0')+':'+String(v.mi).padStart(2,'0')+
+    (v.label?' · '+v.label:'')+'</b><button type="button" id="forget">Forget</button>';
+  el.classList.add('on');
+  $('forget').addEventListener('click',function(){
+    try{ localStorage.removeItem('si_birth'); }catch(e){}
+    el.classList.remove('on');
+    ['bday','bmon','byear','bhour','bmin'].forEach(function(i){ $(i).value=''; });
+    $('bplace').value=''; $('blat').value=''; $('blon').value=''; place=null;
+  });
+}
+(function initSaved(){
+  var v=readSaved(); if(v){ applySaved(v); showSaved(); }
+})();
+
 $('go').addEventListener('click',function(){
   var d=$('bday').value,mo=$('bmon').value,y=$('byear').value,h=$('bhour').value,mi=$('bmin').value;
   if(!d||!mo||!y) return fail('Pick a day, month and year.',[!d?'bday':'', !mo?'bmon':'', !y?'byear':''].filter(Boolean));
@@ -809,6 +844,8 @@ $('go').addEventListener('click',function(){
   if(lon<-180||lon>180) return fail('Longitude must be between −180 and 180.',['blon']);
   clearFail();
   BIRTH={y:y,mo:mo,d:d,h:h,mi:mi,tz:tz,lat:lat,lon:lon,label:label};
+  try{ localStorage.setItem('si_birth',JSON.stringify(BIRTH)); }catch(e){}
+  showSaved();
   CHART=computeChart(y,mo,d,h,mi,tz,lat,lon);
   showConfirm();
 });
@@ -1782,5 +1819,6 @@ if(!THREE_OK){
 }
 })();
 </script>
+<script src="consent.js" defer></script>
 </body>
 </html>
