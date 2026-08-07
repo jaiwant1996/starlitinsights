@@ -71,7 +71,7 @@
       if (!v || !v.y) return '';
       var s = v.d + ' ' + MON[v.mo - 1] + ' ' + v.y;
       if (v.h !== undefined && v.h !== null && v.h !== '') s += ' · ' + pad(+v.h) + ':' + pad(+(v.mi || 0));
-      if (v.place) s += ' · ' + v.place;
+      if (v.place) s += ' · ' + String(v.place).replace(/[\s,]+$/, '').replace(/,\s*,+/g, ',');
       return s;
     },
     onChange: function (fn) { if (typeof fn === 'function') subs.push(fn); }

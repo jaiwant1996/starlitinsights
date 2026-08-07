@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Your Birth Sky in 3D — Starlit Insights</title>
-<meta name="description" content="Travel back to the moment you were born and see the sky in three dimensions — all nine grahas at their true sidereal positions, ringed by the 27 nakshatras. Runs entirely in your browser.">
+<title>Your Birth Sky from Outside — Heliocentric 3D | Starlit Insights</title>
+<meta name="description" content="See the solar system as it truly stood at the minute you were born — real orbits, real distances — with sight-lines from Earth showing exactly why each planet appeared in the sign it did. Runs entirely in your browser.">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Your Birth Sky in 3D — Starlit Insights">
-<meta property="og:description" content="See where every planet actually stood at the moment you were born.">
-<meta property="og:url" content="https://starlitinsights.com/sky.html">
-<link rel="canonical" href="https://starlitinsights.com/sky.html">
+<meta property="og:title" content="Your Birth Sky from Outside — Heliocentric 3D">
+<meta property="og:description" content="The solar system at your birth minute, and the geometry that turns it into a birth chart.">
+<meta property="og:url" content="https://starlitinsights.com/sky-helio.html">
+<link rel="canonical" href="https://starlitinsights.com/sky-helio.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -386,7 +386,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <canvas id="warpc"></canvas>
 
 <a href="index.html" class="backlink" id="backlink">← Starlit Insights</a>
-<a href="sky-helio.html" class="backlink blink2" id="skylink">Sun-centred view →</a>
+<a href="sky.html" class="backlink blink2" id="skylink">Earth-centred view →</a>
 
 <!-- ============ STAGE 1 · FORM ============ -->
 <section class="stage veil on" id="s1">
@@ -395,14 +395,14 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <div class="eyebrow">Runs entirely in your browser</div>
     <h1>Where were the stars<br><em>when you arrived?</em></h1>
     <p class="lead" style="margin-bottom:26px">
-      Give me the moment you were born and I'll rebuild that sky around you — all nine grahas at their
-      true sidereal positions, ringed by the 27 nakṣatras. Then travel forward through your life and
-      watch them move. Your details are remembered on this device only, and never sent anywhere.
+      Give me the moment you were born and I'll rebuild the solar system as it actually stood — real
+      orbits, real distances, seen from outside. Then travel forward through your life and watch it turn.
+      Your details are remembered on this device only, and never sent anywhere.
       <br><br><span style="font-size:.82rem;color:var(--ink3)">
-      <b style="color:var(--cyan);font-weight:500">Geocentric view.</b> Earth sits at the centre, because
-      that is where you were standing. Each graha is placed at the ecliptic longitude it <em>appeared</em>
-      at from your birthplace — the same frame a birth chart uses. Orbit sizes are spaced for legibility,
-      not to scale.</span>
+      <b style="color:var(--cyan);font-weight:500">Heliocentric view.</b> The Sun sits at the centre,
+      because that is the truth of it. A line runs from Earth through each planet and out to the zodiac —
+      that line is <em>why</em> the planet appeared in the sign your chart records. Watch Earth overtake
+      Mars and you are watching retrograde motion happen.</span>
     </p>
 
     <div class="field">
@@ -508,13 +508,21 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
   <div class="infopop" id="infopop">
     <div class="ipclose" id="ipclose" title="Close">×</div>
-    <b>Geocentric view</b>
-    <p>Earth sits at the centre, because that is where you were standing. Each graha is drawn at the
-    longitude it <em>appeared</em> at. Orbit spacing is for legibility, not to scale.</p>
+    <b>Heliocentric view</b>
+    <p>The Sun at the centre, planets on their real elliptical orbits, each tilted by its true
+    inclination. This is the arrangement that actually existed at your birth minute.</p>
+    <p>The faint ray from Earth through each planet, out to the zodiac ring, is <em>why</em> that
+    planet appears in the sign your chart records. Play the timeline and watch Earth overtake Mars —
+    that is retrograde motion, seen from outside.</p>
     <div class="iplegend">
-      <span><i style="background:#5fe3d8"></i>inner ring — 27 nakṣatras</span>
       <span><i style="background:#f2c879"></i>outer ring — 12 rāśis</span>
-      <span><i style="background:#f2c879;opacity:.5"></i>gold beam — your lagna</span>
+      <span><i style="background:#5fe3d8"></i>inner ticks — 27 nakṣatras</span>
+      <span><i style="background:#8b6fb8"></i>violet line — Rāhu / Ketu axis</span>
+    </div>
+    <div class="iprow">
+      <span>Scale</span>
+      <button type="button" data-scale="true" class="on">True</button>
+      <button type="button" data-scale="comp">Readable</button>
     </div>
     <div class="iprow">
       <span>Labels</span>
@@ -522,7 +530,12 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <button type="button" data-lab="signs">Signs</button>
       <button type="button" data-lab="min">Minimal</button>
     </div>
-    <p class="iptip">Drag to orbit · scroll or pinch to zoom · tap a graha to light up its rāśi and nakṣatra</p>
+    <p class="iptip"><b style="color:#ff9db2">Honest limits.</b> The <em>lagna</em> cannot exist here —
+    it needs a horizon, and there is no horizon in space. Rāhu and Ketu are not objects: they are the two
+    points where the Moon's tilted orbit crosses Earth's, drawn as the violet line. The Moon's distance is
+    exaggerated or it would be invisible. <em>True</em> scale is shown by default and every sight-line is
+    exact. <em>Readable</em> compresses distances past Mars so the inner system is easier to see; that tilts
+    Jupiter's line about 1.5° and Saturn's about 5°, while Mercury through Mars stay exact.</p>
   </div>
   <div class="hicap" id="hicap"></div>
 
@@ -969,7 +982,7 @@ function runWarp(){
    ================================================================== */
 var THREE_OK = (typeof THREE!=='undefined');
 var renderer,scene,cam,root,rafId,grahaMeshes=[],labelSprites=[],ctrl;
-var GMAP={},hiNak=null,hiRas=null,hiLbl=null,SELECTED=null,SCRUB=null,LABELMODE='all';
+var GMAP={},hiNak=null,hiRas=null,hiLbl=null,SELECTED=null,SCRUB=null,LABELMODE='all',NODES=null,ZGRP=null;
 
 var GLOWTEX=null;
 function glowTexture(){
@@ -1033,24 +1046,98 @@ function ringLine(radius,color,opacity,segs){
   return new THREE.Line(g,new THREE.LineBasicMaterial({color:color,transparent:true,opacity:opacity}));
 }
 
+/* ==================================================================
+   HELIOCENTRIC ORRERY
+
+   Real Keplerian orbits, drawn as true ellipses with the Sun at a focus and
+   each orbit tilted by its actual inclination. Distances can be shown either
+   true to scale or compressed, because at true scale Mercury and Venus crowd
+   into the Sun's glare while Saturn sits off in the dark.
+
+   The teaching device is the sight-line: a ray from Earth, through the planet,
+   continuing out to the zodiac ring. Where it lands IS the sign the birth chart
+   records. Watch Earth overtake Mars and retrograde motion explains itself.
+
+   Two honest omissions, stated on the page: the lagna cannot exist in this
+   frame (it needs a horizon), and Rahu and Ketu are not bodies — they appear
+   here as the line of nodes through Earth, which is exactly what they are.
+   ================================================================== */
+var PLANETS=[
+ {k:'Mercury',s:'Budha',  c:0x5fe3d8, au:0.387, sz:0.75},
+ {k:'Venus',  s:'Śukra',  c:0xf2c879, au:0.723, sz:1.05},
+ {k:'Earth',  s:'Bhūmi',  c:0x5f9ee3, au:1.000, sz:1.15},
+ {k:'Mars',   s:'Maṅgala',c:0xff7a7a, au:1.524, sz:0.85},
+ {k:'Jupiter',s:'Guru',   c:0xffd98a, au:5.203, sz:2.3 },
+ {k:'Saturn', s:'Śani',   c:0x5f9ee3, au:9.537, sz:2.0 }
+];
+var TRUE_SCALE=true, RING_R=96, MOON_R=3.4;
+
+/* Compressing distances rotates the Earth->planet direction, because Earth gets
+   moved too. A plain r^0.62 curve threw Venus's sight-line 11 degrees off — a
+   third of a sign. So the readable scale stays perfectly LINEAR out to 2 AU,
+   which covers Mercury through Mars, and only compresses beyond that. The inner
+   sight-lines are then exact; Jupiter drifts 1.5 deg and Saturn 4.8 deg, and the
+   info card says so. True scale is exact for everything. */
+function auToScene(au){
+  if(TRUE_SCALE) return au*7.6;
+  return au<=2 ? au*11 : 22+Math.pow(au-2,0.55)*12;
+}
+/* sample a real ellipse from the same elements the ephemeris uses */
+function orbitPath(name,T,N){
+  var e0=EL[name], pts=[];
+  var a=e0[0]+e0[1]*T, e=e0[2]+e0[3]*T, I=(e0[4]+e0[5]*T)*D2R;
+  var wb=e0[8]+e0[9]*T, om=(e0[10]+e0[11]*T)*D2R, w=wb*D2R-om;
+  var cw=Math.cos(w),sw=Math.sin(w),co=Math.cos(om),so=Math.sin(om),ci=Math.cos(I),si=Math.sin(I);
+  for(var q=0;q<=N;q++){
+    var E=q/N*6.2831853;
+    var xp=a*(Math.cos(E)-e), yp=a*Math.sqrt(1-e*e)*Math.sin(E);
+    var X=(cw*co-sw*so*ci)*xp+(-sw*co-cw*so*ci)*yp;
+    var Y=(cw*so+sw*co*ci)*xp+(-sw*so+cw*co*ci)*yp;
+    var Z=(sw*si)*xp+(cw*si)*yp;
+    pts.push(auVec(X,Y,Z));
+  }
+  return pts;
+}
+/* heliocentric AU -> scene, keeping direction exact and only rescaling radius */
+function auVec(X,Y,Z){
+  var r=Math.sqrt(X*X+Y*Y+Z*Z);
+  if(r<1e-9) return new THREE.Vector3(0,0,0);
+  var R=auToScene(r), k=R/r;
+  return new THREE.Vector3(X*k, Z*k, -Y*k);     /* ecliptic plane -> XZ, north -> +Y */
+}
+/* the ring is centred on Earth, so the ray just runs out to RING_R along the
+   Earth->planet direction. Exact: no parallax, no correction needed. */
+function ringHit(A,B){
+  var dx=B.x-A.x, dz=B.z-A.z;
+  var len=Math.hypot(dx,dz);
+  if(len<1e-6) return A.clone();
+  return new THREE.Vector3(A.x+dx/len*RING_R, 0, A.z+dz/len*RING_R);
+}
+function bodyVec(name,T){
+  var v=helio(name,T);
+  return auVec(v[0],v[1],v[2]);
+}
+
 function buildScene(){
   if(!THREE_OK) return;
   teardown();
   var cv=$('scene');
-  renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});
+  renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   renderer.setSize(innerWidth,innerHeight);
   scene=new THREE.Scene();
-  scene.fog=new THREE.FogExp2(0x04060c,0.0032);
-  cam=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,3000);
+  scene.fog=new THREE.FogExp2(0x04060c,0.0022);
+  cam=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,4000);
   root=new THREE.Group(); scene.add(root);
+  labelSprites=[];
+
+  var T=T_of(CHART._jd);
 
   /* --- starfield --- */
-  labelSprites=[];
   var SN=RM?800:2600, pos=new Float32Array(SN*3), col=new Float32Array(SN*3);
   for(var i=0;i<SN;i++){
-    var u=Math.random()*2-1, th=Math.random()*6.2832, rr=Math.sqrt(1-u*u), R=340+Math.random()*260;
-    pos[i*3]=R*rr*Math.cos(th); pos[i*3+1]=R*u*0.7; pos[i*3+2]=R*rr*Math.sin(th);
+    var u=Math.random()*2-1, th=Math.random()*6.2832, rr=Math.sqrt(1-u*u), R=420+Math.random()*320;
+    pos[i*3]=R*rr*Math.cos(th); pos[i*3+1]=R*u*0.75; pos[i*3+2]=R*rr*Math.sin(th);
     var t=Math.random(), c=t<0.14?[0.95,0.78,0.47]:(t<0.3?[0.37,0.89,0.85]:[1,1,1]), b=0.35+Math.random()*0.65;
     col[i*3]=c[0]*b; col[i*3+1]=c[1]*b; col[i*3+2]=c[2]*b;
   }
@@ -1059,94 +1146,107 @@ function buildScene(){
   sg.setAttribute('color',new THREE.BufferAttribute(col,3));
   scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:1.7,vertexColors:true,transparent:true,opacity:.95,sizeAttenuation:true})));
 
-  /* --- Earth at centre --- */
-  var earth=new THREE.Mesh(new THREE.SphereGeometry(3,32,24),
-    new THREE.MeshBasicMaterial({color:0x2a4a7a}));
-  root.add(earth);
-  root.add(new THREE.Mesh(new THREE.SphereGeometry(3.5,32,24),
-    new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.16,side:THREE.BackSide})));
-  root.add(new THREE.Mesh(new THREE.SphereGeometry(5.6,32,24),
-    new THREE.MeshBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.05,side:THREE.BackSide})));
-  var el=makeLabel('EARTH','rgba(174,184,204,.9)',11,'graha'); el.position.set(0,-5.4,0); root.add(el);
+  /* --- the Sun --- */
+  root.add(new THREE.Mesh(new THREE.SphereGeometry(2.1,32,24),
+    new THREE.MeshBasicMaterial({color:0xffcf7a})));
+  var sunGlow=makeGlow(0xffb056,26); sunGlow.position.set(0,0,0); root.add(sunGlow);
+  var sl=makeLabel('SUN · Sūrya','rgba(255,208,130,1)',14,'graha');
+  sl.position.set(0,-4.6,0); root.add(sl);
 
-  /* --- ecliptic disc --- */
-  var disc=new THREE.Mesh(new THREE.RingGeometry(6,50,128),
-    new THREE.MeshBasicMaterial({color:0x2a3050,transparent:true,opacity:.16,side:THREE.DoubleSide}));
+  /* --- ecliptic plane disc --- */
+  var disc=new THREE.Mesh(new THREE.RingGeometry(3,RING_R-14,128),
+    new THREE.MeshBasicMaterial({color:0x223052,transparent:true,opacity:.1,side:THREE.DoubleSide}));
   disc.rotation.x=-Math.PI/2; root.add(disc);
 
-  /* --- nakshatra ring --- */
-  root.add(ringLine(52,0x5fe3d8,.38));
-  root.add(ringLine(56,0x5fe3d8,.16));
-  var tp=[];
-  for(var k=0;k<27;k++){
-    var lon=k*(360/27), a=lon*D2R;
-    tp.push(new THREE.Vector3(52*Math.cos(a),0,-52*Math.sin(a)));
-    tp.push(new THREE.Vector3(56*Math.cos(a),0,-56*Math.sin(a)));
-    var lb=makeLabel(NAK[k],'rgba(120,240,230,1)',13,'nak');
-    lb.position.copy(polar(59.5,lon+(360/54),0)); root.add(lb);
-  }
-  var tg=new THREE.BufferGeometry().setFromPoints(tp);
-  root.add(new THREE.LineSegments(tg,new THREE.LineBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.42})));
+  /* --- zodiac ring ---
+     Centred on EARTH, not the Sun. The zodiac is an Earth-centred construct, and
+     drawing it that way makes every sight-line land on its true sign by
+     construction — no parallax error to explain away. It rides with Earth as the
+     timeline plays, which is exactly what the real thing does. */
+  ZGRP=new THREE.Group(); root.add(ZGRP);
 
-  /* --- rashi ring --- */
-  root.add(ringLine(64,0xf2c879,.3));
+  ZGRP.add(ringLine(RING_R,0xf2c879,.3));
   var rp=[];
   for(var z=0;z<12;z++){
-    var lz=z*30, az=lz*D2R;
-    rp.push(new THREE.Vector3(64*Math.cos(az),0,-64*Math.sin(az)));
-    rp.push(new THREE.Vector3(70*Math.cos(az),0,-70*Math.sin(az)));
-    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(248,214,145,1)',17,'rasi');
-    gl.position.copy(polar(74,lz+15,0)); root.add(gl);
+    var lz=z*30+CHART._ay, az=lz*D2R;
+    rp.push(new THREE.Vector3(RING_R*Math.cos(az),0,-RING_R*Math.sin(az)));
+    rp.push(new THREE.Vector3((RING_R+7)*Math.cos(az),0,-(RING_R+7)*Math.sin(az)));
+    var gl=makeLabel(GLYPH[z]+'  '+SIGN[z],'rgba(248,214,145,1)',16,'rasi');
+    gl.position.copy(polar(RING_R+13,lz+15,0)); ZGRP.add(gl);
   }
-  var rg=new THREE.BufferGeometry().setFromPoints(rp);
-  root.add(new THREE.LineSegments(rg,new THREE.LineBasicMaterial({color:0xf2c879,transparent:true,opacity:.36})));
+  ZGRP.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(rp),
+    new THREE.LineBasicMaterial({color:0xf2c879,transparent:true,opacity:.36})));
 
-  /* --- highlight arcs (hidden until a graha is selected) --- */
-  hiNak=arcMesh(52,56,0,360/27,0x5fe3d8,.3); hiNak.visible=false; root.add(hiNak);
-  hiRas=arcMesh(64,70,0,30,0xf2c879,.22);    hiRas.visible=false; root.add(hiRas);
+  ZGRP.add(ringLine(RING_R-8,0x5fe3d8,.26));
+  var tp=[];
+  for(var k2=0;k2<27;k2++){
+    var d2=(k2*(360/27)+CHART._ay)*D2R;
+    tp.push(new THREE.Vector3((RING_R-8)*Math.cos(d2),0,-(RING_R-8)*Math.sin(d2)));
+    tp.push(new THREE.Vector3((RING_R-4)*Math.cos(d2),0,-(RING_R-4)*Math.sin(d2)));
+  }
+  ZGRP.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tp),
+    new THREE.LineBasicMaterial({color:0x5fe3d8,transparent:true,opacity:.34})));
 
-  /* --- grahas --- */
+  /* --- highlight arcs, also Earth-centred --- */
+  hiNak=arcMesh(RING_R-8,RING_R-4,0,360/27,0x5fe3d8,.4); hiNak.visible=false; ZGRP.add(hiNak);
+  hiRas=arcMesh(RING_R,RING_R+7,0,30,0xf2c879,.28);      hiRas.visible=false; ZGRP.add(hiRas);
+
+  /* --- planets, their true elliptical orbits, and the sight-lines --- */
   grahaMeshes=[]; GMAP={};
-  for(var b=0;b<BODIES.length;b++){
-    var B=BODIES[b], data=CHART[B.k]; if(!data) continue;
+  for(var b=0;b<PLANETS.length;b++){
+    var B=PLANETS[b], nm=B.k.toLowerCase();
     var hex='#'+('000000'+B.c.toString(16)).slice(-6);
 
-    if(B.k==='Lagna'){
-      var lline=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
-        new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.9}));
-      root.add(lline);
-      var llb=makeLabel('LAGNA rising','rgba(242,200,121,1)',15,'graha');
-      llb.position.copy(polar(76,data.sid,2.5)); root.add(llb);
-      GMAP.Lagna={line:lline,label:llb,key:'Lagna',lon:data.sid};
-      grahaMeshes.push(GMAP.Lagna);
-      continue;
-    }
+    var orb=new THREE.Line(new THREE.BufferGeometry().setFromPoints(orbitPath(nm,T,160)),
+      new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:B.k==='Earth'?.4:.22}));
+    root.add(orb);
 
-    var orb=ringLine(B.r,B.c,.09,120); root.add(orb);
     var m=new THREE.Mesh(new THREE.SphereGeometry(B.sz,24,18),new THREE.MeshBasicMaterial({color:B.c}));
-    m.position.copy(polar(B.r,data.sid,0)); root.add(m);
+    var p0=bodyVec(nm,T); m.position.copy(p0); root.add(m);
+    var gl2=makeGlow(B.c,B.sz*7); gl2.position.copy(p0); root.add(gl2);
+    var lb=makeLabel(B.k,hex,15,'graha'); lb.position.copy(p0.clone().setY(p0.y+B.sz+3.4)); root.add(lb);
 
-    var gl=makeGlow(B.c,B.sz*7); gl.position.copy(m.position); root.add(gl);
-
-    /* spoke now runs all the way out to the rasi ring so you can read the placement */
-    var spoke=new THREE.Line(new THREE.BufferGeometry().setFromPoints([polar(4,data.sid,0),polar(70,data.sid,0)]),
-      new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.16}));
-    root.add(spoke);
-
-    var lb2=makeLabel(B.k,hex,16,'graha');
-    lb2.position.copy(polar(B.r,data.sid,B.sz+3.4)); root.add(lb2);
-
-    GMAP[B.k]={mesh:m,glow:gl,spoke:spoke,label:lb2,orbit:orb,
-               key:B.k,base:B,lon:data.sid,natalLon:data.sid,hex:hex};
+    /* the ray from Earth out to the zodiac — the whole point of this view */
+    var sight=null;
+    if(B.k!=='Earth'){
+      sight=new THREE.Line(new THREE.BufferGeometry().setFromPoints([p0,p0]),
+        new THREE.LineBasicMaterial({color:B.c,transparent:true,opacity:.2}));
+      root.add(sight);
+    }
+    GMAP[B.k]={mesh:m,glow:gl2,label:lb,orbit:orb,spoke:sight,key:B.k,base:B,name:nm,hex:hex,lon:0};
     grahaMeshes.push(GMAP[B.k]);
   }
 
-  cam.position.set(0,86,104);
+  /* --- Earth marker, Moon, and the line of nodes --- */
+  var eP=bodyVec('earth',T);
+  var youLbl=makeLabel('▲ YOU WERE HERE','rgba(95,158,227,1)',13,'graha');
+  youLbl.position.copy(eP.clone().setY(eP.y-5)); root.add(youLbl);
+  GMAP.Earth.you=youLbl;
+
+  var moon=new THREE.Mesh(new THREE.SphereGeometry(0.5,16,12),
+    new THREE.MeshBasicMaterial({color:0xdfe7f5}));
+  root.add(moon);
+  var moonOrb=ringLine(MOON_R,0xdfe7f5,.28,64); root.add(moonOrb);
+  var moonLbl=makeLabel('Moon','#dfe7f5',12,'graha'); root.add(moonLbl);
+  GMAP.Moon={mesh:moon,orbit:moonOrb,label:moonLbl,key:'Moon',
+             base:{k:'Moon',s:'Candra',c:0xdfe7f5,sz:0.5},hex:'#dfe7f5',lon:0,isMoon:true};
+  grahaMeshes.push(GMAP.Moon);
+
+  var nodeLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints([eP,eP]),
+    new THREE.LineBasicMaterial({color:0x8b6fb8,transparent:true,opacity:.5}));
+  root.add(nodeLine);
+  var rahuLbl=makeLabel('Rāhu ☊','#8b6fb8',12,'graha'); root.add(rahuLbl);
+  var ketuLbl=makeLabel('Ketu ☋','#7d6be0',12,'graha'); root.add(ketuLbl);
+  NODES={line:nodeLine,rahu:rahuLbl,ketu:ketuLbl};
+
+  cam.position.set(0,132,168);
   ctrl=orbitControls(cam,renderer.domElement,new THREE.Vector3(0,0,0));
   addEventListener('resize',onResize);
   root.scale.set(0.001,0.001,0.001);
+  placeAt(CHART._jd);
   loop();
 }
+
 function onResize(){
   if(!renderer)return;
   cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix();
@@ -1196,7 +1296,7 @@ var SEL_NAK=-1, SEL_RAS=-1, SEL_KEY=null;
 
 function clearHiLbl(){
   if(!hiLbl) return;
-  root.remove(hiLbl);
+  if(hiLbl.parent) hiLbl.parent.remove(hiLbl);
   var ix=labelSprites.indexOf(hiLbl); if(ix>=0) labelSprites.splice(ix,1);
   if(hiLbl.material.map) hiLbl.material.map.dispose();
   hiLbl.material.dispose(); hiLbl=null;
@@ -1206,14 +1306,10 @@ function selectGraha(key){
   SELECTED=key;
   for(var k in GMAP){
     var G=GMAP[k], on=(k===key), any=!!key;
-    /* dim the rest, but only enough to make the choice obvious — the scene still
-       has to read as a whole sky, especially since one graha is lit by default */
-    if(G.spoke) G.spoke.material.opacity = on?0.9 :(any?0.10:0.16);
-    if(G.glow)  G.glow.material.opacity  = on?0.92:(any?0.36:0.55);
-    if(G.orbit) G.orbit.material.opacity = on?0.38:(any?0.06:0.09);
+    if(G.spoke) G.spoke.material.opacity = on?0.95:(any?0.06:0.2);
+    if(G.glow)  G.glow.material.opacity  = on?0.95:(any?0.34:0.55);
+    if(G.orbit) G.orbit.material.opacity = on?0.75:(any?0.10:(k==='Earth'?0.4:0.22));
     if(G.label) G.label.material.opacity = on?1   :(any?0.62:1);
-    if(G.mesh)  G.mesh.material.opacity  = 1;
-    if(G.line)  G.line.material.opacity  = on?1   :(any?0.4 :0.9);
   }
   if(!key){
     if(hiNak)hiNak.visible=false; if(hiRas)hiRas.visible=false;
@@ -1222,39 +1318,37 @@ function selectGraha(key){
     if($('pbody')) $('pbody').querySelectorAll('.grow.sel').forEach(function(x){x.classList.remove('sel');});
     return;
   }
-
-  var G=GMAP[key], lon=G?G.lon:0, col=G&&G.base?G.base.c:0xf2c879;
+  var G=GMAP[key];
+  if(!G){ return; }
+  var lon=G.lon||0, col=G.base?G.base.c:0xf2c879;
   var hex='#'+('000000'+col.toString(16)).slice(-6);
   var nIdx=Math.floor(lon/(360/27)), rIdx=Math.floor(lon/30);
   var fresh=(key!==SEL_KEY);
 
-  /* Rebuilding the arcs and the label every frame while the timeline is playing
-     meant a new canvas, texture and geometry sixty times a second. Only redo the
-     parts that actually changed. */
+  /* arcs sit on the sidereal boundaries, offset into tropical space like the ring */
   if(hiNak && (fresh || nIdx!==SEL_NAK)){
     hiNak.geometry.dispose();
-    hiNak.geometry=new THREE.RingGeometry(52,56,64,1,nIdx*(360/27)*D2R,(360/27)*D2R);
+    hiNak.geometry=new THREE.RingGeometry(RING_R-8,RING_R-4,64,1,
+      (nIdx*(360/27)+CHART._ay)*D2R,(360/27)*D2R);
   }
   if(hiRas && (fresh || rIdx!==SEL_RAS)){
     hiRas.geometry.dispose();
-    hiRas.geometry=new THREE.RingGeometry(64,70,64,1,rIdx*30*D2R,30*D2R);
+    hiRas.geometry=new THREE.RingGeometry(RING_R,RING_R+7,64,1,
+      (rIdx*30+CHART._ay)*D2R,30*D2R);
   }
-  if(hiNak){ if(fresh) hiNak.material.color.setHex(col); hiNak.material.opacity=.42; hiNak.visible=true; }
+  if(hiNak){ if(fresh) hiNak.material.color.setHex(col); hiNak.material.opacity=.45; hiNak.visible=true; }
   if(hiRas){ if(fresh) hiRas.material.color.setHex(col); hiRas.material.opacity=.3;  hiRas.visible=true; }
 
-  /* the floating label only needs rebuilding when the graha changes — otherwise
-     it just moves along the spoke. The lagna is skipped; it already has one. */
   if(fresh){
     clearHiLbl();
-    if(key!=='Lagna'){
-      hiLbl=makeLabel('▲ '+key.toUpperCase()+'  is here',hex,15,'hi');
-      root.add(hiLbl);
-    }
+    hiLbl=makeLabel('▲ '+key.toUpperCase()+'  appears here',hex,14,'hi');
+    (ZGRP||root).add(hiLbl);
   }
-  if(hiLbl) hiLbl.position.copy(polar(80,lon,3));
-
+  if(hiLbl){
+    var a=(lon+CHART._ay)*D2R;
+    hiLbl.position.set(Math.cos(a)*(RING_R+22),3,-Math.sin(a)*(RING_R+22));
+  }
   if(fresh || nIdx!==SEL_NAK || rIdx!==SEL_RAS) setHiCaption(key,SIGN[rIdx],NAK[nIdx],hex);
-
   if(fresh && $('pbody')){
     $('pbody').querySelectorAll('.grow').forEach(function(x){
       x.classList.toggle('sel', x.dataset.key===key);
@@ -1336,7 +1430,7 @@ function revealScene(){
   $('ptitle').textContent='Your sky, that moment';
   $('ptabs').querySelectorAll('.ptab').forEach(function(x,i){x.classList.toggle('on',i===0);});
   $('pSky').classList.add('on'); $('pTra').classList.remove('on'); $('pDas').classList.remove('on');
-  selectGraha('Moon');
+  selectGraha('Mars');
   if(root){
     var t0=performance.now(), dur=RM?1:1500;
     (function grow(now){
@@ -1351,6 +1445,7 @@ function revealScene(){
   var html='';
   for(var i=0;i<BODIES.length;i++){
     var B=BODIES[i], d=CHART[B.k]; if(!d) continue;
+    if(B.k==='Lagna') continue;   /* no horizon in a heliocentric frame */
     var t=posText(d.sid), hex='#'+('000000'+B.c.toString(16)).slice(-6);
     var retro=(d.retro&&B.k!=='Rahu'&&B.k!=='Ketu')?'<i>℞</i>':'';
     html+='<div class="grow" data-key="'+B.k+'" data-lon="'+d.sid.toFixed(4)+'">'+
@@ -1633,17 +1728,50 @@ function renderReturns(){
 /* move every graha to where it stood on a given Julian Day */
 function placeAt(jd){
   if(!root||!BIRTH) return;
-  var c=chartAtJD(jd,BIRTH.lat,BIRTH.lon);
+  var T=T_of(jd), c=chartAtJD(jd,BIRTH.lat,BIRTH.lon);
+  var eP=bodyVec('earth',T);
+
   for(var k in GMAP){
-    var G=GMAP[k], d=c[k]; if(!d) continue;
-    G.lon=d.sid;
-    if(k==='Lagna'){ G.lon=CHART.Lagna.sid; continue; }   /* stays at the natal degree */
-    var r=G.base.r;
-    if(G.mesh) G.mesh.position.copy(polar(r,d.sid,0));
-    if(G.glow) G.glow.position.copy(polar(r,d.sid,0));
-    if(G.label) G.label.position.copy(polar(r,d.sid,G.base.sz+3.4));
-    if(G.spoke) G.spoke.geometry.setFromPoints([polar(4,d.sid,0),polar(70,d.sid,0)]);
+    var G=GMAP[k];
+    if(G.isMoon) continue;
+    var p=(k==='Earth')?eP:bodyVec(G.name,T);
+    G.pos=p;
+    if(G.mesh)  G.mesh.position.copy(p);
+    if(G.glow)  G.glow.position.copy(p);
+    if(G.label) G.label.position.set(p.x,p.y+G.base.sz+3.4,p.z);
+    if(c[k]) G.lon=c[k].sid;
+
+    /* Sight-line: from Earth, straight through the planet as drawn, continuing
+       until it meets the zodiac ring. Building it from the drawn positions is
+       what guarantees it actually touches the planet. */
+    if(G.spoke){
+      G.spoke.geometry.setFromPoints([eP, ringHit(eP,p)]);
+    }
   }
+  if(GMAP.Earth&&GMAP.Earth.you) GMAP.Earth.you.position.set(eP.x,eP.y-4,eP.z);
+  if(ZGRP) ZGRP.position.set(eP.x,0,eP.z);
+
+  /* Moon: real direction from Earth, distance exaggerated so it is visible */
+  var M=GMAP.Moon;
+  if(M){
+    var ml=(c.Moon.sid+CHART._ay)*D2R;
+    var mp=new THREE.Vector3(eP.x+Math.cos(ml)*MOON_R, eP.y, eP.z-Math.sin(ml)*MOON_R);
+    M.pos=mp; M.lon=c.Moon.sid;
+    M.mesh.position.copy(mp);
+    M.label.position.set(mp.x,mp.y+2.2,mp.z);
+    M.orbit.position.copy(eP);
+  }
+
+  /* line of nodes — Rahu and Ketu are this line, not objects on it */
+  if(NODES){
+    var ra=(c.Rahu.sid+CHART._ay)*D2R, L=MOON_R*2.6;
+    var rp=new THREE.Vector3(eP.x+Math.cos(ra)*L, eP.y, eP.z-Math.sin(ra)*L);
+    var kp=new THREE.Vector3(eP.x-Math.cos(ra)*L, eP.y, eP.z+Math.sin(ra)*L);
+    NODES.line.geometry.setFromPoints([kp,rp]);
+    NODES.rahu.position.set(rp.x,rp.y+1.6,rp.z);
+    NODES.ketu.position.set(kp.x,kp.y+1.6,kp.z);
+  }
+
   if(SELECTED) selectGraha(SELECTED);
   return c;
 }
@@ -1843,6 +1971,16 @@ function renderTransit(jd){
     },9000);
   };
 
+  /* true distances or readable spacing — stated, never silently chosen */
+  $('infopop').addEventListener('click',function(e){
+    var b=e.target.closest('[data-scale]'); if(!b) return;
+    TRUE_SCALE=(b.dataset.scale==='true');
+    $('infopop').querySelectorAll('[data-scale]').forEach(function(x){
+      x.classList.toggle('on', x===b);
+    });
+    rescaleOrbits();
+  });
+
   /* label density — nothing is deleted, just held back until wanted */
   $('infopop').addEventListener('click',function(e){
     var b=e.target.closest('[data-lab]'); if(!b) return;
@@ -1854,6 +1992,24 @@ function renderTransit(jd){
 
   $('againTop').addEventListener('click',function(){ $('again').click(); });
 })();
+
+/* redraw every orbit ellipse at the new radial scale, then re-place the bodies */
+function rescaleOrbits(){
+  if(!root||!CHART) return;
+  var T=T_of(CHART._jd);
+  for(var k in GMAP){
+    var G=GMAP[k];
+    if(G.isMoon||!G.orbit||!G.name) continue;
+    G.orbit.geometry.dispose();
+    G.orbit.geometry=new THREE.BufferGeometry().setFromPoints(orbitPath(G.name,T,160));
+  }
+  placeAt(jdNow());
+}
+function jdNow(){
+  var r=$('scrubrange');
+  var v=r?+r.value:0;
+  return CHART._jd + (v/1000)*SPAN_Y*365.2425;
+}
 
 /* mobile: the panel starts collapsed so the sky is the hero */
 function fitMobile(){
