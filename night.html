@@ -464,20 +464,69 @@ function recompute(){
 /* ==================================================================
    ORIENTATION
    ================================================================== */
-function setFromDevice(a,b,g,screenA){
+/* --------------------------------------------------------------------------
+   GIMBAL LOCK
+
+   deviceorientation reports Z-X'-Y'' Euler angles. At beta = +-90 (phone held
+   upright, camera at the horizon) alpha and gamma describe the SAME physical
+   rotation, so the pair is degenerate and alpha swings wildly.
+
+   Worse, the old code substituted webkitCompassHeading straight in for alpha.
+   That identity only holds while the phone is roughly flat — held upright the
+   device's top edge points at the zenith, its horizontal projection collapses,
+   and the heading becomes meaningless. Hence west -> SW -> north.
+
+   Fix: never touch alpha. Build the rotation matrix from the raw angles, then
+   correct the whole frame to true north with a single offset that is only
+   re-measured while the phone is in a posture where north is well defined.
+   -------------------------------------------------------------------------- */
+var NORTH_OFF=null, NORTH_OK=false, LASTB=0;
+
+function eulerMatrix(a,b,g){
   var _a=a*D2R,_b=b*D2R,_g=g*D2R;
   var cA=Math.cos(_a),sA=Math.sin(_a),cB=Math.cos(_b),sB=Math.sin(_b),cG=Math.cos(_g),sG=Math.sin(_g);
-  /* R = Rz(a)Rx(b)Ry(g) : device -> world (x East, y North, z Up) */
-  var m=[[cA*cG-sA*sB*sG, -cB*sA, cA*sG+cG*sA*sB],
-         [cG*sA+cA*sB*sG,  cA*cB, sA*sG-cA*cG*sB],
-         [-cB*sG,          sB,    cB*cG]];
-  if(screenA){                                   /* landscape correction */
-    var t=-screenA*D2R, ct=Math.cos(t), st=Math.sin(t);
-    var rz=[[ct,-st,0],[st,ct,0],[0,0,1]], o=[[0,0,0],[0,0,0],[0,0,0]];
-    for(var i=0;i<3;i++)for(var j=0;j<3;j++)for(var k=0;k<3;k++) o[i][j]+=m[i][k]*rz[k][j];
-    m=o;
+  return [[cA*cG-sA*sB*sG, -cB*sA, cA*sG+cG*sA*sB],
+          [cG*sA+cA*sB*sG,  cA*cB, sA*sG-cA*cG*sB],
+          [-cB*sG,          sB,    cB*cG]];
+}
+function mul3(m,r){
+  var o=[[0,0,0],[0,0,0],[0,0,0]];
+  for(var i=0;i<3;i++)for(var j=0;j<3;j++)for(var k=0;k<3;k++) o[i][j]+=m[i][k]*r[k][j];
+  return o;
+}
+function rotZ(deg){
+  var t=deg*D2R, c=Math.cos(t), st=Math.sin(t);
+  return [[c,st,0],[-st,c,0],[0,0,1]];      /* increases azimuth by deg */
+}
+function angLerp(from,to,k){
+  var d=((to-from)%360+540)%360-180;
+  return norm(from+d*k);
+}
+
+function setFromDevice(a,b,g,screenA,heading,absolute){
+  var m=eulerMatrix(a,b,g);
+  if(screenA){                                   /* landscape: rotate in device space */
+    var t=-screenA*D2R, ct=Math.cos(t), stt=Math.sin(t);
+    m=mul3(m,[[ct,-stt,0],[stt,ct,0],[0,0,1]]);
   }
-  MAT=m; HAVE_SENSOR=true;
+  LASTB=b;
+
+  if(absolute===true){ NORTH_OFF=0; NORTH_OK=true; }
+  else if(typeof heading==='number' && !isNaN(heading)){
+    /* device +Y (top edge) expressed in the relative world frame */
+    var top=[m[0][1],m[1][1],m[2][1]];
+    var horiz=Math.hypot(top[0],top[1]);
+    /* only trust the compass while the top edge is meaningfully horizontal */
+    if(horiz>0.34){
+      var azRel=norm(Math.atan2(top[0],top[1])*R2D);
+      var d=norm(heading-azRel);
+      NORTH_OFF=(NORTH_OFF===null)?d:angLerp(NORTH_OFF,d,0.06);
+      NORTH_OK=true;
+    }
+  }
+  if(NORTH_OFF===null){ NORTH_OFF=0; }
+  MAT=mul3(rotZ(NORTH_OFF),m);
+  HAVE_SENSOR=true;
 }
 var MAT=null, SMAT=null;
 
@@ -504,6 +553,10 @@ function smoothOrientation(){
   for(i=0;i<3;i++) for(j=0;j<3;j++) diff=Math.max(diff,Math.abs(MAT[i][j]-SMAT[i][j]));
   /* follow fast sweeps closely, but crawl when the phone is nearly still */
   var k=Math.max(0.055, Math.min(0.45, diff*3.2));
+  /* within ~22 degrees of the beta=90 singularity the reconstructed matrix is
+     still jumpy, so lean harder on the filter there */
+  var near=Math.max(0, 1-Math.abs(Math.abs(LASTB)-90)/22);
+  if(near>0) k*=(1-near*0.72);
   for(i=0;i<3;i++) for(j=0;j<3;j++) SMAT[i][j]+=(MAT[i][j]-SMAT[i][j])*k;
   /* a near-180 degree compass jump can lerp through a singular matrix — snap instead */
   if(!orthonormalize(SMAT)) SMAT=[MAT[0].slice(),MAT[1].slice(),MAT[2].slice()];
@@ -741,13 +794,10 @@ function attachSensors(){
   function handler(e){
     var a=e.alpha, b=e.beta, g=e.gamma;
     if(a===null||b===null||g===null) return;
-    if(typeof e.webkitCompassHeading==='number' && !isNaN(e.webkitCompassHeading)){
-      a=360-e.webkitCompassHeading;              /* iOS gives a true heading */
-    }
     var sa=0;
     if(screen.orientation && typeof screen.orientation.angle==='number') sa=screen.orientation.angle;
     else if(typeof window.orientation==='number') sa=window.orientation;
-    setFromDevice(a,b,g,sa);
+    setFromDevice(a,b,g,sa,e.webkitCompassHeading,e.absolute);
   }
   if('ondeviceorientationabsolute' in window)
     window.addEventListener('deviceorientationabsolute',handler,true);
