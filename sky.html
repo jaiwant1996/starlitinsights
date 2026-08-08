@@ -14,7 +14,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4l10 32 32 10-32 10-10 32-10-32-32-10 32-10z' fill='%23f5c86b'/%3E%3C/svg%3E">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta property="og:image" content="https://starlitinsights.com/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Starlit Insights — your horoscope has been off by 24 degrees.">
+<meta name="twitter:image" content="https://starlitinsights.com/assets/og-cover.png">
 
 <style>
 :root{
@@ -146,7 +156,8 @@ select.ctl option{background:#0a0f1c;color:var(--ink)}
   align-items:flex-start;gap:14px;padding:20px 22px;pointer-events:none}
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--fd);font-weight:600;
   font-size:.95rem;letter-spacing:-.02em;pointer-events:auto}
-.brand svg{width:20px;height:20px;animation:spin 22s linear infinite}
+.brand img{width:26px;height:26px;flex:0 0 auto;filter:drop-shadow(0 0 7px rgba(95,227,216,.35));transition:transform .45s var(--ease,ease),filter .45s}
+.brand:hover img{transform:scale(1.07);filter:drop-shadow(0 0 11px rgba(95,227,216,.6))}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hudmeta{text-align:right;font-family:var(--fm);font-size:10px;letter-spacing:.11em;
   color:var(--ink3);line-height:1.7}
@@ -239,15 +250,16 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   letter-spacing:.13em;text-transform:uppercase;transition:.25s}
 .scrubbtns button:hover{color:var(--gold);border-color:var(--gold)}
 .scrubbtns button.on{background:rgba(242,200,121,.14);color:var(--gold);border-color:rgba(242,200,121,.4)}
-.spanrow{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:9px;border-top:1px solid var(--line)}
+.spanrow{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:8px;padding-top:9px;
+  border-top:1px solid var(--line)}
 .spanrow>span{font-family:var(--fm);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--ink3);margin-right:2px}
-.spanrow button{padding:5px 13px;border-radius:100px;border:1px solid var(--line);cursor:pointer;
+.spanrow button{padding:5px 11px;border-radius:100px;border:1px solid var(--line);cursor:pointer;
   background:none;color:var(--ink3);font-family:var(--fm);font-size:8.5px;letter-spacing:.11em;
   text-transform:uppercase;transition:.25s}
 .spanrow button:hover{color:var(--ink2);border-color:var(--line2)}
 .spanrow button.on{color:var(--cyan);border-color:rgba(95,227,216,.45);background:rgba(95,227,216,.1)}
-.spanrow em{font-style:normal;margin-left:auto;font-family:var(--fm);font-size:8.5px;
+.spanrow em{font-style:normal;flex:0 0 100%;margin:3px 0 0;font-family:var(--fm);font-size:8.5px;
   letter-spacing:.1em;color:var(--ink3);white-space:nowrap}
 @media(max-width:1100px){.spanrow em{display:none}}
 .hudright{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
@@ -370,7 +382,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .hudright{gap:7px}
   .hicon{width:32px;height:32px}
   .infopop{left:10px;right:10px;top:60px;width:auto;max-width:none}
-  .brand{font-size:.88rem}.brand svg{width:18px;height:18px}
+  .brand{font-size:.88rem}.brand img{width:26px;height:26px;flex:0 0 auto;filter:drop-shadow(0 0 7px rgba(95,227,216,.35));transition:transform .45s var(--ease,ease),filter .45s}
+.brand:hover img{transform:scale(1.07);filter:drop-shadow(0 0 11px rgba(95,227,216,.6))}
   .cbtns .btn{flex:1 1 100%}
 }
 @media(prefers-reduced-motion:reduce){
@@ -477,7 +490,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <div id="hud">
   <div class="hudtop">
     <a href="index.html" class="brand">
-      <svg viewBox="0 0 100 100" fill="none"><path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="#f2c879"/></svg>
+      <img src="assets/logo-mark.png" alt="" width="26" height="26" decoding="async">
       Starlit Insights
     </a>
     <div class="hudright">
@@ -539,9 +552,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     </div>
     <div class="spanrow">
       <span>Speed</span>
-      <button type="button" data-rate="slow">Slow</button>
-      <button type="button" data-rate="med" class="on">Medium</button>
-      <button type="button" data-rate="fast">Fast</button>
+      <button type="button" data-rate="day">Day</button>
+      <button type="button" data-rate="week">Week</button>
+      <button type="button" data-rate="month">Month</button>
+      <button type="button" data-rate="year" class="on">Year</button>
       <em id="rateout"></em>
     </div>
   </div>
@@ -595,16 +609,30 @@ function sunLon(T){
       +(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
   return norm(L0+C);
 }
-var MT=[[6.288774,0,0,1,0],[1.274027,2,0,-1,0],[0.658314,2,0,0,0],[0.213618,0,0,2,0],
-[-0.185116,0,1,0,0],[-0.114332,0,0,0,2],[0.058793,2,0,-2,0],[0.057066,2,-1,-1,0],
-[0.053322,2,0,1,0],[0.045758,2,-1,0,0],[-0.040923,0,1,-1,0],[-0.034720,1,0,0,0],
-[-0.030383,0,1,1,0],[0.015327,2,0,0,-2],[-0.012528,0,0,1,2],[0.010980,0,0,1,-2],
-[0.010675,4,0,-1,0],[0.010034,0,0,3,0],[0.008548,4,0,-2,0],[-0.007888,2,1,-1,0],
-[-0.006766,2,1,0,0],[-0.005163,1,0,-1,0],[0.004987,1,1,0,0],[0.004036,2,-1,1,0],
-[0.003994,2,0,2,0],[0.003861,4,0,0,0],[0.003665,2,0,-3,0],[-0.002689,0,1,-2,0],
-[-0.002602,2,0,-1,2],[0.002390,2,-1,-2,0],[-0.002348,1,0,1,0],[0.002236,2,-2,0,0],
-[-0.002120,0,1,2,0],[-0.002069,0,2,0,0],[0.002048,2,-2,-1,0],[-0.001773,2,0,1,-2],
-[-0.001595,2,0,0,2],[0.001215,4,-1,-1,0],[-0.001110,0,0,2,2],[-0.000892,3,0,-1,0]];
+/* ============================================================================
+   MOON — Meeus, Astronomical Algorithms 2nd ed., chapter 47.
+   The complete table 47.A (all 60 periodic terms) plus the three additive
+   corrections: Venus (A1), Jupiter (A2) and the Earth-flattening term in
+   Lp - F. Reproduces the book's worked example 47.a to 0.00 arcsec.
+   Columns are Meeus's own, in his order and sign: D, M, M', F, and the
+   coefficient of the sine in units of 1e-6 degree.
+   ========================================================================= */
+var MT=[
+[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],
+[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],
+[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],
+[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],
+[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],
+[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],
+[2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],
+[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],[2,0,1,-2,-1773],
+[2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],
+[2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],
+[2,1,-2,0,691],[2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],
+[4,-1,0,0,520],[1,0,-2,0,-487],[2,1,0,-2,-399],[0,0,2,-2,-381],
+[1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],[2,-1,2,0,327],
+[0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294],[2,0,-1,-2,0]];
 function moonLon(T){
   var Lp=norm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841-T*T*T*T/65194000);
   var D=norm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868-T*T*T*T/113065000)*D2R;
@@ -613,11 +641,13 @@ function moonLon(T){
   var F=norm(93.2720950+483202.0175233*T-0.0036539*T*T-T*T*T/3526000+T*T*T*T/863310000)*D2R;
   var E=1-0.002516*T-0.0000074*T*T,sum=0;
   for(var i=0;i<MT.length;i++){
-    var t=MT[i],a=t[0]*Math.sin(t[1]*D-t[2]*M+t[3]*Mp+t[4]*F);
-    if(Math.abs(t[2])===1)a*=E; else if(Math.abs(t[2])===2)a*=E*E;
+    var t=MT[i],a=t[4]*Math.sin(t[0]*D+t[1]*M+t[2]*Mp+t[3]*F),am=t[1]<0?-t[1]:t[1];
+    if(am===1)a*=E; else if(am===2)a*=E*E;
     sum+=a;
   }
-  return norm(Lp+sum);
+  var A1=norm(119.75+131.849*T)*D2R, A2=norm(53.09+479264.290*T)*D2R;
+  sum+=3958*Math.sin(A1)+1962*Math.sin(Lp*D2R-F)+318*Math.sin(A2);
+  return norm(Lp+sum/1e6);
 }
 function rahuLon(T){
   return norm(125.0445479-1934.1362891*T+0.0020754*T*T+T*T*T/467441-T*T*T*T/60616000);
@@ -1567,11 +1597,17 @@ $('ptabs').addEventListener('click',function(e){
    11. TIME TRAVEL  —  watch the sky move across your whole life
    ================================================================== */
 var SPAN_Y=90, PLAYING=false, playRAF=null;
-/* playback rates, expressed as years of sky per second of real time */
-var RATES={slow:{y:7/365.2425, label:'7 days / sec'},
-           med :{y:2.2/12,     label:'2.2 months / sec'},
-           fast:{y:1.6,        label:'1.6 years / sec'}};
-var RATE='med';
+/* Playback rates. Each rung is named for how much sky passes in one second of
+   real time, so the choice is legible without doing arithmetic, and each is
+   pitched at a body that is actually watchable at that speed: the Moon steps a
+   nakshatra a day, the Sun takes a month a rashi, a retrograde loop runs a
+   couple of months, Jupiter holds a sign for a year. */
+var RATES={
+  day  :{y:1/365.2425, label:'1 day / sec · Moon steps a nakshatra'},
+  week :{y:7/365.2425, label:'1 week / sec · Sun crossing a rashi'},
+  month:{y:1/12,       label:'1 month / sec · Mars turning retrograde'},
+  year :{y:1,          label:'1 year / sec · Jupiter changing sign'}};
+var RATE='year';
 
 function angDiff(a,b){ var d=((a-b)%360+540)%360-180; return d; }
 
@@ -1727,7 +1763,7 @@ function placeAt(jd){
       if(x.dataset.j!=='play') x.classList.toggle('on', x.dataset.j==='now');
     });
   };
-  window.__scrubInit=function(){ stopPlay(); setRate('med'); POS=0; range.value=0; apply(0); };
+  window.__scrubInit=function(){ stopPlay(); setRate('year'); POS=0; range.value=0; apply(0); };
 })();
 
 

@@ -15,7 +15,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4l10 32 32 10-32 10-10 32-10-32-32-10 32-10z' fill='%23f5c86b'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta property="og:image" content="https://starlitinsights.com/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Starlit Insights — your horoscope has been off by 24 degrees.">
+<meta name="twitter:image" content="https://starlitinsights.com/assets/og-cover.png">
 
 <style>
 /* ============================================================
@@ -181,7 +190,8 @@ header.stuck{background:rgba(4,6,12,.82);backdrop-filter:blur(24px);-webkit-back
   font-size:1.02rem;letter-spacing:-.022em;white-space:nowrap;flex:0 0 auto}
 .brand span{background:linear-gradient(100deg,var(--ink) 40%,#cfd8ea);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.brand svg{width:24px;height:24px;flex:0 0 auto;animation:spin 26s linear infinite}
+.brand img{width:26px;height:26px;flex:0 0 auto;filter:drop-shadow(0 0 7px rgba(95,227,216,.35));transition:transform .45s var(--ease,ease),filter .45s}
+.brand:hover img{transform:scale(1.07);filter:drop-shadow(0 0 11px rgba(95,227,216,.6))}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .nav-links{display:flex;align-items:center;gap:6px}
@@ -523,8 +533,39 @@ header.stuck .navprog{opacity:.9}
    ============================================================ */
 .bookgrid{display:grid;grid-template-columns:.92fr 1.08fr;gap:22px;align-items:start}
 .bookcard{padding:30px 28px}
-.paycard,.calcard{padding:28px 26px;margin-bottom:18px;position:relative}
-.calcard{margin-bottom:0}
+.paycard,.calcard{padding:28px 26px;margin-bottom:26px;position:relative}
+/* the pay card is now the last thing on the page, so it has to read as the
+   action rather than as one more block of text */
+.paycard.final{border-color:rgba(242,200,121,.34);
+  background:linear-gradient(158deg,rgba(242,200,121,.07),rgba(255,255,255,.014) 46%)}
+.paycard.final::before{content:'';position:absolute;top:0;left:26px;right:26px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.75}
+.holdnote{display:flex;gap:11px;align-items:flex-start;margin:2px 0 16px;padding:12px 14px;
+  border-radius:11px;border:1px solid rgba(242,200,121,.3);
+  background:linear-gradient(120deg,rgba(242,200,121,.11),rgba(242,200,121,.03))}
+.holdnote svg{width:16px;height:16px;flex:0 0 auto;margin-top:2px;color:var(--gold)}
+.holdnote span{font-size:.79rem;line-height:1.55;color:var(--ink-2)}
+.holdnote b{color:var(--gold);font-weight:500}
+.calnote{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:13px;
+  border-top:1px solid var(--line);font-size:.78rem;line-height:1.5;color:var(--ink-3)}
+.calnote i{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:0 0 auto;
+  box-shadow:0 0 0 3px rgba(242,200,121,.15)}
+.calnote b{color:var(--ink-2);font-weight:500}
+.bonus{padding:24px 24px 20px;margin-top:12px;
+  border-color:rgba(95,227,216,.26);
+  background:linear-gradient(155deg,rgba(95,227,216,.075),rgba(255,255,255,.012) 52%)}
+.bonustag{display:inline-block;margin-bottom:11px;padding:4px 11px;border-radius:100px;
+  border:1px solid rgba(95,227,216,.35);background:rgba(95,227,216,.1);
+  font-family:var(--f-mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan)}
+.bonus h4{font-family:var(--f-disp);font-weight:500;font-size:1.12rem;letter-spacing:-.022em;
+  margin-bottom:8px}
+.bonus p{font-size:.83rem;line-height:1.6;color:var(--ink-2)}
+.bonusfoot{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px;padding-top:14px;
+  border-top:1px solid var(--line)}
+.bonusfoot span{padding:4px 9px;border-radius:6px;background:rgba(255,255,255,.04);
+  font-size:8px;letter-spacing:.12em;color:var(--ink-3)}
+.paycard.final{margin-bottom:0}
 .paynum{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;margin-bottom:14px;
   border:1px solid rgba(242,200,121,.35);background:rgba(242,200,121,.1);
   font-family:var(--f-mono);font-size:11px;color:var(--gold)}
@@ -728,11 +769,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
 <header id="hdr">
   <div class="wrap nav">
     <a href="index.html" class="brand">
-      <svg viewBox="0 0 100 100" fill="none">
-        <path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="url(#bg1)"/>
-        <defs><linearGradient id="bg1" x1="0" y1="0" x2="100" y2="100">
-          <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8"/></linearGradient></defs>
-      </svg>
+      <img src="assets/logo-mark.png" alt="" width="26" height="26" decoding="async">
       <span>Starlit Insights</span>
     </a>
 
@@ -789,15 +826,17 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
     <div class="bookgrid">
       <!-- LEFT: what it is, and how it works (A/B/C) -->
       <div>
+        <div class="colhead rv"><span>What you're booking</span></div>
         <div class="card rv bookcard">
           <span class="stag">One product</span>
           <h3 style="margin-bottom:4px">15-Minute Jyotisha Reading</h3>
-          <div class="price">₹500<small> / 15 min · paid to confirm</small></div>
+          <div class="price">₹500<small> / 15 min · confirmed on payment</small></div>
           <div class="prodspec" style="margin-top:16px">
-            <div class="prow"><span>Format</span><b>One-to-one online call, audio or video</b></div>
+            <div class="prow"><span>Format</span><b>One-to-one online call</b></div>
             <div class="prow"><span>Prepared</span><b>Chart computed from Swiss Ephemeris positions before we meet</b></div>
             <div class="prow"><span>You bring</span><b>Birth date, exact time, city — and one thing you want read</b></div>
-            <div class="prow"><span>Payment</span><b>₹500 by UPI, card, net banking or wallet</b></div>
+            <div class="prow"><span>Payment</span><b>₹500 by UPI, card, net banking or wallet. The slot is confirmed once payment is received.</b></div>
+            <div class="prow"><span>Included</span><b>Your Sky Ahead — a dated twelve-month almanac for your chart, yours to keep</b></div>
           </div>
         </div>
 
@@ -805,15 +844,15 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         <div class="steps rv" data-d="1" style="grid-template-columns:1fr;margin-top:12px">
           <div class="step">
             <span class="stepn">A</span>
-            <h4>Pay to confirm</h4>
-            <p>₹500 through our secure payment page. This is what reserves the slot and starts the
-            chart preparation.</p>
-          </div>
-          <div class="step">
-            <span class="stepn">B</span>
             <h4>Choose your time</h4>
             <p>Pick a slot from the live calendar. The form takes your birth date, exact time and city,
             plus a short note on what you'd like the reading to cover.</p>
+          </div>
+          <div class="step">
+            <span class="stepn">B</span>
+            <h4>Confirm it</h4>
+            <p>₹500 through our secure payment page. The slot is held until you pay and confirmed once
+            you have — that is also what starts the chart preparation.</p>
           </div>
           <div class="step">
             <span class="stepn">C</span>
@@ -822,43 +861,29 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
             against your note. Sources named as we go.</p>
           </div>
         </div>
+
+        <div class="colhead rv"><span>And you keep this</span></div>
+        <div class="card rv bonus" data-d="1">
+          <div class="bonustag">Included · yours after the session</div>
+          <h4>Your Sky Ahead</h4>
+          <p>A twelve-month almanac computed for your own chart, not a generic calendar. Every
+          dasha and sub-period changeover, every sign change of the slow planets counted from your
+          natal Moon, every retrograde window, dated to the day.</p>
+          <p style="margin-top:9px">It exports to a calendar file, so the dates land in Google
+          Calendar or Apple Calendar and you simply see them coming. You get an access code at the
+          end of the session.</p>
+          <div class="bonusfoot">
+            <span class="mono">DASHA CHANGES</span><span class="mono">SIGN CHANGES</span>
+            <span class="mono">RETROGRADES</span><span class="mono">.ICS EXPORT</span>
+          </div>
+        </div>
       </div>
 
-      <!-- RIGHT: pay, then schedule -->
+      <!-- RIGHT: schedule, then pay to confirm -->
       <div>
-        <div class="colhead rv"><span>Book it — two steps</span></div>
-        <!-- ============================================================
-             RAZORPAY — payment link. To change it, edit the href on
-             .paybtn below and nothing else.
-             ============================================================ -->
-        <div class="card rv paycard" id="razorpay-slot">
-          <div class="paynum">1</div>
-          <h3>Pay ₹500</h3>
-          <p>This confirms your slot and starts the chart preparation. Card, UPI, net banking and
-          wallets, all handled by Razorpay — we never see or store your payment details.</p>
-
-          <a class="paybtn" href="https://rzp.io/rzp/KBT7ihe" target="_blank" rel="noopener">
-            <span>Pay ₹500 securely</span>
-            <b>→</b>
-          </a>
-
-          <div class="paymeta">
-            <span class="paylock">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M8.5 10.5V7.75a3.5 3.5 0 017 0v2.75" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-              Secured by Razorpay
-            </span>
-            <span>UPI · Card · Net banking · Wallets</span>
-          </div>
-
-          <p class="payafterlink">Opens in a new tab. Once payment is done, come back here and pick
-          your slot below — use the same name and email so I can match them up.</p>
-        </div>
-
+        <div class="colhead rv"><span>Book it — pick a time, then confirm</span></div>
         <div class="card rv calcard" data-d="1">
-          <div class="paynum">2</div>
+          <div class="paynum">1</div>
           <h3>Choose your slot</h3>
           <p style="margin-bottom:16px">Live availability. Have your birth date, exact time and city
           ready — and one question you actually want answered.</p>
@@ -880,6 +905,47 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
         </script>
         <!-- Cal inline embed code ends -->
           </div>
+          <div class="calnote"><i></i><span>Picking a time <b>holds</b> it. Step 2 below confirms it.</span></div>
+        </div>
+
+        <!-- ============================================================
+             RAZORPAY — payment link. To change it, edit the href on
+             .paybtn below and nothing else.
+             ============================================================ -->
+        <div class="card rv paycard final" id="razorpay-slot">
+          <div class="paynum">2</div>
+          <h3>Confirm with ₹500</h3>
+
+          <div class="holdnote">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.4" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M12 7.6V12l3 1.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span><b>Your slot isn't confirmed yet.</b> The time you picked is held while you pay.
+            It's confirmed the moment payment goes through, and you'll get an email either way.</span>
+          </div>
+
+          <p>Payment also starts the chart preparation. Card, UPI, net banking and wallets, all handled
+          by Razorpay — we never see or store your payment details.</p>
+
+          <a class="paybtn" href="https://rzp.io/rzp/4OBqrqZJ" target="_blank" rel="noopener">
+            <span>Pay ₹500 and confirm</span>
+            <b>→</b>
+          </a>
+
+          <div class="paymeta">
+            <span class="paylock">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8.5 10.5V7.75a3.5 3.5 0 017 0v2.75" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+              Secured by Razorpay
+            </span>
+            <span>UPI · Card · Net banking · Wallets</span>
+          </div>
+
+          <p class="payafterlink">Opens in a new tab. Use the <b>same name and email</b> you just booked
+          with, so the payment matches your slot.</p>
         </div>
       </div>
     </div>
@@ -902,11 +968,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 34px;position:relative;z-
     <div class="fgrid">
       <div>
         <a href="index.html" class="brand" style="margin-bottom:16px">
-          <svg viewBox="0 0 100 100" fill="none">
-            <path d="M50 3l11.5 35.5L97 50 61.5 61.5 50 97 38.5 61.5 3 50l35.5-11.5z" fill="url(#bg2)"/>
-            <defs><linearGradient id="bg2" x1="0" y1="0" x2="100" y2="100">
-              <stop stop-color="#f2c879"/><stop offset="1" stop-color="#5fe3d8"/></linearGradient></defs>
-          </svg>
+          <img src="assets/logo-mark.png" alt="" width="26" height="26" decoding="async">
           Starlit Insights
         </a>
         <p style="font-size:.88rem;max-width:42ch">

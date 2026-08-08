@@ -1,0 +1,15 @@
+{
+  "name": "Starlit Insights",
+  "short_name": "Starlit",
+  "description": "Jyotisha (Vedic astrology) computed from real ephemeris positions — sidereal charts, classical sources, no fear-selling.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#04060c",
+  "theme_color": "#04060c",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
